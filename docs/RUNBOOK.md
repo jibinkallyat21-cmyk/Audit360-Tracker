@@ -130,3 +130,7 @@ The export reads everything with the service role so that it is complete. That i
 - **Export size and time**: about 100 files of at most 2 MB is comfortable. A very large version history on a plan with a short function time limit may need the export run from a larger plan or in two steps.
 - **Administrator access to the database or Supabase dashboard** is outside the application's controls.
 - **Not run live**: auth emails, Supabase Storage uploads and downloads, and the file-restore scripts. They need a real project; see the marked items above.
+
+## 9. Demo sign-in (optional)
+
+For showing how each role sees the app. Set `ENABLE_DEMO=1` and `DEMO_PASSWORD` in Vercel, and run `supabase/demo/demo-users.sql` once with that password (`psql -v demo_password=...`). The login page then lists one button per role. Demo accounts are real, approved accounts on the same database, so their actions are recorded. **Remove `ENABLE_DEMO` and delete the `demo+*@audit360.demo` users before real launch.**

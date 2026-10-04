@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { login } from "../actions";
+import { demoLogin, login } from "../actions";
 import { AuthForm, Field } from "../form";
+import { DEMO_PERSONAS, demoEnabled } from "@/lib/demo";
 import { AuthShell } from "@/components/auth-shell";
 
 export default async function LoginPage({
@@ -12,11 +13,16 @@ export default async function LoginPage({
   return (
     <AuthShell>
       <main className="card">
-        <h1>Tracker &amp; Review</h1>
+        <h1>Audit 360 Tracker</h1>
         <p className="muted">Sign in to the internal process portal.</p>
         {error === "link" && (
           <p role="alert" className="error">
             That link is invalid or has expired. Request a new one.
+          </p>
+        )}
+        {error === "demo" && (
+          <p role="alert" className="error">
+            Demo accounts are not set up on this deployment yet.
           </p>
         )}
         <AuthForm action={login} submitLabel="Sign in">
@@ -34,6 +40,30 @@ export default async function LoginPage({
           <Link href="/register">Create account</Link>
         </p>
       </main>
+      {demoEnabled() && (
+        <section className="card demo">
+          <h2>Demo sign-in</h2>
+          <p className="muted">
+            Try the app as each role. Demo accounts work on the real database, so what you do here
+            is recorded. For Dashboard Lead and Administrator, use the real login.
+          </p>
+          <ul className="demo-list">
+            {DEMO_PERSONAS.map((p) => (
+              <li key={p.slug}>
+                <form action={demoLogin}>
+                  <input type="hidden" name="persona" value={p.slug} />
+                  <button type="submit" className="secondary">
+                    <strong>{p.role}</strong>
+                    <span>
+                      {p.person} · {p.blurb}
+                    </span>
+                  </button>
+                </form>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </AuthShell>
   );
 }

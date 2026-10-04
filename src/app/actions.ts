@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { DEMO_PERSONAS, demoEmail, demoEnabled } from "@/lib/demo";
 import { z } from "zod";
 import { siteUrl } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
@@ -22,6 +23,19 @@ export async function login(_: FormState, form: FormData): Promise<FormState> {
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   // One message for every failure so accounts cannot be enumerated.
   if (error) return { error: "Incorrect email or password, or the email is not confirmed." };
+  redirect("/");
+}
+
+/** One-click demo sign-in. Refuses unless demo mode is switched on for this deployment. */
+export async function demoLogin(formData: FormData) {
+  const slug = String(formData.get("persona") ?? "");
+  if (!demoEnabled() || !DEMO_PERSONAS.some((p) => p.slug === slug)) redirect("/login");
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email: demoEmail(slug),
+    password: process.env.DEMO_PASSWORD!,
+  });
+  if (error) redirect("/login?error=demo");
   redirect("/");
 }
 
