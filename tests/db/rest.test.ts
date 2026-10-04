@@ -3,6 +3,12 @@ import { createHmac } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PostgrestClient } from "@supabase/postgrest-js";
 import {
+  ACTIVITY_SELECT,
+  APPROVALS_SELECT,
+  COMMENTS_SELECT,
+  DOCUMENTS_SELECT,
+  REVIEW_POINTS_SELECT,
+  TESTING_SELECT,
   ASSIGNMENT_SELECT,
   PERSON_ROLES_SELECT,
   PROCESS_DETAIL_SELECT,
@@ -142,6 +148,120 @@ describe.skipIf(!TEST_URL || !BIN)("page queries through PostgREST", () => {
       .update({ current_stage: "production" })
       .eq("id", sub);
     expect(direct.error?.message).toMatch(/permission denied/);
+  });
+
+  it("returns records with their joins, scoped to people on the process", async () => {
+    const sub = await db.sub("1.2", 2);
+    const DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    const ok = async (p: PromiseLike<{ error: { message: string } | null }>) =>
+      expect((await p).error).toBeNull();
+    const pav = client("pavithra");
+    const rij = client("rijin");
+    await ok(pav.rpc("set_status", { p_sub: sub, p_status: "in_progress" }));
+    await ok(pav.rpc("complete_stage", { p_sub: sub }));
+    await ok(pav.rpc("set_status", { p_sub: sub, p_status: "in_progress" }));
+    await ok(pav.rpc("complete_stage", { p_sub: sub }));
+    const up = (path: string, doc: string | null) =>
+      rij.rpc("register_document_version", {
+        p_sub: sub,
+        p_rp: null,
+        p_document: doc,
+        p_filename: "plan.docx",
+        p_storage_path: path,
+        p_size: 100,
+        p_mime: DOCX,
+        p_note: null,
+      });
+    await ok(up("rest/1", null));
+    const docId = (await rij.from("documents").select("id").eq("subprocess_id", sub).single()).data!
+      .id;
+    await ok(up("rest/2", docId));
+    await ok(
+      rij.rpc("record_testing", {
+        p_sub: sub,
+        p_result: "pass",
+        p_notes: "fine",
+        p_evidence_document: docId,
+      }),
+    );
+    await ok(rij.rpc("add_comment", { p_sub: sub, p_text: "hello", p_parent: null, p_rp: null }));
+    await ok(
+      client("fayis").rpc("raise_review_point", {
+        p_sub: sub,
+        p_description: "Check totals",
+        p_owner_person: await db.person("Rijin"),
+      }),
+    );
+
+    const docs = await rij.from("documents").select(DOCUMENTS_SELECT).eq("subprocess_id", sub);
+    const versions = (
+      docs.data as unknown as {
+        document_versions: { version_number: number; is_current: boolean }[];
+      }[]
+    )[0].document_versions;
+    expect(docs.error).toBeNull();
+    expect(versions.map((v) => [v.version_number, v.is_current]).sort()).toEqual([
+      [1, false],
+      [2, true],
+    ]);
+
+    const rps = await rij
+      .from("review_points")
+      .select(REVIEW_POINTS_SELECT)
+      .eq("subprocess_id", sub);
+    expect(rps.error).toBeNull();
+    expect(
+      (rps.data as unknown as { owner: { display_name: string } }[])[0].owner.display_name,
+    ).toBe("Rijin");
+    for (const [table, select] of [
+      ["comments", COMMENTS_SELECT],
+      ["testing_records", TESTING_SELECT],
+      ["approvals", APPROVALS_SELECT],
+    ] as const) {
+      const r = await rij
+        .from(table as string)
+        .select(select as string)
+        .eq("subprocess_id", sub);
+      expect(r.error, table).toBeNull();
+    }
+    const tests = await rij.from("testing_records").select(TESTING_SELECT).eq("subprocess_id", sub);
+    expect(tests.data).toHaveLength(1);
+
+    const log = await rij
+      .from("activity_logs")
+      .select(ACTIVITY_SELECT)
+      .or("action_type.ilike.%document%,entity_type.ilike.%document%")
+      .order("id", { ascending: false })
+      .range(0, 10);
+    expect(log.error).toBeNull();
+    expect(
+      (log.data as unknown as { action_type: string }[]).map((l) => l.action_type).sort(),
+    ).toEqual(["document_replaced", "document_uploaded"]);
+
+    const names = await rij.rpc("actor_names", { p_ids: [db.users.pavithra, db.users.fayis] });
+    expect((names.data as { display_name: string }[]).map((n) => n.display_name).sort()).toEqual([
+      "Fayis",
+      "Pavithra",
+    ]);
+
+    // Someone on another team gets nothing from any of it.
+    const other = client("rustham");
+    for (const [table, select] of [
+      ["documents", DOCUMENTS_SELECT],
+      ["review_points", REVIEW_POINTS_SELECT],
+      ["comments", COMMENTS_SELECT],
+      ["testing_records", TESTING_SELECT],
+      ["approvals", APPROVALS_SELECT],
+      ["activity_logs", ACTIVITY_SELECT],
+    ] as const) {
+      const r = await other
+        .from(table as string)
+        .select(select as string)
+        .eq("subprocess_id", sub);
+      expect(r.data ?? [], table).toEqual([]);
+    }
+    const hiddenVersions = await other.from("document_versions").select("id");
+    expect(hiddenVersions.data).toEqual([]);
   });
 
   it("serves nothing without a valid user token", async () => {

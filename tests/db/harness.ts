@@ -51,6 +51,7 @@ export async function setup(): Promise<Db> {
     "supabase/migrations/0002_schema.sql",
     "supabase/migrations/0003_functions.sql",
     "supabase/migrations/0004_rls.sql",
+    "supabase/migrations/0005_documents_support.sql",
     "supabase/seed.sql",
   ];
   for (const f of files) await admin.query(read(f));

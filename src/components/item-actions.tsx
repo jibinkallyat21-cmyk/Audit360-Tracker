@@ -24,7 +24,15 @@ const SETTABLE = [
  * Shows only the actions this user can take. This is a convenience: the database
  * functions re-check every request and reject anything not permitted.
  */
-export function ItemActions({ row, caps }: { row: SubprocessRow; caps: Capabilities }) {
+export function ItemActions({
+  row,
+  caps,
+  documents = [],
+}: {
+  row: SubprocessRow;
+  caps: Capabilities;
+  documents?: { id: string; name: string }[];
+}) {
   const sub = { sub: row.id };
   const parts = [
     canSetStatus(caps, row) && (
@@ -53,6 +61,16 @@ export function ItemActions({ row, caps }: { row: SubprocessRow; caps: Capabilit
             { value: "fail", label: "Fail" },
           ]}
         />
+        {documents.length > 0 && (
+          <SelectField
+            name="evidence"
+            label="Evidence document"
+            options={[
+              { value: "", label: "No evidence" },
+              ...documents.map((d) => ({ value: d.id, label: d.name })),
+            ]}
+          />
+        )}
         <input
           name="notes"
           placeholder="Notes (optional)"

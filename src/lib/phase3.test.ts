@@ -2,6 +2,12 @@ import { describe, expect, it } from "vitest";
 import { remaining, zonedToUtcIso } from "./countdown";
 import type { AssignmentRow, AssignmentType, RoleName, SubprocessRow } from "./domain";
 import {
+  canComment,
+  canRaiseReviewPoint,
+  canRecordDecision,
+  canReview,
+  canUpload,
+  reviewPointActions,
   canCompleteStage,
   canRecordTesting,
   canSetDashboardStatus,
@@ -185,5 +191,54 @@ describe("button visibility mirrors the rules", () => {
     expect(dashboardKind(caps(["project_head"]))).toBe("management");
     expect(dashboardKind(lead)).toBe("lead");
     expect(dashboardKind(member)).toBe("member");
+  });
+});
+
+describe("review permissions mirror the rules", () => {
+  const reviewer = caps([], { p1: ["reviewer"] });
+  const conflicted = caps([], { p1: ["reviewer", "team_member"] });
+  const member = caps([], { p1: ["team_member"] });
+
+  it("stops a reviewer who also worked on the process from reviewing", () => {
+    expect(canReview(reviewer, "p1")).toBe(true);
+    expect(canReview(conflicted, "p1")).toBe(false);
+    expect(canReview(reviewer, "p2")).toBe(false);
+  });
+  it("offers review points during Testing or Review, and decisions only in Review", () => {
+    expect(canRaiseReviewPoint(reviewer, row({ stage: "testing" }))).toBe(true);
+    expect(canRaiseReviewPoint(reviewer, row({ stage: "solution_building" }))).toBe(false);
+    expect(canRecordDecision(reviewer, row({ stage: "review" }))).toBe(true);
+    expect(canRecordDecision(reviewer, row({ stage: "testing" }))).toBe(false);
+    expect(canRecordDecision(member, row({ stage: "review" }))).toBe(false);
+  });
+  it("separates the owner's response from the reviewer's approval", () => {
+    const owner = { ...caps([], { p1: ["team_member"] }), personId: "me" };
+    const rp = (status: string) => ({ ownerPersonId: "me", status });
+    expect(reviewPointActions(owner, "p1", rp("open"))).toEqual({
+      start: true,
+      submit: true,
+      approveClose: false,
+      returnBack: false,
+    });
+    expect(reviewPointActions(owner, "p1", rp("submitted_for_closure")).approveClose).toBe(false);
+    expect(reviewPointActions(owner, "p1", rp("closed")).submit).toBe(false);
+    const rev = { ...reviewer, personId: "rev" };
+    expect(reviewPointActions(rev, "p1", rp("submitted_for_closure"))).toMatchObject({
+      approveClose: true,
+      returnBack: true,
+    });
+    expect(reviewPointActions(rev, "p1", rp("open")).approveClose).toBe(false);
+    // A reviewer cannot approve a point they own.
+    const selfOwned = { ...reviewer, personId: "me" };
+    expect(reviewPointActions(selfOwned, "p1", rp("submitted_for_closure")).approveClose).toBe(
+      false,
+    );
+  });
+  it("limits uploads to assigned people and comments to them plus the Project Lead", () => {
+    expect(canUpload(member, "p1")).toBe(true);
+    expect(canUpload(member, "p2")).toBe(false);
+    expect(canUpload(caps(["project_lead"]), "p1")).toBe(false);
+    expect(canComment(caps(["project_lead"]), "p1")).toBe(true);
+    expect(canComment(caps(["project_head"]), "p1")).toBe(false);
   });
 });

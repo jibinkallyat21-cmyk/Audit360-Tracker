@@ -103,7 +103,7 @@ export const getCapabilities = cache(async (): Promise<Capabilities> => {
     set.add(a.type);
     assignments.set(a.processId, set);
   }
-  return { roles, assignments };
+  return { personId: viewer.personId, roles, assignments };
 });
 
 export const getDeadline = cache(async (): Promise<string | null> => {

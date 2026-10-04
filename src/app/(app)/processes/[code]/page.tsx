@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import { StepRecords } from "@/components/step-records";
 import { ItemActions } from "@/components/item-actions";
 import { BuildBadge, DecisionBadge, StageTrack, StatusBadge } from "@/components/ui";
 import { getCapabilities, listAssignments, listSubprocesses } from "@/lib/data";
 import { PROCESS_DETAIL_SELECT } from "@/lib/queries";
+import { getRecords } from "@/lib/records";
 import { createClient } from "@/lib/supabase/server";
 import type { AssignmentType } from "@/lib/domain";
 
@@ -31,6 +33,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ code: 
     .eq("id", rows[0].processId)
     .single();
   if (!proc) notFound();
+  const records = await getRecords(rows.map((r) => r.id));
   const people = assignments.filter((a) => a.processId === rows[0].processId);
   const before: string[] = (proc.context as { before_ai_steps?: string[] })?.before_ai_steps ?? [];
 
@@ -72,7 +75,14 @@ export default async function ProcessPage({ params }: { params: Promise<{ code: 
               <StatusBadge status={r.status} /> <DecisionBadge decision={r.reviewDecision} />{" "}
               <BuildBadge status={r.dashboardStatus} />
             </p>
-            <ItemActions row={r} caps={caps} />
+            <ItemActions
+              row={r}
+              caps={caps}
+              documents={records.documents
+                .filter((d) => d.subprocess_id === r.id)
+                .map((d) => ({ id: d.id, name: d.original_filename }))}
+            />
+            <StepRecords row={r} caps={caps} records={records} people={assignments} />
           </article>
         ))}
       </section>

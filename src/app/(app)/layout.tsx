@@ -11,6 +11,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <nav aria-label="Main" className="nav">
           <Link href="/">Dashboard</Link>
           <Link href="/workflow">Workflow</Link>
+          <Link href="/documents">Documents</Link>
+          <Link href="/activity">Activity</Link>
         </nav>
         <span className="spacer" />
         <span className="muted">{viewer.fullName ?? viewer.email}</span>

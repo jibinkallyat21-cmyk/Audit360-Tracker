@@ -197,4 +197,42 @@ describe.skipIf(!TEST_URL)("documents, history, countdown and administration", (
     );
     expect(n.rows[0].count).toBe("2");
   });
+
+  it("logs downloads only for people who may view the document", async () => {
+    const sub = await db.sub("1.1", 1);
+    const v = await run(
+      "rijin",
+      "select register_document_version($1,null,null,'d.docx','dl/1',500,$2) id",
+      [sub, DOCX],
+    );
+    const vid = v.rows[0].id;
+    await run("pavithra", "select log_document_download($1)", [vid]);
+    for (const u of ["rustham", "shonJ", "jibin"])
+      await denied(u, "select log_document_download($1)", [vid]);
+    const log = await db.admin.query(
+      "select actor_id from activity_logs where action_type='document_downloaded' and entity_id=$1",
+      [vid],
+    );
+    expect(log.rows.map((r) => r.actor_id)).toEqual([db.users.pavithra]);
+  });
+
+  it("resolves author names without exposing emails", async () => {
+    const fresh = (
+      await db.admin.query(
+        "insert into auth.users (email) values ('fresh@example.com') returning id",
+      )
+    ).rows[0].id;
+    const r = await run("rijin", "select * from actor_names($1)", [[db.users.pavithra, fresh]]);
+    expect(r.rows).toEqual([{ profile_id: db.users.pavithra, display_name: "Pavithra" }]);
+    // An unapproved account gets nothing back.
+    const none = await db.as(fresh, (q) =>
+      q.query("select * from actor_names($1)", [[db.users.pavithra]]),
+    );
+    expect(none.rows).toEqual([]);
+    // Emails stay private: other people's profile rows are invisible.
+    const hidden = await run("rijin", "select email from profiles where id=$1", [
+      db.users.pavithra,
+    ]);
+    expect(hidden.rows).toEqual([]);
+  });
 });

@@ -147,3 +147,12 @@ Automated tests cover role permissions (including guessed IDs and direct URLs), 
 - **Re-approval.** If a document version is added after a review approval, the item cannot enter Production until a reviewer approves again.
 - **Writes.** Clients have SELECT only. Every change goes through a database function that checks the actor, role, assignment, stage and approvals, and writes its audit entry in the same transaction.
 - **First administrator.** The owner runs `select public.bootstrap_first_admin('<email>')` once in the Supabase SQL editor after registering. It refuses to run if an administrator already exists.
+
+## 13. Phase 4 implementation notes
+
+- **Files.** The bucket `documents` is private and created by migration 0005. Clients have no storage policies; only the server uses the service-role key, after checking the user's permission. Order of an upload: validate (size, extension, declared type, file signature, macros) → check the user is assigned to the process → store → register the version in the database → remove the stored file if registration fails.
+- **Type decision.** The stored MIME type is the one the server derives from the extension and signature, not the one the browser claims.
+- **Legacy formats.** `.doc` and `.xls` are checked by their OLE signature only. Macros cannot be reliably detected inside them, and no malware scanner is available on the free tier. Macro-bearing `.docx`/`.xlsx` are rejected.
+- **Downloads.** An authenticated route reads the version through row-level security, records the download in the history, then redirects to a signed link that expires after 60 seconds.
+- **Author names.** Records show people's names via a function that returns only display names, never emails.
+- **History screen.** Shows only processes the viewer can access; system events appear for the administrator and Dashboard Lead.

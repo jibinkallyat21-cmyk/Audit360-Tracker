@@ -337,3 +337,75 @@ td {
     padding: 14px;
   }
 }
+
+.records {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+.records details {
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+.records summary {
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.versions {
+  list-style: none;
+  padding-left: 14px;
+  margin: 6px 0;
+  display: grid;
+  gap: 4px;
+}
+.badge.current {
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.badge.superseded {
+  border-style: dashed;
+  color: var(--muted);
+}
+.badge.test-fail,
+.badge.rp-changes_required {
+  border-color: var(--danger);
+}
+.badge.rp-closed {
+  border-color: var(--accent);
+}
+.meta {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.pre {
+  white-space: pre-wrap;
+  margin: 4px 0;
+}
+.thread {
+  list-style: none;
+  padding-left: 14px;
+  margin: 8px 0 0;
+  border-left: 2px solid var(--border);
+  display: grid;
+  gap: 10px;
+}
+.rp {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+}
+textarea {
+  padding: 10px;
+  font: inherit;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  width: 100%;
+}
+.inline-field select,
+.inline-form input {
+  max-width: 100%;
+}

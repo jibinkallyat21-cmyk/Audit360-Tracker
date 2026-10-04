@@ -5,6 +5,8 @@ import type { AssignmentType, RoleName, SubprocessRow } from "./domain";
  * the database functions make the real decision and reject anything else.
  */
 export interface Capabilities {
+  /** The viewer's linked person, used to recognise review points they own. */
+  personId?: string | null;
   roles: ReadonlySet<RoleName>;
   /** Assignment types the user holds, per process id. */
   assignments: ReadonlyMap<string, ReadonlySet<AssignmentType>>;
@@ -47,4 +49,47 @@ export function dashboardKind(c: Capabilities): "project_lead" | "management" | 
     return "management";
   for (const types of c.assignments.values()) if (types.has("production_lead")) return "lead";
   return "member";
+}
+
+/** A reviewer must not also have worked on the process (mirrors is_conflicted_reviewer). */
+export function canReview(c: Capabilities, processId: string): boolean {
+  return (
+    has(c, processId, "reviewer") &&
+    !(["production_lead", "team_member", "supporting_role"] as const).some((t) =>
+      has(c, processId, t),
+    )
+  );
+}
+
+export const canRaiseReviewPoint = (c: Capabilities, r: SubprocessRow) =>
+  canReview(c, r.processId) && (r.stage === "testing" || r.stage === "review");
+
+export const canRecordDecision = (c: Capabilities, r: SubprocessRow) =>
+  canReview(c, r.processId) && r.stage === "review";
+
+export const canUpload = (c: Capabilities, processId: string) => c.assignments.has(processId);
+
+export const canComment = (c: Capabilities, processId: string) =>
+  c.roles.has("project_lead") || c.assignments.has(processId);
+
+export interface ReviewPointActions {
+  start: boolean;
+  submit: boolean;
+  approveClose: boolean;
+  returnBack: boolean;
+}
+
+export function reviewPointActions(
+  c: Capabilities,
+  processId: string,
+  rp: { ownerPersonId: string; status: string },
+): ReviewPointActions {
+  const isOwner = !!c.personId && c.personId === rp.ownerPersonId;
+  const reviewer = canReview(c, processId) && !isOwner;
+  return {
+    start: isOwner && (rp.status === "open" || rp.status === "changes_required"),
+    submit: isOwner && ["open", "in_progress", "changes_required"].includes(rp.status),
+    approveClose: reviewer && rp.status === "submitted_for_closure",
+    returnBack: reviewer && rp.status === "submitted_for_closure",
+  };
 }
