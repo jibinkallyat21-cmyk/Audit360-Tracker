@@ -4,26 +4,26 @@ Status: **Draft v1 — awaiting approval before Phase 1.** Source of truth: the 
 
 ## 1. Decisions confirmed with the project owner
 
-| # | Topic | Decision |
-|---|-------|----------|
-| 1 | Source data | Team_Structure.html and the Analytix AI Before/After workbook are the seed sources |
-| 2 | Accounts | No Supabase or Vercel account exists yet; setup guide in section 9 |
-| 3 | Signup | Open registration with email confirmation, then **admin approval** before any data access |
-| 4 | System Administrator | Jibin K K only (also Dashboard Lead, no other role) |
-| 5 | Stage vs status | Per subprocess. Completing a stage advances to the next stage as Not Started. Review completes only on an Approved decision |
-| 6 | Dashboard (build) status | New, separate field. Only Jibin changes it. Applies once a subprocess reaches Production. Values: Not Started, Under Construction, Under Review, Changes Required, Live/Deployed, Completed |
-| 7 | Granularity | Stage and status per subprocess; process progress is rolled up |
-| 8 | Stage authority | Production Lead through Review; Project Lead from Production onward |
-| 9 | Rework | Failed test or change request returns the item to Solution Building with status Changes Required |
-| 10 | Self-review | Blocked: a reviewer cannot decide or approve closure on items where they are also a team member or corrective owner |
-| 11 | Management view | Project Head sees aggregates plus process titles; no documents, comments or review details unless separately assigned |
-| 12 | Supporting roles | Same rights as Team Member, on assigned processes only |
-| 13 | Deadline | Unset until Jibin sets it |
-| 14 | 18-point checklist | Not in scope |
-| 15 | Export | Admin runs it after Project Head approval; archive kept 1 year, deletion needs written approval |
-| 16 | Subprocesses | The numbered AFTER-AI steps of each workbook process |
-| 17 | Phase names | HTML names |
-| 18 | Account matching | Fuzzy match of email local part to seeded first name; ambiguous matches go to the admin to confirm; nothing links without admin approval |
+| #   | Topic                    | Decision                                                                                                                                                                                    |
+| --- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Source data              | Team_Structure.html and the Analytix AI Before/After workbook are the seed sources                                                                                                          |
+| 2   | Accounts                 | No Supabase or Vercel account exists yet; setup guide in section 9                                                                                                                          |
+| 3   | Signup                   | Open registration with email confirmation, then **admin approval** before any data access                                                                                                   |
+| 4   | System Administrator     | Jibin K K only (also Dashboard Lead, no other role)                                                                                                                                         |
+| 5   | Stage vs status          | Per subprocess. Completing a stage advances to the next stage as Not Started. Review completes only on an Approved decision                                                                 |
+| 6   | Dashboard (build) status | New, separate field. Only Jibin changes it. Applies once a subprocess reaches Production. Values: Not Started, Under Construction, Under Review, Changes Required, Live/Deployed, Completed |
+| 7   | Granularity              | Stage and status per subprocess; process progress is rolled up                                                                                                                              |
+| 8   | Stage authority          | Production Lead through Review; Project Lead from Production onward                                                                                                                         |
+| 9   | Rework                   | Failed test or change request returns the item to Solution Building with status Changes Required                                                                                            |
+| 10  | Self-review              | Blocked: a reviewer cannot decide or approve closure on items where they are also a team member or corrective owner                                                                         |
+| 11  | Management view          | Project Head sees aggregates plus process titles; no documents, comments or review details unless separately assigned                                                                       |
+| 12  | Supporting roles         | Same rights as Team Member, on assigned processes only                                                                                                                                      |
+| 13  | Deadline                 | Unset until Jibin sets it                                                                                                                                                                   |
+| 14  | 18-point checklist       | Not in scope                                                                                                                                                                                |
+| 15  | Export                   | Admin runs it after Project Head approval; archive kept 1 year, deletion needs written approval                                                                                             |
+| 16  | Subprocesses             | The numbered AFTER-AI steps of each workbook process                                                                                                                                        |
+| 17  | Phase names              | HTML names                                                                                                                                                                                  |
+| 18  | Account matching         | Fuzzy match of email local part to seeded first name; ambiguous matches go to the admin to confirm; nothing links without admin approval                                                    |
 
 ## 2. Seed data extracted from the source files
 
@@ -36,6 +36,7 @@ Status: **Draft v1 — awaiting approval before Phase 1.** Source of truth: the 
 - The HTML identifies people by first name only. Surnames and emails are not available.
 
 ### Source observations to be aware of
+
 - The workbook has 5 phase headers; the HTML has 6 groups (it splits the first workbook phase in two). We follow the HTML.
 - Process 4.2 has a single AFTER-AI step, so it has one subprocess. Counts per process range from 1 to 5.
 - Subprocess titles are long sentences taken verbatim from the workbook. They can be shortened later by an admin without code changes.
@@ -55,15 +56,15 @@ Next.js (App Router, TypeScript) on Vercel, with Supabase for Postgres, Auth and
 
 A user may hold several roles. Rights = union of role rights, each scoped by process assignment.
 
-| Role | Sees | Can do |
-|------|------|--------|
-| Team Member / Supporting role | Assigned subprocesses and their records | Update own work, upload evidence, comment, respond to review points. No stage transitions |
-| Production Lead | Processes of their own team only | Transition stages and status up to and including Review; assign corrective owners; coordinate |
-| Reviewer | Processes assigned for review | Record Pending Review / Changes Required / Approved; raise review points; approve closure (never on items they worked on) |
-| Project Lead | All processes (read) | Move an Approved item into Production and manage post-Review status. No override of review decisions, history or approvals |
-| Dashboard Lead | Dashboard; processes only once they reach Production | Set, change and reset the countdown; set Dashboard (build) status. No approvals |
-| Project Head / Management | Aggregate dashboard with process titles | Read-only metrics. No documents, comments or review details |
-| System Administrator | Users, roles, teams, assignments, config | Approve signups, link accounts to people, manage assignments, run approved exports. No automatic approval or workflow override |
+| Role                          | Sees                                                 | Can do                                                                                                                         |
+| ----------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Team Member / Supporting role | Assigned subprocesses and their records              | Update own work, upload evidence, comment, respond to review points. No stage transitions                                      |
+| Production Lead               | Processes of their own team only                     | Transition stages and status up to and including Review; assign corrective owners; coordinate                                  |
+| Reviewer                      | Processes assigned for review                        | Record Pending Review / Changes Required / Approved; raise review points; approve closure (never on items they worked on)      |
+| Project Lead                  | All processes (read)                                 | Move an Approved item into Production and manage post-Review status. No override of review decisions, history or approvals     |
+| Dashboard Lead                | Dashboard; processes only once they reach Production | Set, change and reset the countdown; set Dashboard (build) status. No approvals                                                |
+| Project Head / Management     | Aggregate dashboard with process titles              | Read-only metrics. No documents, comments or review details                                                                    |
+| System Administrator          | Users, roles, teams, assignments, config             | Approve signups, link accounts to people, manage assignments, run approved exports. No automatic approval or workflow override |
 
 Archive deletion and the final export require Project Head approval, recorded in the audit log.
 
