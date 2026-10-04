@@ -12,7 +12,7 @@ Create **two** Supabase projects, one for development and one for production, an
 
 ### 2.1 Database
 
-1. Open the SQL editor (or use the Supabase CLI) and run, in order, every file in `supabase/migrations/` (`0001` to `0007`).
+1. Open the SQL editor (or use the Supabase CLI) and run, in order, every file in `supabase/migrations/` (`0001` to `0008`).
 2. Run `supabase/seed.sql` **once**. It loads the 20 processes, 74 subprocesses, 6 phases, 40 people, assignments, teams and role tags. It is generated from `seed/seed.json` by `node scripts/generate-seed.mjs`; do not edit it by hand.
 3. Check that the storage bucket `documents` exists and is **private** (Storage page). Migration `0005` creates it.
 
@@ -83,7 +83,7 @@ Store backups outside Supabase, in an access-controlled location. They contain i
 
 Use a new Supabase project (or an empty one).
 
-1. Apply migrations `0001` to `0007` (not the seed; the data comes from the backup).
+1. Apply migrations `0001` to `0008` (not the seed; the data comes from the backup).
 2. Load the data in replica mode so triggers do not re-create notifications or history:
 
    ```
