@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -17,25 +18,29 @@ export function canAccessProject(v: Pick<Viewer, "approvalState" | "isActive">) 
   return v.approvalState === "approved" && v.isActive;
 }
 
-export async function getViewer(): Promise<Viewer | null> {
+/** Cached per request: the layout, the page and the data helpers all ask who is signed in. */
+export const getViewer = cache(async (): Promise<Viewer | null> => {
   const supabase = await createClient();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return null;
+  // getClaims checks the token signature locally instead of calling the auth server each time;
+  // the proxy has already refreshed the session, and row-level security still guards every query.
+  const { data: auth } = await supabase.auth.getClaims();
+  const userId = auth?.claims?.sub;
+  if (!userId) return null;
   const { data: profile } = await supabase
     .from("profiles")
     .select("email, full_name, person_id, approval_state, is_active")
-    .eq("id", auth.user.id)
+    .eq("id", userId)
     .single();
   if (!profile) return null;
   return {
-    id: auth.user.id,
+    id: userId,
     email: profile.email,
     fullName: profile.full_name,
     personId: profile.person_id,
     approvalState: profile.approval_state as ApprovalState,
     isActive: profile.is_active,
   };
-}
+});
 
 /** For pages that need an approved, active user. Everyone else is redirected. */
 export async function requireApprovedViewer(): Promise<Viewer> {

@@ -17,7 +17,7 @@ const mono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Analytix Tracker",
+  title: "Audit 360 Tracker",
   description: "Internal process development and review portal",
 };
 

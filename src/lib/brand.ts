@@ -1,8 +1,8 @@
 /** Name shown in the header. Change here to rebrand the whole app. */
 export const BRAND = {
-  company: "Analytix",
+  company: "Audit 360",
   product: "Tracker",
-  tagline: "Audit 360 · process review portal",
+  tagline: "Process review portal",
 } as const;
 
 /** Colour tone of a team, used for chips, borders and dots across the app. */

@@ -1237,3 +1237,20 @@ td {
     scroll-behavior: auto !important;
   }
 }
+
+.skeleton {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

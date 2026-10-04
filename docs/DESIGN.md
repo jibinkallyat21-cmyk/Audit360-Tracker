@@ -176,7 +176,7 @@ Automated tests cover role permissions (including guessed IDs and direct URLs), 
 
 - **Source.** Colors, fonts and layout come from the supplied team-structure page: Source Sans 3 for text, JetBrains Mono for numbers and small labels, a navy dark theme with a light alternative, a red accent, a faint grid with a red/blue glow behind page titles, and large mono digits on stat cards. Both fonts are bundled with the app, so nothing is requested from Google.
 - **Themes.** Dark is the default. The toggle in the header switches to light and the choice is remembered on that device. All colors are variables at the top of `src/app/globals.css`; `src/lib/theme.test.ts` checks the contrast of the important pairs in both themes (4.5:1 for text, 3:1 for team and stage colors).
-- **Name in the header.** Set in `src/lib/brand.ts` ("Analytix Tracker").
+- **Name in the header.** Set in `src/lib/brand.ts` ("Audit 360 Tracker").
 - **Team colors.** Sky for Pavithra's team, violet for Rustham's, amber for reviewers, in `src/lib/brand.ts`. Color is never the only signal: statuses keep their symbols and labels, and the stage bar prints its counts.
 - **Workflow page.** Three views of the same filtered items: Flow (the phase-and-step overview, colored by team with live progress), Board (five stage columns) and List. "Highlight person" dims everything that person is not part of.
 - **Style guide.** `/styleguide` renders the real components with sample data. It exists only when `ENABLE_STYLEGUIDE=1` is set (local checks) and is hidden in production. `node scripts/screenshot-styleguide.mjs <folder>` takes dark, light and phone screenshots of it.
