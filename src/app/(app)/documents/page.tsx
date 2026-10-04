@@ -2,6 +2,8 @@ import Link from "next/link";
 import { EmptyState, PageHero } from "@/components/ui";
 import { listSubprocesses } from "@/lib/data";
 import { resolveNames } from "@/lib/records";
+import { getPersona } from "@/lib/demo";
+import { demoDocuments } from "@/lib/demo-data";
 import { createClient } from "@/lib/supabase/server";
 import { DOCUMENTS_SELECT } from "@/lib/queries";
 import type { DocumentRec } from "@/lib/records";
@@ -20,13 +22,20 @@ export default async function DocumentsPage({
 }) {
   const q = ((await searchParams).q ?? "").trim().toLowerCase().slice(0, 80);
   const rows = await listSubprocesses();
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("documents")
-    .select(DOCUMENTS_SELECT)
-    .order("created_at", { ascending: false })
-    .returns<DocumentRec[]>();
-  const docs = data ?? [];
+  const persona = await getPersona();
+  let docs: DocumentRec[];
+  if (persona) {
+    docs = demoDocuments(persona);
+  } else {
+    const { data } = await (
+      await createClient()
+    )
+      .from("documents")
+      .select(DOCUMENTS_SELECT)
+      .order("created_at", { ascending: false })
+      .returns<DocumentRec[]>();
+    docs = data ?? [];
+  }
   const names = await resolveNames(
     docs.flatMap((d) => d.document_versions.map((v) => v.uploaded_by)),
   );

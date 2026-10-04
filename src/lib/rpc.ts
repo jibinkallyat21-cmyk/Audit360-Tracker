@@ -1,6 +1,7 @@
 import "server-only";
 import { revalidatePath } from "next/cache";
 import type { FormState } from "@/app/actions";
+import { getPersona } from "@/lib/demo";
 import { createClient } from "@/lib/supabase/server";
 
 /** Turns a database rejection into a short message without exposing internals. */
@@ -13,6 +14,7 @@ export function friendly(message: string | undefined): string {
 }
 
 export async function rpc(name: string, args: Record<string, unknown>): Promise<FormState> {
+  if (await getPersona()) return { error: "Demo mode is read-only. Nothing was changed." };
   const supabase = await createClient();
   const { error } = await supabase.rpc(name, args);
   if (error) return { error: friendly(error.message) };

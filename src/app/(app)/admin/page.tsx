@@ -3,6 +3,8 @@ import { EmptyState, PageHero } from "@/components/ui";
 import { getOrg } from "@/lib/data";
 import { requireApprovedViewer } from "@/lib/access";
 import { suggestPersons } from "@/lib/matching";
+import { getPersona } from "@/lib/demo";
+import { demoProfiles } from "@/lib/demo-data";
 import { createClient } from "@/lib/supabase/server";
 import { approveUser, rejectUser, setUserActive } from "./actions";
 
@@ -21,16 +23,19 @@ const day = (iso: string) =>
 
 export default async function AdminUsersPage() {
   const me = await requireApprovedViewer();
-  const supabase = await createClient();
-  const [org, { data, error }] = await Promise.all([
+  const demo = await getPersona();
+  const [org, profiles] = await Promise.all([
     getOrg(),
-    supabase
-      .from("profiles")
-      .select("id, email, full_name, person_id, approval_state, is_active, created_at")
-      .order("created_at", { ascending: false })
-      .returns<Profile[]>(),
+    demo
+      ? Promise.resolve({ data: demoProfiles() as Profile[], error: null })
+      : (await createClient())
+          .from("profiles")
+          .select("id, email, full_name, person_id, approval_state, is_active, created_at")
+          .order("created_at", { ascending: false })
+          .returns<Profile[]>(),
   ]);
-  if (error) throw new Error("Could not load accounts.");
+  const { data, error } = profiles;
+  if (error || !data) throw new Error("Could not load accounts.");
   const linked = new Set(data.map((p) => p.person_id).filter(Boolean));
   const people = org.people.map((p) => ({ ...p, linked: linked.has(p.id) }));
   const nameOf = new Map(org.people.map((p) => [p.id, p.displayName]));

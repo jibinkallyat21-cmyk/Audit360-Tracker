@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { getPersona } from "./demo";
 import { createClient } from "@/lib/supabase/server";
 
 export type ApprovalState = "pending" | "approved" | "rejected" | "deactivated";
@@ -20,6 +21,17 @@ export function canAccessProject(v: Pick<Viewer, "approvalState" | "isActive">) 
 
 /** Cached per request: the layout, the page and the data helpers all ask who is signed in. */
 export const getViewer = cache(async (): Promise<Viewer | null> => {
+  const demo = await getPersona();
+  if (demo) {
+    return {
+      id: demo.slug,
+      email: `${demo.slug}@demo.local`,
+      fullName: demo.person,
+      personId: demo.personId,
+      approvalState: "approved",
+      isActive: true,
+    };
+  }
   const supabase = await createClient();
   // getClaims checks the token signature locally instead of calling the auth server each time;
   // the proxy has already refreshed the session, and row-level security still guards every query.

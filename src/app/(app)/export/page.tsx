@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { ActionForm } from "@/components/client";
 import { EmptyState, PageHero } from "@/components/ui";
 import { getCapabilities } from "@/lib/data";
+import { getPersona } from "@/lib/demo";
+import { demoExportRequests } from "@/lib/demo-data";
 import { createClient } from "@/lib/supabase/server";
 import { archiveProject, decideExport, requestExport } from "./actions";
 
@@ -37,19 +39,28 @@ export default async function ExportPage() {
   const isHead = caps.roles.has("project_head");
   if (!isAdmin && !isHead) notFound();
 
-  const supabase = await createClient();
-  const [{ data }, { data: archive }] = await Promise.all([
-    supabase
-      .from("export_requests")
-      .select("*")
-      .order("requested_at", { ascending: false })
-      .returns<Req[]>(),
-    supabase
-      .from("project_settings")
-      .select("setting_value")
-      .eq("setting_key", "archive")
-      .maybeSingle(),
-  ]);
+  const demo = await getPersona();
+  let data: Req[] | null;
+  let archive: { setting_value: unknown } | null = null;
+  if (demo) {
+    data = demoExportRequests();
+  } else {
+    const supabase = await createClient();
+    const [reqs, arch] = await Promise.all([
+      supabase
+        .from("export_requests")
+        .select("*")
+        .order("requested_at", { ascending: false })
+        .returns<Req[]>(),
+      supabase
+        .from("project_settings")
+        .select("setting_value")
+        .eq("setting_key", "archive")
+        .maybeSingle(),
+    ]);
+    data = reqs.data;
+    archive = arch.data;
+  }
   const requests = data ?? [];
   const open = requests.find((r) => r.status === "requested" || r.status === "approved");
   const lastDone = requests.find((r) => r.status === "completed");

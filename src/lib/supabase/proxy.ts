@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { DEMO_COOKIE } from "@/lib/demo-constants";
 import { publicEnv } from "@/lib/env";
 
 const PUBLIC_PATHS = [
@@ -21,6 +22,10 @@ export function isPublicPath(pathname: string) {
 
 /** Refreshes the session cookie and sends signed-out visitors to /login. */
 export async function updateSession(request: NextRequest) {
+  // Prototype demo: a visitor who picked a sample role needs no account (see src/lib/demo.ts).
+  if (process.env.ENABLE_DEMO === "1" && request.cookies.get(DEMO_COOKIE)) {
+    return NextResponse.next({ request });
+  }
   let response = NextResponse.next({ request });
   const { url, anonKey } = publicEnv();
   const supabase = createServerClient(url, anonKey, {

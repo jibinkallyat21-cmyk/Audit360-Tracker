@@ -11,6 +11,8 @@ import type {
   SubprocessRow,
 } from "./domain";
 import { createClient } from "@/lib/supabase/server";
+import { getPersona } from "./demo";
+import * as demo from "./demo-data";
 import { requireApprovedViewer } from "./access";
 import {
   ASSIGNMENT_SELECT,
@@ -42,6 +44,8 @@ interface RawSub {
 }
 
 export const listSubprocesses = cache(async (): Promise<SubprocessRow[]> => {
+  const persona = await getPersona();
+  if (persona) return demo.demoRows(persona);
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("subprocesses")
@@ -71,6 +75,8 @@ export const listSubprocesses = cache(async (): Promise<SubprocessRow[]> => {
 });
 
 export const listAssignments = cache(async (): Promise<AssignmentRow[]> => {
+  const persona = await getPersona();
+  if (persona) return demo.demoAssignments(persona);
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("process_assignments")
@@ -93,6 +99,8 @@ export const listAssignments = cache(async (): Promise<AssignmentRow[]> => {
 });
 
 export const getCapabilities = cache(async (): Promise<Capabilities> => {
+  const persona = await getPersona();
+  if (persona) return demo.demoCapabilities(persona);
   const viewer = await requireApprovedViewer();
   const supabase = await createClient();
   const roles = new Set<RoleName>();
@@ -115,6 +123,7 @@ export const getCapabilities = cache(async (): Promise<Capabilities> => {
 });
 
 export const getDeadline = cache(async (): Promise<string | null> => {
+  if (await getPersona()) return demo.demoDeadline();
   const supabase = await createClient();
   const { data } = await supabase
     .from("project_settings")
@@ -134,6 +143,8 @@ export interface NotificationRow {
 }
 
 export const getUnreadCount = cache(async (): Promise<number> => {
+  const persona = await getPersona();
+  if (persona) return demo.demoNotifications(persona).filter((n) => !n.isRead).length;
   const supabase = await createClient();
   const { count } = await supabase
     .from("notifications")
@@ -143,6 +154,8 @@ export const getUnreadCount = cache(async (): Promise<number> => {
 });
 
 export async function listNotifications(limit = 100): Promise<NotificationRow[]> {
+  const persona = await getPersona();
+  if (persona) return demo.demoNotifications(persona);
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("notifications")
@@ -183,6 +196,7 @@ export interface OrgData {
 }
 
 export const getOrg = cache(async (): Promise<OrgData> => {
+  if (await getPersona()) return demo.demoOrg();
   const supabase = await createClient();
   const [p, r, t] = await Promise.all([
     supabase

@@ -1280,3 +1280,16 @@ td {
   font-weight: 400;
   color: var(--muted);
 }
+
+.demo-banner {
+  padding: 10px 28px;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--chip);
+  border-bottom: 1px solid var(--border);
+}
+@media (max-width: 900px) {
+  .demo-banner {
+    padding: 10px 16px;
+  }
+}

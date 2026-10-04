@@ -4,6 +4,8 @@ import { actionLabel, describeChange, safeSearch } from "@/lib/activity";
 import { listSubprocesses } from "@/lib/data";
 import { ACTIVITY_SELECT } from "@/lib/queries";
 import { resolveNames } from "@/lib/records";
+import { getPersona } from "@/lib/demo";
+import { demoActivity } from "@/lib/demo-data";
 import { createClient } from "@/lib/supabase/server";
 
 const PAGE = 50;
@@ -38,16 +40,27 @@ export default async function ActivityPage({
   const processes = new Map(rows.map((r) => [r.processId, r]));
   const filterProcess = [...processes.values()].find((r) => r.processCode === sp.process);
 
-  const supabase = await createClient();
-  let query = supabase
-    .from("activity_logs")
-    .select(ACTIVITY_SELECT)
-    .order("id", { ascending: false })
-    .range((page - 1) * PAGE, page * PAGE); // one extra row tells us whether there is a next page
-  if (q) query = query.or(`action_type.ilike.%${q}%,entity_type.ilike.%${q}%`);
-  if (filterProcess) query = query.eq("process_id", filterProcess.processId);
-  const { data, error } = await query.returns<Log[]>();
-  if (error) throw new Error("Could not load activity.");
+  const persona = await getPersona();
+  let data: Log[];
+  if (persona) {
+    data = demoActivity(persona).filter(
+      (l) =>
+        (!filterProcess || l.process_id === filterProcess.processId) &&
+        (!q || `${l.action_type} ${l.entity_type}`.includes(q.toLowerCase())),
+    );
+  } else {
+    const supabase = await createClient();
+    let query = supabase
+      .from("activity_logs")
+      .select(ACTIVITY_SELECT)
+      .order("id", { ascending: false })
+      .range((page - 1) * PAGE, page * PAGE); // one extra row tells us whether there is a next page
+    if (q) query = query.or(`action_type.ilike.%${q}%,entity_type.ilike.%${q}%`);
+    if (filterProcess) query = query.eq("process_id", filterProcess.processId);
+    const res = await query.returns<Log[]>();
+    if (res.error) throw new Error("Could not load activity.");
+    data = res.data;
+  }
   const logs = data.slice(0, PAGE);
   const hasNext = data.length > PAGE;
   const names = await resolveNames(logs.map((l) => l.actor_id));

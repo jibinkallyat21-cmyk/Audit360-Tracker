@@ -1,3 +1,5 @@
+import { getPersona } from "@/lib/demo";
+import { demoName, demoRecords } from "@/lib/demo-data";
 import { createClient } from "@/lib/supabase/server";
 import {
   APPROVALS_SELECT,
@@ -84,6 +86,10 @@ export async function resolveNames(
   const unique = [...new Set(ids.filter((x): x is string => !!x))];
   const names = new Map<string, string>();
   if (unique.length === 0) return names;
+  if (await getPersona()) {
+    unique.forEach((id) => names.set(id, demoName(id)));
+    return names;
+  }
   const supabase = await createClient();
   const { data } = await supabase.rpc("actor_names", { p_ids: unique });
   (data as { profile_id: string; display_name: string }[] | null)?.forEach((r) =>
@@ -103,6 +109,8 @@ export async function getRecords(subIds: string[]): Promise<Records> {
     names: new Map(),
   };
   if (subIds.length === 0) return empty;
+  const persona = await getPersona();
+  if (persona) return demoRecords(persona, subIds);
   const supabase = await createClient();
   const [c, r, d, t, a] = await Promise.all([
     supabase

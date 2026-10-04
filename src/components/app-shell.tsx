@@ -9,11 +9,14 @@ export function AppShell({
   items,
   unread,
   userLabel,
+  demoRole,
   children,
 }: {
   items: NavItem[];
   unread: number;
   userLabel: string;
+  /** Set in prototype demo mode: the sample role being shown. */
+  demoRole?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -47,6 +50,12 @@ export function AppShell({
         </div>
       </aside>
       <div className="main">
+        {demoRole && (
+          <div className="demo-banner" role="note">
+            Prototype demo · viewing as <strong>{demoRole}</strong> · sample data, changes are
+            disabled · <Link href="/login">Switch role</Link>
+          </div>
+        )}
         <div className="content">{children}</div>
       </div>
     </div>

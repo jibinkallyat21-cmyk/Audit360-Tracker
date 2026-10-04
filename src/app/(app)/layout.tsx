@@ -1,10 +1,12 @@
 import { AppShell } from "@/components/app-shell";
 import type { NavItem } from "@/components/nav";
+import { getPersona } from "@/lib/demo";
 import { requireApprovedViewer } from "@/lib/access";
 import { getCapabilities, getUnreadCount } from "@/lib/data";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const viewer = await requireApprovedViewer();
+  const persona = await getPersona();
   const [unread, caps] = await Promise.all([getUnreadCount(), getCapabilities()]);
   const items: NavItem[] = [
     { href: "/", label: "Dashboard" },
@@ -18,7 +20,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     items.push({ href: "/export", label: "Export" });
   }
   return (
-    <AppShell items={items} unread={unread} userLabel={viewer.fullName ?? viewer.email}>
+    <AppShell
+      items={items}
+      unread={unread}
+      userLabel={viewer.fullName ?? viewer.email}
+      demoRole={persona?.role}
+    >
       {children}
     </AppShell>
   );

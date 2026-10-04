@@ -131,6 +131,6 @@ The export reads everything with the service role so that it is complete. That i
 - **Administrator access to the database or Supabase dashboard** is outside the application's controls.
 - **Not run live**: auth emails, Supabase Storage uploads and downloads, and the file-restore scripts. They need a real project; see the marked items above.
 
-## 9. Demo sign-in (optional)
+## 9. Prototype demo (optional)
 
-For showing how each role sees the app. Set `ENABLE_DEMO=1` and `DEMO_PASSWORD` in Vercel, and run `supabase/demo/demo-users.sql` once with that password (`psql -v demo_password=...`). The login page then lists one button per role. Demo accounts are real, approved accounts on the same database, so their actions are recorded. **Remove `ENABLE_DEMO` and delete the `demo+*@audit360.demo` users before real launch.**
+Set `ENABLE_DEMO=1` in Vercel and the login page gains a "Try the demo" box: one button per role. It shows made-up data (`src/lib/demo-data.ts`), reads nothing from Supabase, creates no accounts and refuses every change. Remove `ENABLE_DEMO` for real use.

@@ -6,6 +6,8 @@ import { toneForLead } from "@/lib/brand";
 import { getCapabilities, listAssignments, listSubprocesses } from "@/lib/data";
 import { PROCESS_DETAIL_SELECT } from "@/lib/queries";
 import { getRecords } from "@/lib/records";
+import { getPersona } from "@/lib/demo";
+import { demoProcess } from "@/lib/demo-data";
 import { createClient } from "@/lib/supabase/server";
 import type { AssignmentType } from "@/lib/domain";
 
@@ -27,12 +29,16 @@ export default async function ProcessPage({ params }: { params: Promise<{ code: 
   const rows = all.filter((r) => r.processCode === code);
   if (rows.length === 0) notFound();
 
-  const supabase = await createClient();
-  const { data: proc } = await supabase
-    .from("processes")
-    .select(PROCESS_DETAIL_SELECT)
-    .eq("id", rows[0].processId)
-    .single();
+  const demo = await getPersona();
+  const { data: proc } = demo
+    ? { data: demoProcess(code) }
+    : await (
+        await createClient()
+      )
+        .from("processes")
+        .select(PROCESS_DETAIL_SELECT)
+        .eq("id", rows[0].processId)
+        .single();
   if (!proc) notFound();
   const records = await getRecords(rows.map((r) => r.id));
   const people = assignments.filter((a) => a.processId === rows[0].processId);

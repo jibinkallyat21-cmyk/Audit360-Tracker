@@ -1,7 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { DEMO_PERSONAS, demoEmail, demoEnabled } from "@/lib/demo";
+import { cookies } from "next/headers";
+import { DEMO_COOKIE } from "@/lib/demo-constants";
+import { PERSONAS, demoEnabled } from "@/lib/demo";
 import { z } from "zod";
 import { siteUrl } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
@@ -26,20 +28,16 @@ export async function login(_: FormState, form: FormData): Promise<FormState> {
   redirect("/");
 }
 
-/** One-click demo sign-in. Refuses unless demo mode is switched on for this deployment. */
+/** Prototype demo: pick a sample role. No account or database is involved. */
 export async function demoLogin(formData: FormData) {
   const slug = String(formData.get("persona") ?? "");
-  if (!demoEnabled() || !DEMO_PERSONAS.some((p) => p.slug === slug)) redirect("/login");
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
-    email: demoEmail(slug),
-    password: process.env.DEMO_PASSWORD!,
-  });
-  if (error) redirect("/login?error=demo");
+  if (!demoEnabled() || !PERSONAS.some((p) => p.slug === slug)) redirect("/login");
+  (await cookies()).set(DEMO_COOKIE, slug, { httpOnly: true, sameSite: "lax", path: "/" });
   redirect("/");
 }
 
 export async function logout() {
+  (await cookies()).delete(DEMO_COOKIE);
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/login");
