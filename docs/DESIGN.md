@@ -138,3 +138,12 @@ Automated tests cover role permissions (including guessed IDs and direct URLs), 
 - Confirm the extracted subprocess lists in `seed/seed.json` are correct.
 - Confirm the permission matrix in section 4, especially that Jibin sees a process only once it reaches Production.
 - Confirm the Supabase and Vercel setup steps in section 9.
+
+## 12. Phase 2 implementation notes (changes from the plan above)
+
+- **Administrator visibility.** The System Administrator can read process structure (title, stage, status, assignments) so assignments can be managed, but never records (comments, documents, review points, testing, history of a process). Because Jibin is both Dashboard Lead and administrator, he sees the structure of every process. The Dashboard Lead role on its own sees only items in Production; this is tested with a separate user.
+- **Entering Production.** Completing the Review stage is the move into Production, so only the Project Lead can do it. The Production Lead manages status during Review (for example setting it In Progress to signal readiness) but cannot complete Review. The Project Lead can complete a stage only when the status is In Progress, which the Production Lead sets.
+- **Roles.** Global roles (Project Head, Project Lead, Dashboard Lead, System Administrator) attach to the seeded person, not the account, so they apply as soon as an account is linked to that person. Production Lead, Team Member, Reviewer and Supporting Role come from process assignments.
+- **Re-approval.** If a document version is added after a review approval, the item cannot enter Production until a reviewer approves again.
+- **Writes.** Clients have SELECT only. Every change goes through a database function that checks the actor, role, assignment, stage and approvals, and writes its audit entry in the same transaction.
+- **First administrator.** The owner runs `select public.bootstrap_first_admin('<email>')` once in the Supabase SQL editor after registering. It refuses to run if an administrator already exists.

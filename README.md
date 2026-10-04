@@ -13,6 +13,17 @@ Internal portal for tracking 20 business processes. See `docs/DESIGN.md` for the
 
 `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`
 
+## Database tests
+
+The permission and workflow rules are tested against a real Postgres (not mocks). Point `TEST_DATABASE_URL` at any Postgres 15+ server you can create databases on; each test file creates and drops its own throwaway database:
+
+```
+TEST_DATABASE_URL="postgres://postgres@localhost:5432/postgres" npm test
+```
+
+Without it the database tests are skipped. The seed (`supabase/seed.sql`) is generated from `seed/seed.json` with `node scripts/generate-seed.mjs`.
+
 ## Status
 
-Phase 1 (foundation and authentication) is done. Sign-in, registration, email confirmation and password reset are in place. Every signed-in user is held on an access-denied page until an administrator approves the account; the approval and role tools arrive in Phase 2.
+- Phase 1 (foundation and authentication): done.
+- Phase 2 (schema, row-level security, workflow functions, seed): done and covered by database tests. The admin screens that call the approval and assignment functions arrive in Phase 5; until then, the first administrator is created with `bootstrap_first_admin` (see `docs/DESIGN.md` section 12).
