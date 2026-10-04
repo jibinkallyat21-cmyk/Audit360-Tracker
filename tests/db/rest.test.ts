@@ -3,6 +3,10 @@ import { createHmac } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PostgrestClient } from "@supabase/postgrest-js";
 import {
+  NOTIFICATIONS_SELECT,
+  PEOPLE_SELECT,
+  ROLE_TAGS_SELECT,
+  TEAMS_SELECT,
   ACTIVITY_SELECT,
   APPROVALS_SELECT,
   COMMENTS_SELECT,
@@ -262,6 +266,57 @@ describe.skipIf(!TEST_URL || !BIN)("page queries through PostgREST", () => {
     }
     const hiddenVersions = await other.from("document_versions").select("id");
     expect(hiddenVersions.data).toEqual([]);
+  });
+
+  it("serves notifications, the team structure and the admin account list", async () => {
+    const rij = client("rijin");
+    // Rijin was notified of the document upload earlier in this file's flow.
+    const proc = await db.process("1.1");
+    await client("jibin").rpc("admin_set_assignment", {
+      p_process: proc,
+      p_person: await db.person("Rijin"),
+      p_type: "reviewer",
+      p_assigned: true,
+    });
+    const n = await rij
+      .from("notifications")
+      .select(NOTIFICATIONS_SELECT)
+      .order("created_at", { ascending: false });
+    expect(n.error).toBeNull();
+    const first = (
+      n.data as unknown as {
+        id: string;
+        is_read: boolean;
+        processes: { process_code: string } | null;
+      }[]
+    )[0];
+    expect(first.processes?.process_code).toBe("1.1");
+    const mark = await rij.rpc("mark_notification_read", { p_id: first.id });
+    expect(mark.error).toBeNull();
+    const after = await rij.from("notifications").select("is_read").eq("id", first.id).single();
+    expect(after.data?.is_read).toBe(true);
+    const count = await rij
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("is_read", false);
+    expect(count.error).toBeNull();
+
+    const people = await rij.from("people").select(PEOPLE_SELECT);
+    expect(people.data).toHaveLength(40);
+    const tags = await rij.from("person_roles").select(ROLE_TAGS_SELECT);
+    expect(tags.error).toBeNull();
+    const teams = await rij.from("teams").select(TEAMS_SELECT);
+    const t = teams.data as unknown as { name: string; team_members: { person_id: string }[] }[];
+    expect(t.map((x) => [x.name, x.team_members.length]).sort()).toEqual([
+      ["Team Pavithra", 13],
+      ["Team Rustham", 13],
+    ]);
+
+    const cols = "id, email, full_name, person_id, approval_state, is_active, created_at";
+    const asAdmin = await client("jibin").from("profiles").select(cols);
+    expect((asAdmin.data ?? []).length).toBeGreaterThan(5);
+    const asUser = await rij.from("profiles").select(cols);
+    expect((asUser.data ?? []).map((p) => p.id)).toEqual([db.users.rijin]);
   });
 
   it("serves nothing without a valid user token", async () => {

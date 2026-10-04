@@ -17,3 +17,8 @@ export const APPROVALS_SELECT =
   "id, subprocess_id, review_point_id, approval_type, decision, decided_by, decision_note, decided_at";
 export const ACTIVITY_SELECT =
   "id, actor_id, action_type, entity_type, entity_id, previous_value, new_value, process_id, subprocess_id, metadata, created_at";
+export const NOTIFICATIONS_SELECT =
+  "id, event_type, message, is_read, created_at, process_id, processes(process_code)";
+export const PEOPLE_SELECT = "id, display_name, first_name";
+export const ROLE_TAGS_SELECT = "person_id, roles!inner(name)";
+export const TEAMS_SELECT = "id, name, production_lead_person_id, team_members(person_id)";

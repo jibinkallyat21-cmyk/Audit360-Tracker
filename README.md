@@ -26,6 +26,7 @@ Without it the database tests are skipped. To also run the page queries through 
 ## Status
 
 - Phase 1 (foundation and authentication): done.
+- Phase 5 (notifications, administration, team structure, filters): done. The admin screens (Users, Roles, Assignments, Teams) are visible only to System Administrators. The initial process import is the generated seed (`supabase/seed.sql`), not a screen. Export and archive arrive in Phase 6.
 - Phase 4 (documents, review points, comments, testing records, approvals, activity history): done. Uploads are validated on the server (size, extension, declared type, file signature, macros) and stored in a private bucket; downloads go through an authenticated route that issues a link valid for one minute. The upload and download routes need a real Supabase project with the `SUPABASE_SERVICE_ROLE_KEY` set, so they have not been run end to end yet.
 - Phase 3 (dashboard, workflow explorer, process pages, stage/status controls, countdown): done.
 - Phase 2 (schema, row-level security, workflow functions, seed): done and covered by database tests. The admin screens that call the approval and assignment functions arrive in Phase 5; until then, the first administrator is created with `bootstrap_first_admin` (see `docs/DESIGN.md` section 12).

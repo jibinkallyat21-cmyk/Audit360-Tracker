@@ -1,28 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { DASHBOARD_STATUSES } from "@/lib/domain";
 import { zonedToUtcIso } from "@/lib/countdown";
-import { createClient } from "@/lib/supabase/server";
+import { rpc } from "@/lib/rpc";
 import type { FormState } from "../actions";
-
-/** Turns a database rejection into a short message without exposing internals. */
-function friendly(message: string | undefined): string {
-  if (!message) return "Something went wrong.";
-  if (/Not authorized/i.test(message)) return "You are not allowed to do that.";
-  // Workflow rules are written as plain sentences in the database functions.
-  if (/^[A-Z][^{}()]{3,160}$/.test(message)) return message;
-  return "The change could not be saved.";
-}
-
-async function rpc(name: string, args: Record<string, unknown>): Promise<FormState> {
-  const supabase = await createClient();
-  const { error } = await supabase.rpc(name, args);
-  if (error) return { error: friendly(error.message) };
-  revalidatePath("/", "layout");
-  return { message: "Saved." };
-}
 
 const id = z.string().uuid();
 
@@ -146,4 +128,14 @@ export async function updateReviewPoint(_: FormState, form: FormData): Promise<F
     p_action: p.data.action,
     p_note: p.data.note || null,
   });
+}
+
+export async function markNotificationRead(_: FormState, form: FormData): Promise<FormState> {
+  const p = z.object({ id }).safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: "Invalid notification." };
+  return rpc("mark_notification_read", { p_id: p.data.id });
+}
+
+export async function markAllNotificationsRead(): Promise<FormState> {
+  return rpc("mark_all_notifications_read", {});
 }

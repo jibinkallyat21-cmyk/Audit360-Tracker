@@ -1,8 +1,8 @@
 import { WorkflowExplorer } from "@/components/workflow-explorer";
-import { listSubprocesses } from "@/lib/data";
+import { getCapabilities, listSubprocesses } from "@/lib/data";
 
 export default async function WorkflowPage() {
-  const rows = await listSubprocesses();
+  const [rows, caps] = await Promise.all([listSubprocesses(), getCapabilities()]);
   return (
     <main className="stack-lg">
       <h1>Workflow</h1>
@@ -10,7 +10,7 @@ export default async function WorkflowPage() {
         Phase → Process → Step, with the current stage and status. You see only your permitted
         scope.
       </p>
-      <WorkflowExplorer rows={rows} />
+      <WorkflowExplorer rows={rows} mineProcessIds={[...caps.assignments.keys()]} />
     </main>
   );
 }

@@ -49,16 +49,18 @@ export function SelectField({
   label,
   options,
   value,
+  required,
 }: {
   name: string;
   label: string;
   options: { value: string; label: string }[];
   value?: string;
+  required?: boolean;
 }) {
   return (
     <label className="inline-field">
       <span className="sr-only">{label}</span>
-      <select name={name} defaultValue={value} aria-label={label}>
+      <select name={name} defaultValue={value} aria-label={label} required={required}>
         {options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}

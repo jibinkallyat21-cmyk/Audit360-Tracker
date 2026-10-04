@@ -156,3 +156,10 @@ Automated tests cover role permissions (including guessed IDs and direct URLs), 
 - **Downloads.** An authenticated route reads the version through row-level security, records the download in the history, then redirects to a signed link that expires after 60 seconds.
 - **Author names.** Records show people's names via a function that returns only display names, never emails.
 - **History screen.** Shows only processes the viewer can access; system events appear for the administrator and Dashboard Lead.
+
+## 14. Phase 5 implementation notes
+
+- **Notifications.** Created in the database by a trigger on the history log, so every event is covered and each one is generated in the same transaction as the change. Recipients are chosen from people assigned to the process (or holding the role that needs to know, such as the Dashboard Lead when an item reaches Production), and the person who made the change is never notified of their own action. Notifications are cleared when someone loses their last assignment on a process, so restricted titles do not linger. Mentions in comments are not implemented.
+- **Account matching.** The administrator sees a suggestion built from the email name. A single close match is preselected; several similar names are flagged "needs confirmation" with nothing preselected. The administrator always approves.
+- **Team structure.** Reviewers, supporting roles and Production Leads appear as org-level role tags (visible to every approved user). Which processes a selected person works on is limited to processes the viewer can access, except for the Project Lead, Project Head and administrators.
+- **Roles screen.** Manages the four global roles only; other roles come from assignments. An administrator cannot remove their own administrator role.

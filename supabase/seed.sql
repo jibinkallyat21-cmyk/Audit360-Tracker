@@ -51,6 +51,8 @@ insert into public.people (display_name, first_name) values
   ('Vineetha', 'Vineetha');
 insert into public.person_roles (person_id, role_id)
 select p.id, r.id from (values ('Shon J Iype', 'project_head'), ('Shon Domnic', 'project_lead'), ('Jibin K K', 'dashboard_lead'), ('Jibin K K', 'system_admin')) v(person, role) join public.people p on p.display_name = v.person join public.roles r on r.name = v.role;
+insert into public.person_roles (person_id, role_id)
+select p.id, r.id from (values ('Pavithra', 'production_lead'), ('Fayis', 'reviewer'), ('Mohammed Ali', 'supporting_role'), ('Uvais', 'supporting_role'), ('Sajad', 'supporting_role'), ('Syam', 'reviewer'), ('Azhar', 'reviewer'), ('Rustham', 'production_lead'), ('Jismy', 'reviewer'), ('Allen', 'supporting_role'), ('Dhanhaj', 'supporting_role')) v(person, role) join public.people p on p.display_name = v.person join public.roles r on r.name = v.role;
 insert into public.phases (name, display_order) values
   ('Lead and proposal', 1),
   ('Engagement and advance', 2),

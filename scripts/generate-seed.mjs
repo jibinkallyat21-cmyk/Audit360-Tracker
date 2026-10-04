@@ -40,6 +40,22 @@ add(
     ") v(person, role) join public.people p on p.display_name = v.person join public.roles r on r.name = v.role;",
 );
 
+// Org-level role tags for the team chart. These are display tags that everyone may see; who works
+// on which process stays in process_assignments and is visible only to people with access.
+const tagged = new Map();
+const tag = (name, role) => tagged.set(`${name}|${role}`, [name, role]);
+for (const p of seed.processes) {
+  tag(p.production_lead, "production_lead");
+  p.reviewers.forEach((n) => tag(n, "reviewer"));
+  p.supporting.forEach((n) => tag(n, "supporting_role"));
+}
+add("insert into public.person_roles (person_id, role_id)");
+add(
+  "select p.id, r.id from (values " +
+    [...tagged.values()].map(([p, r]) => `(${q(p)}, ${q(r)})`).join(", ") +
+    ") v(person, role) join public.people p on p.display_name = v.person join public.roles r on r.name = v.role;",
+);
+
 add("insert into public.phases (name, display_order) values");
 add(seed.phases.map((n, i) => `  (${q(n)}, ${i + 1})`).join(",\n") + ";");
 

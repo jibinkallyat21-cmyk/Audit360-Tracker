@@ -409,3 +409,87 @@ textarea {
 .inline-form input {
   max-width: 100%;
 }
+
+.bell {
+  position: relative;
+  text-decoration: none;
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px 6px;
+}
+.bell .count {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 18px;
+  padding: 0 4px;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  color: #fff;
+  background: var(--danger);
+  border-radius: 9px;
+}
+.subnav {
+  display: flex;
+  gap: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.note {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  background: var(--card);
+}
+.note.unread {
+  border-left: 4px solid var(--accent);
+}
+.note p {
+  margin: 0 0 4px;
+}
+.team-layout {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+}
+.chip.selected {
+  border-color: var(--accent);
+  border-width: 2px;
+  font-weight: 700;
+}
+.detail {
+  position: sticky;
+  top: 16px;
+}
+.check {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 6px;
+  align-items: center;
+  align-self: end;
+}
+@media (max-width: 800px) {
+  .team-layout {
+    grid-template-columns: 1fr;
+  }
+  .detail {
+    position: static;
+  }
+}

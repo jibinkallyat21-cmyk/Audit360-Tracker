@@ -12,7 +12,15 @@ import type {
 } from "./domain";
 import { createClient } from "@/lib/supabase/server";
 import { requireApprovedViewer } from "./access";
-import { ASSIGNMENT_SELECT, PERSON_ROLES_SELECT, SUBPROCESS_SELECT } from "./queries";
+import {
+  ASSIGNMENT_SELECT,
+  NOTIFICATIONS_SELECT,
+  PEOPLE_SELECT,
+  PERSON_ROLES_SELECT,
+  ROLE_TAGS_SELECT,
+  SUBPROCESS_SELECT,
+  TEAMS_SELECT,
+} from "./queries";
 
 // Every query below runs as the signed-in user, so row-level security decides what comes back.
 
@@ -114,4 +122,102 @@ export const getDeadline = cache(async (): Promise<string | null> => {
     .eq("setting_key", "project_deadline")
     .maybeSingle();
   return typeof data?.setting_value === "string" ? data.setting_value : null;
+});
+
+export interface NotificationRow {
+  id: string;
+  eventType: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+  processCode: string | null;
+}
+
+export const getUnreadCount = cache(async (): Promise<number> => {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("notifications")
+    .select("id", { count: "exact", head: true })
+    .eq("is_read", false);
+  return count ?? 0;
+});
+
+export async function listNotifications(limit = 100): Promise<NotificationRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("notifications")
+    .select(NOTIFICATIONS_SELECT)
+    .order("created_at", { ascending: false })
+    .limit(limit)
+    .returns<
+      {
+        id: string;
+        event_type: string;
+        message: string;
+        is_read: boolean;
+        created_at: string;
+        processes: { process_code: string } | null;
+      }[]
+    >();
+  if (error) throw new Error("Could not load notifications.");
+  return data.map((n) => ({
+    id: n.id,
+    eventType: n.event_type,
+    message: n.message,
+    isRead: n.is_read,
+    createdAt: n.created_at,
+    processCode: n.processes?.process_code ?? null,
+  }));
+}
+
+export interface PersonRow {
+  id: string;
+  displayName: string;
+  firstName: string;
+}
+export interface OrgData {
+  people: PersonRow[];
+  /** Org-level role tags per person (display only). */
+  roleTags: Map<string, Set<RoleName>>;
+  teams: { id: string; name: string; leadPersonId: string; memberIds: string[] }[];
+}
+
+export const getOrg = cache(async (): Promise<OrgData> => {
+  const supabase = await createClient();
+  const [p, r, t] = await Promise.all([
+    supabase
+      .from("people")
+      .select(PEOPLE_SELECT)
+      .order("display_name")
+      .returns<{ id: string; display_name: string; first_name: string }[]>(),
+    supabase
+      .from("person_roles")
+      .select(ROLE_TAGS_SELECT)
+      .returns<{ person_id: string; roles: { name: RoleName } }[]>(),
+    supabase.from("teams").select(TEAMS_SELECT).order("name").returns<
+      {
+        id: string;
+        name: string;
+        production_lead_person_id: string;
+        team_members: { person_id: string }[];
+      }[]
+    >(),
+  ]);
+  if (p.error || r.error || t.error) throw new Error("Could not load the team structure.");
+  const roleTags = new Map<string, Set<RoleName>>();
+  for (const x of r.data) {
+    const set = roleTags.get(x.person_id) ?? new Set<RoleName>();
+    set.add(x.roles.name);
+    roleTags.set(x.person_id, set);
+  }
+  return {
+    people: p.data.map((x) => ({ id: x.id, displayName: x.display_name, firstName: x.first_name })),
+    roleTags,
+    teams: t.data.map((x) => ({
+      id: x.id,
+      name: x.name,
+      leadPersonId: x.production_lead_person_id,
+      memberIds: x.team_members.map((m) => m.person_id),
+    })),
+  };
 });
