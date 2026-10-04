@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ActionForm } from "@/components/client";
-import { EmptyState } from "@/components/ui";
+import { EmptyState, PageHero } from "@/components/ui";
 import { listNotifications } from "@/lib/data";
 import { markAllNotificationsRead, markNotificationRead } from "../actions";
 
@@ -16,11 +16,10 @@ export default async function NotificationsPage() {
   const unread = items.filter((n) => !n.isRead).length;
   return (
     <main className="stack-lg">
-      <h1>Notifications</h1>
-      <p className="muted">
+      <PageHero eyebrow="Inbox" title="Notifications">
         Updates about processes you can access. Notifications are information only; they never
         approve work or change a status.
-      </p>
+      </PageHero>
       {unread > 0 && (
         <ActionForm
           action={markAllNotificationsRead}

@@ -1,5 +1,5 @@
 import { ActionForm, SelectField } from "@/components/client";
-import { EmptyState } from "@/components/ui";
+import { EmptyState, PageHero } from "@/components/ui";
 import { getOrg } from "@/lib/data";
 import { requireApprovedViewer } from "@/lib/access";
 import { suggestPersons } from "@/lib/matching";
@@ -49,7 +49,7 @@ export default async function AdminUsersPage() {
 
   return (
     <main className="stack-lg">
-      <h1>Users</h1>
+      <PageHero eyebrow="Admin" title="Users" />
 
       <section className="panel">
         <h2>Waiting for approval ({pending.length})</h2>

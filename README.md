@@ -9,6 +9,10 @@ Internal portal for tracking 20 business processes. See `docs/DESIGN.md` for the
 3. Apply `supabase/migrations/*.sql` to your Supabase project (SQL editor, or the Supabase CLI).
 4. `npm run dev`
 
+## Design check
+
+To see the design with sample data: `ENABLE_STYLEGUIDE=1 npm run build && ENABLE_STYLEGUIDE=1 npm start`, then open `/styleguide` (or run `node scripts/screenshot-styleguide.mjs <folder>` with the server on port 3120).
+
 ## Documents
 
 - `docs/DESIGN.md`: design and decisions.

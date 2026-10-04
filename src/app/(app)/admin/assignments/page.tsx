@@ -1,5 +1,5 @@
 import { ActionForm, SelectField } from "@/components/client";
-import { EmptyState } from "@/components/ui";
+import { EmptyState, PageHero } from "@/components/ui";
 import { getOrg, listAssignments, listSubprocesses } from "@/lib/data";
 import type { AssignmentType } from "@/lib/domain";
 import { setAssignment } from "../actions";
@@ -28,12 +28,11 @@ export default async function AssignmentsPage({
 
   return (
     <main className="stack-lg">
-      <h1>Assignments</h1>
-      <p className="muted">
+      <PageHero eyebrow="Admin" title="Assignments">
         Changes take effect immediately and are logged. Removing someone&apos;s last assignment on a
         process also clears their notifications for it. A process can have only one Production Lead;
         remove the current one before adding another.
-      </p>
+      </PageHero>
       <form method="get" className="filters">
         <label>
           <span>Process</span>

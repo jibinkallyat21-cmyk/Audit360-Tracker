@@ -1,5 +1,6 @@
 import { getViewer } from "@/lib/access";
 import { logout } from "../actions";
+import { AuthShell } from "@/components/auth-shell";
 
 const COPY = {
   pending:
@@ -14,14 +15,16 @@ export default async function AccessDeniedPage() {
   const state = viewer && !viewer.isActive ? "deactivated" : viewer?.approvalState;
   const text = state && state !== "approved" ? COPY[state] : "You do not have access to this page.";
   return (
-    <main className="card">
-      <h1>Access denied</h1>
-      <p>{text}</p>
-      {viewer && (
-        <form action={logout}>
-          <button type="submit">Sign out</button>
-        </form>
-      )}
-    </main>
+    <AuthShell>
+      <main className="card">
+        <h1>Access denied</h1>
+        <p>{text}</p>
+        {viewer && (
+          <form action={logout}>
+            <button type="submit">Sign out</button>
+          </form>
+        )}
+      </main>
+    </AuthShell>
   );
 }

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ActionForm } from "@/components/client";
-import { EmptyState } from "@/components/ui";
+import { EmptyState, PageHero } from "@/components/ui";
 import { getCapabilities } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { archiveProject, decideExport, requestExport } from "./actions";
@@ -58,12 +58,11 @@ export default async function ExportPage() {
 
   return (
     <main className="stack-lg">
-      <h1>Export and archive</h1>
-      <p className="muted">
+      <PageHero eyebrow="Export" title="Export and archive">
         At the end of the project the administrator exports all records and documents. The Project
         Head must approve each export, and each approval allows one export. Archiving is a separate
         step and never deletes anything.
-      </p>
+      </PageHero>
 
       {arch && (
         <section className="panel" role="status">

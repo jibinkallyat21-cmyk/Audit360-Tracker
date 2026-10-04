@@ -1,16 +1,32 @@
+import { PageHero } from "@/components/ui";
 import { WorkflowExplorer } from "@/components/workflow-explorer";
-import { getCapabilities, listSubprocesses } from "@/lib/data";
+import { getCapabilities, listAssignments, listSubprocesses } from "@/lib/data";
 
 export default async function WorkflowPage() {
-  const [rows, caps] = await Promise.all([listSubprocesses(), getCapabilities()]);
+  const [rows, assignments, caps] = await Promise.all([
+    listSubprocesses(),
+    listAssignments(),
+    getCapabilities(),
+  ]);
+  // Both maps come from assignments the database already limited to what this user may see.
+  const leadByProcess: Record<string, string> = {};
+  const peopleByProcess: Record<string, string[]> = {};
+  for (const a of assignments) {
+    if (a.type === "production_lead") leadByProcess[a.processId] = a.personName;
+    (peopleByProcess[a.processId] ??= []).push(a.personName);
+  }
   return (
     <main className="stack-lg">
-      <h1>Workflow</h1>
-      <p className="muted">
-        Phase → Process → Step, with the current stage and status. You see only your permitted
+      <PageHero eyebrow="Workflow" title="Process flow">
+        Phase, process and step, with the current stage and status. You see only your permitted
         scope.
-      </p>
-      <WorkflowExplorer rows={rows} mineProcessIds={[...caps.assignments.keys()]} />
+      </PageHero>
+      <WorkflowExplorer
+        rows={rows}
+        mineProcessIds={[...caps.assignments.keys()]}
+        leadByProcess={leadByProcess}
+        peopleByProcess={peopleByProcess}
+      />
     </main>
   );
 }

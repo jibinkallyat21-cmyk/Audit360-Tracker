@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyState } from "@/components/ui";
+import { EmptyState, PageHero } from "@/components/ui";
 import { listSubprocesses } from "@/lib/data";
 import { resolveNames } from "@/lib/records";
 import { createClient } from "@/lib/supabase/server";
@@ -43,11 +43,10 @@ export default async function DocumentsPage({
 
   return (
     <main className="stack-lg">
-      <h1>Document centre</h1>
-      <p className="muted">
+      <PageHero eyebrow="Documents" title="Document centre">
         Word and Excel files for the processes you can access. Older versions stay available and are
         labelled Superseded.
-      </p>
+      </PageHero>
       <form method="get" className="filters" role="search">
         <label>
           <span>Search</span>

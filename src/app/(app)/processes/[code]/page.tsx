@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { StepRecords } from "@/components/step-records";
 import { ItemActions } from "@/components/item-actions";
-import { BuildBadge, DecisionBadge, StageTrack, StatusBadge } from "@/components/ui";
+import { BuildBadge, DecisionBadge, PageHero, StageTrack, StatusBadge } from "@/components/ui";
+import { toneForLead } from "@/lib/brand";
 import { getCapabilities, listAssignments, listSubprocesses } from "@/lib/data";
 import { PROCESS_DETAIL_SELECT } from "@/lib/queries";
 import { getRecords } from "@/lib/records";
@@ -35,20 +36,17 @@ export default async function ProcessPage({ params }: { params: Promise<{ code: 
   if (!proc) notFound();
   const records = await getRecords(rows.map((r) => r.id));
   const people = assignments.filter((a) => a.processId === rows[0].processId);
+  const leadName = people.find((p) => p.type === "production_lead")?.personName;
+  const tone = `tone-${toneForLead(leadName)}`;
   const before: string[] = (proc.context as { before_ai_steps?: string[] })?.before_ai_steps ?? [];
 
   return (
     <main className="stack-lg">
-      <div>
-        <p className="muted">{rows[0].phaseName}</p>
-        <h1>
-          {code} {proc.title}
-        </h1>
-        {proc.description && <p>{proc.description}</p>}
-        <p className="muted">Source: {proc.source_reference}</p>
-      </div>
+      <PageHero eyebrow={`Phase · ${rows[0].phaseName}`} title={`${code} ${proc.title}`}>
+        {proc.description ?? `Source: ${proc.source_reference}`}
+      </PageHero>
 
-      <section className="panel">
+      <section className={`panel team-card ${tone}`}>
         <h2>People</h2>
         <dl className="people">
           {GROUPS.map(([type, label]) => {
@@ -66,7 +64,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ code: 
       <section className="stack-lg">
         <h2>Steps</h2>
         {rows.map((r) => (
-          <article key={r.id} className="panel">
+          <article key={r.id} className={`panel team-card ${tone}`}>
             <h3>
               Step {r.seq}: {r.title}
             </h3>

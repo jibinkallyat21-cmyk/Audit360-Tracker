@@ -1,5 +1,6 @@
 import { TeamChart, type PersonProcess } from "@/components/team-chart";
 import { getCapabilities, getOrg, listAssignments, listSubprocesses } from "@/lib/data";
+import { PageHero } from "@/components/ui";
 
 export default async function TeamPage() {
   const [org, assignments, rows, caps] = await Promise.all([
@@ -30,8 +31,9 @@ export default async function TeamPage() {
 
   return (
     <main className="stack-lg">
-      <h1>Team structure</h1>
-      <p className="muted">Select a person to see their role and the processes they work on.</p>
+      <PageHero eyebrow="Team" title="Team structure">
+        Select a person to see their role and the processes they work on.
+      </PageHero>
       <TeamChart
         people={org.people.map((p) => ({
           id: p.id,

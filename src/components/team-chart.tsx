@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { toneForLead } from "@/lib/brand";
 
 export interface ChartPerson {
   id: string;
@@ -41,16 +42,18 @@ function PersonChip({
   p,
   selected,
   onSelect,
+  tone,
 }: {
   p: ChartPerson;
   selected: string | null;
   onSelect: (id: string | null) => void;
+  tone?: string;
 }) {
   const on = p.id === selected;
   return (
     <button
       type="button"
-      className={on ? "chip selected" : "chip"}
+      className={`${on ? "chip selected" : "chip"}${tone ? ` tone-${tone}` : ""}`}
       aria-pressed={on}
       onClick={() => onSelect(on ? null : p.id)}
     >
@@ -64,19 +67,35 @@ function PeopleGroup({
   list,
   selected,
   onSelect,
+  tone,
+  top,
 }: {
   title: string;
   list: ChartPerson[];
   selected: string | null;
   onSelect: (id: string | null) => void;
+  tone?: string;
+  top?: boolean;
 }) {
   if (list.length === 0) return null;
+  if (top) {
+    return (
+      <section className="org-node" aria-label={title}>
+        <span className="eyebrow">{title}</span>
+        <div className="chips">
+          {list.map((p) => (
+            <PersonChip key={p.id} p={p} selected={selected} onSelect={onSelect} tone={tone} />
+          ))}
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="panel">
       <h2>{title}</h2>
       <div className="chips">
         {list.map((p) => (
-          <PersonChip key={p.id} p={p} selected={selected} onSelect={onSelect} />
+          <PersonChip key={p.id} p={p} selected={selected} onSelect={onSelect} tone={tone} />
         ))}
       </div>
     </section>
@@ -112,20 +131,23 @@ export function TeamChart({
   return (
     <div className="team-layout">
       <div className="stack-lg">
-        <div className="grid">
+        <div className="org-top">
           <PeopleGroup
+            top
             title="Project Head"
             list={withTag("project_head")}
             selected={selected}
             onSelect={setSelected}
           />
           <PeopleGroup
+            top
             title="Project Lead"
             list={withTag("project_lead")}
             selected={selected}
             onSelect={setSelected}
           />
           <PeopleGroup
+            top
             title="Dashboard Lead"
             list={withTag("dashboard_lead")}
             selected={selected}
@@ -139,20 +161,27 @@ export function TeamChart({
             const members = t.memberIds
               .map((id) => byId.get(id))
               .filter((p): p is ChartPerson => !!p);
+            const tone = toneForLead(lead?.name);
             return (
-              <section key={t.id} className="panel">
+              <section key={t.id} className={`panel team-card tone-${tone}`}>
                 <h2>{t.name}</h2>
                 {lead && (
                   <p>
                     <span className="muted">Production Lead </span>
-                    <PersonChip p={lead} selected={selected} onSelect={setSelected} />
+                    <PersonChip p={lead} selected={selected} onSelect={setSelected} tone={tone} />
                   </p>
                 )}
                 <div className="chips">
                   {members
                     .sort((a, b) => a.name.localeCompare(b.name))
                     .map((p) => (
-                      <PersonChip key={p.id} p={p} selected={selected} onSelect={setSelected} />
+                      <PersonChip
+                        key={p.id}
+                        p={p}
+                        selected={selected}
+                        onSelect={setSelected}
+                        tone={tone}
+                      />
                     ))}
                 </div>
               </section>
@@ -163,6 +192,7 @@ export function TeamChart({
         <div className="grid">
           <PeopleGroup
             title="Reviewers"
+            tone="amber"
             list={withTag("reviewer")}
             selected={selected}
             onSelect={setSelected}

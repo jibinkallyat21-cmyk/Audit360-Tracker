@@ -10,8 +10,13 @@ const PUBLIC_PATHS = [
   "/auth/confirm",
 ];
 
+// The design style guide is reachable without signing in only when ENABLE_STYLEGUIDE=1 (local checks).
+const STYLEGUIDE = process.env.ENABLE_STYLEGUIDE === "1" ? ["/styleguide"] : [];
+
 export function isPublicPath(pathname: string) {
-  return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+  return [...PUBLIC_PATHS, ...STYLEGUIDE].some(
+    (p) => pathname === p || pathname.startsWith(p + "/"),
+  );
 }
 
 /** Refreshes the session cookie and sends signed-out visitors to /login. */

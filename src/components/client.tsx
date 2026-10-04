@@ -90,12 +90,16 @@ export function Countdown({ deadline }: { deadline: string | null }) {
     );
   }
   const r = now === null ? null : remaining(deadline, now);
+  const urgent = !!r && !r.expired && r.days < 7;
   const local = new Intl.DateTimeFormat(undefined, {
     dateStyle: "full",
     timeStyle: "short",
   }).format(new Date(deadline));
   return (
-    <section className="countdown" aria-label="Project deadline countdown">
+    <section
+      className={urgent ? "countdown urgent" : "countdown"}
+      aria-label="Project deadline countdown"
+    >
       <h2>Project deadline</h2>
       {r?.expired ? (
         <p className="expired" role="status">
@@ -110,6 +114,11 @@ export function Countdown({ deadline }: { deadline: string | null }) {
             </div>
           ))}
         </div>
+      )}
+      {urgent && (
+        <p role="status" className="error">
+          Less than a week left.
+        </p>
       )}
       <p className="muted">Deadline: {local}</p>
     </section>

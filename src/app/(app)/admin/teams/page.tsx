@@ -1,5 +1,5 @@
 import { ActionForm, SelectField } from "@/components/client";
-import { EmptyState } from "@/components/ui";
+import { EmptyState, PageHero } from "@/components/ui";
 import { getOrg } from "@/lib/data";
 import { setTeamMember } from "../actions";
 
@@ -8,11 +8,10 @@ export default async function TeamsPage() {
   const name = new Map(org.people.map((p) => [p.id, p.displayName]));
   return (
     <main className="stack-lg">
-      <h1>Teams</h1>
-      <p className="muted">
+      <PageHero eyebrow="Admin" title="Teams">
         Team membership feeds the team structure page. Who works on which process is set under
         Assignments.
-      </p>
+      </PageHero>
       {org.teams.length === 0 && <EmptyState>No teams.</EmptyState>}
       {org.teams.map((t) => (
         <section key={t.id} className="panel">

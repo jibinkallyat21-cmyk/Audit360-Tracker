@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyState } from "@/components/ui";
+import { EmptyState, PageHero } from "@/components/ui";
 import { actionLabel, describeChange, safeSearch } from "@/lib/activity";
 import { listSubprocesses } from "@/lib/data";
 import { ACTIVITY_SELECT } from "@/lib/queries";
@@ -61,11 +61,10 @@ export default async function ActivityPage({
 
   return (
     <main className="stack-lg">
-      <h1>Activity history</h1>
-      <p className="muted">
+      <PageHero eyebrow="History" title="Activity history">
         A permanent record of changes in the processes you can access. Entries cannot be edited or
         deleted.
-      </p>
+      </PageHero>
       <form method="get" className="filters" role="search">
         <label>
           <span>Search action</span>

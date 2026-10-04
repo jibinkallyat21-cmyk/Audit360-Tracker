@@ -1,5 +1,5 @@
 import { ActionForm, SelectField } from "@/components/client";
-import { EmptyState } from "@/components/ui";
+import { EmptyState, PageHero } from "@/components/ui";
 import { requireApprovedViewer } from "@/lib/access";
 import { getOrg } from "@/lib/data";
 import type { RoleName } from "@/lib/domain";
@@ -23,12 +23,11 @@ export default async function RolesPage() {
   );
   return (
     <main className="stack-lg">
-      <h1>Roles</h1>
-      <p className="muted">
+      <PageHero eyebrow="Admin" title="Roles">
         These roles belong to a person, so they apply as soon as that person&apos;s account is
         approved. Production Lead, Team Member, Reviewer and Supporting roles come from process
         assignments. Every change is logged.
-      </p>
+      </PageHero>
       <section className="panel">
         <h2>Current holders</h2>
         {holders.length === 0 && <EmptyState>No roles assigned.</EmptyState>}
