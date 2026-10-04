@@ -7,6 +7,7 @@ export interface Viewer {
   id: string;
   email: string;
   fullName: string | null;
+  personId: string | null;
   approvalState: ApprovalState;
   isActive: boolean;
 }
@@ -22,7 +23,7 @@ export async function getViewer(): Promise<Viewer | null> {
   if (!auth.user) return null;
   const { data: profile } = await supabase
     .from("profiles")
-    .select("email, full_name, approval_state, is_active")
+    .select("email, full_name, person_id, approval_state, is_active")
     .eq("id", auth.user.id)
     .single();
   if (!profile) return null;
@@ -30,6 +31,7 @@ export async function getViewer(): Promise<Viewer | null> {
     id: auth.user.id,
     email: profile.email,
     fullName: profile.full_name,
+    personId: profile.person_id,
     approvalState: profile.approval_state as ApprovalState,
     isActive: profile.is_active,
   };

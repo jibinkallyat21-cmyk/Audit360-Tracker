@@ -21,9 +21,10 @@ The permission and workflow rules are tested against a real Postgres (not mocks)
 TEST_DATABASE_URL="postgres://postgres@localhost:5432/postgres" npm test
 ```
 
-Without it the database tests are skipped. The seed (`supabase/seed.sql`) is generated from `seed/seed.json` with `node scripts/generate-seed.mjs`.
+Without it the database tests are skipped. To also run the page queries through PostgREST (the API layer Supabase uses), download a PostgREST binary and set `POSTGREST_BIN` to its path. The seed (`supabase/seed.sql`) is generated from `seed/seed.json` with `node scripts/generate-seed.mjs`.
 
 ## Status
 
 - Phase 1 (foundation and authentication): done.
+- Phase 3 (dashboard, workflow explorer, process pages, stage/status controls, countdown): done through the Testing stage. Review decisions, review points, comments and documents get their screens in Phase 4, so an item cannot yet be taken through Review to Production from the interface alone.
 - Phase 2 (schema, row-level security, workflow functions, seed): done and covered by database tests. The admin screens that call the approval and assignment functions arrive in Phase 5; until then, the first administrator is created with `bootstrap_first_admin` (see `docs/DESIGN.md` section 12).
