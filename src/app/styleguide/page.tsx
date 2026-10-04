@@ -1,14 +1,12 @@
 import { notFound } from "next/navigation";
+import { AppShell } from "@/components/app-shell";
 import { Countdown } from "@/components/client";
-import { NavLinks } from "@/components/nav";
 import { TeamChart } from "@/components/team-chart";
-import { ThemeToggle } from "@/components/theme-toggle";
 import {
   BuildBadge,
   DecisionBadge,
   EmptyState,
   Meter,
-  PageHero,
   Pips,
   StageBadge,
   StageBar,
@@ -17,7 +15,6 @@ import {
   StatusBadge,
 } from "@/components/ui";
 import { WorkflowExplorer } from "@/components/workflow-explorer";
-import { BRAND } from "@/lib/brand";
 import { STAGES, STATUSES } from "@/lib/domain";
 import { sampleDeadlines, sampleRows } from "./sample";
 
@@ -30,44 +27,27 @@ export default function StyleGuide() {
   ) as Record<(typeof STAGES)[number], number>;
   const { soon, later } = sampleDeadlines();
   return (
-    <div className="shell">
-      <header className="topbar">
-        <span className="brand">
-          <strong>
-            {BRAND.company} <em>{BRAND.product}</em>
-          </strong>
-          <small>{BRAND.tagline}</small>
-        </span>
-        <NavLinks
-          items={[
-            { href: "/styleguide", label: "Dashboard" },
-            { href: "/workflow", label: "Workflow" },
-            { href: "/documents", label: "Documents" },
-            { href: "/team", label: "Team" },
-          ]}
-        />
-        <span className="spacer" />
-        <ThemeToggle />
-        <span className="who">Jibin K K</span>
-        <button type="button" className="secondary">
-          Sign out
-        </button>
-      </header>
-      <div className="content stack-lg">
-        <PageHero eyebrow="Style guide" title="Where the work stands">
-          Sample data only. This page is hidden in production.
-        </PageHero>
+    <AppShell
+      items={[
+        { href: "/styleguide", label: "Dashboard" },
+        { href: "/workflow", label: "Workflow" },
+        { href: "/documents", label: "Documents" },
+        { href: "/team", label: "Team" },
+      ]}
+      unread={3}
+      userLabel="Jibin K K"
+    >
+      <div className="stack-lg">
+        <div className="grid">
+          <Countdown deadline={soon} />
+          <Countdown deadline={later} />
+        </div>
 
         <div className="stats">
           <StatCard label="Complete" value="34%" hint="26 of 74 items" />
           <StatCard label="Items" value={74} hint="20 processes" />
           <StatCard label="Awaiting review" value={6} />
           <StatCard label="Blocked" value={3} warn />
-        </div>
-
-        <div className="grid">
-          <Countdown deadline={soon} />
-          <Countdown deadline={later} />
         </div>
 
         <section className="panel">
@@ -137,6 +117,6 @@ export default function StyleGuide() {
           fullView
         />
       </div>
-    </div>
+    </AppShell>
   );
 }

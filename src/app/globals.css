@@ -156,48 +156,61 @@ code {
   flex: 1;
 }
 
-/* ---------- shell ---------- */
-.topbar {
+/* ---------- shell: left sidebar ---------- */
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar {
   position: sticky;
   top: 0;
-  z-index: 20;
+  align-self: flex-start;
+  flex: 0 0 248px;
+  width: 248px;
+  height: 100vh;
+  overflow-y: auto;
   display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 12px 28px;
+  flex-direction: column;
+  gap: 20px;
+  padding: 22px 14px 16px;
   background: var(--bar);
-  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  z-index: 20;
+}
+.main {
+  flex: 1;
+  min-width: 0;
 }
 .brand {
   display: flex;
-  align-items: baseline;
-  gap: 12px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 8px;
   text-decoration: none;
   color: var(--text);
-  white-space: nowrap;
 }
 .brand strong {
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 .brand strong em {
   font-style: normal;
   color: var(--accent);
 }
 .brand small {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--muted);
 }
 .nav {
   display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  margin-left: 10px;
-  scrollbar-width: none;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
 }
 .nav a {
-  padding: 10px 12px;
+  padding: 11px 12px;
   text-decoration: none;
   white-space: nowrap;
   font:
@@ -206,25 +219,46 @@ code {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
-  border-bottom: 2px solid transparent;
+  border-left: 3px solid transparent;
+  border-radius: 0 10px 10px 0;
 }
 .nav a:hover {
   color: var(--text);
+  background: var(--chip);
 }
 .nav a[aria-current="page"] {
   color: var(--text);
-  border-bottom-color: var(--accent);
+  background: var(--chip);
+  border-left-color: var(--accent);
+}
+.side-foot {
+  display: grid;
+  gap: 12px;
+  padding: 14px 8px 0;
+  border-top: 1px solid var(--border);
+}
+.side-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.side-actions form {
+  flex: 1;
+}
+.side-actions form button {
+  width: 100%;
 }
 .who {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--muted);
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 .icon-btn,
 .bell {
   display: inline-grid;
   place-items: center;
   position: relative;
+  flex: none;
   width: 40px;
   height: 40px;
   padding: 0;
@@ -256,16 +290,13 @@ code {
   border-radius: 10px;
 }
 .content {
-  padding: 0 28px 48px;
-  max-width: 1280px;
-  margin: 0 auto;
+  padding: 28px 28px 48px;
+  max-width: 1400px;
 }
 
 .hero {
-  /* full-bleed: reach both edges of the window, keep the text aligned with the page content */
-  margin: 0 calc(50% - 50vw) 28px;
-  padding-block: 44px 34px;
-  padding-inline: calc(50vw - 50%);
+  margin: -28px -28px 28px;
+  padding: 44px 28px 34px;
   background:
     radial-gradient(60% 90% at 0% 30%, var(--glow-red), transparent 70%),
     radial-gradient(50% 80% at 100% 40%, var(--glow-blue), transparent 70%),
@@ -1120,28 +1151,72 @@ td {
     grid-auto-columns: auto;
   }
 }
-@media (max-width: 720px) {
-  .topbar {
+@media (max-width: 900px) {
+  /* the sidebar folds up into a header: brand and controls on top, navigation scrolling below */
+  .shell {
+    display: block;
+  }
+  .sidebar {
+    flex: none;
+    width: auto;
+    height: auto;
+    flex-direction: row;
     flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
     padding: 10px 16px;
-    gap: 10px;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    flex-direction: row;
+    align-items: baseline;
+    padding: 0;
   }
   .brand small,
   .who {
     display: none;
   }
+  .side-foot {
+    order: 2;
+    margin-left: auto;
+    padding: 0;
+    border-top: 0;
+  }
+  .side-actions form {
+    flex: none;
+  }
   .nav {
-    order: 5;
+    order: 3;
+    flex: none;
     width: 100%;
-    margin: 0;
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav a {
+    padding: 10px 12px;
+    border-left: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+  }
+  .nav a:hover,
+  .nav a[aria-current="page"] {
+    background: transparent;
+  }
+  .nav a[aria-current="page"] {
+    border-bottom-color: var(--accent);
   }
   .content {
-    padding: 0 16px 36px;
+    padding: 22px 16px 36px;
   }
   .hero {
-    margin-bottom: 22px;
-    padding-block: 30px 24px;
+    margin: -22px -16px 22px;
+    padding: 30px 16px 24px;
   }
+}
+@media (max-width: 720px) {
   .hero h1 {
     font-size: 32px;
   }

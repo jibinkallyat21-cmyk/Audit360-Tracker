@@ -6,7 +6,6 @@ import {
   BuildBadge,
   EmptyState,
   Meter,
-  PageHero,
   StageBadge,
   StageBar,
   StatCard,
@@ -63,13 +62,6 @@ function Progress({ items }: { items: GroupProgress[] }) {
   );
 }
 
-const SUBTITLE = {
-  member: "Your assigned work and what needs your attention.",
-  lead: "How your teams' items are moving through the five stages.",
-  project_lead: "Every process, stage by stage, from definition to production.",
-  management: "Progress across all processes, without the confidential detail.",
-} as const;
-
 export default async function DashboardPage() {
   const [rows, assignments, caps, deadline] = await Promise.all([
     listSubprocesses(),
@@ -90,9 +82,16 @@ export default async function DashboardPage() {
 
   return (
     <main className="stack-lg">
-      <PageHero eyebrow="Dashboard" title="Where the work stands">
-        {SUBTITLE[kind]}
-      </PageHero>
+      <Countdown deadline={deadline} />
+      {isDashboardLead && (
+        <section className="panel">
+          <h2>Countdown controls</h2>
+          <p className="muted">
+            Only the Dashboard Lead can set or change the shared deadline. Every change is logged.
+          </p>
+          <DeadlineForm current={deadline} />
+        </section>
+      )}
 
       <div className="stats">
         {kind === "member" ? (
@@ -123,17 +122,6 @@ export default async function DashboardPage() {
           </>
         )}
       </div>
-
-      <Countdown deadline={deadline} />
-      {isDashboardLead && (
-        <section className="panel">
-          <h2>Countdown controls</h2>
-          <p className="muted">
-            Only the Dashboard Lead can set or change the shared deadline. Every change is logged.
-          </p>
-          <DeadlineForm current={deadline} />
-        </section>
-      )}
 
       {kind === "member" && (
         <section className="panel">
