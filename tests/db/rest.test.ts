@@ -18,6 +18,7 @@ import {
   PROCESS_DETAIL_SELECT,
   SUBPROCESS_SELECT,
 } from "../../src/lib/queries";
+import { TABLES } from "../../src/lib/export/build";
 import { setup, TEST_URL, type Db } from "./harness";
 
 interface SubRow {
@@ -29,9 +30,9 @@ const SECRET = "test-secret-test-secret-test-secret-123";
 const PORT = 3999;
 
 const b64 = (o: object) => Buffer.from(JSON.stringify(o)).toString("base64url");
-function jwt(sub: string) {
+function jwt(sub: string, role = "authenticated") {
   const head = b64({ alg: "HS256", typ: "JWT" });
-  const body = b64({ role: "authenticated", sub, exp: Math.floor(Date.now() / 1000) + 600 });
+  const body = b64({ role, sub, exp: Math.floor(Date.now() / 1000) + 600 });
   const sig = createHmac("sha256", SECRET).update(`${head}.${body}`).digest("base64url");
   return `${head}.${body}.${sig}`;
 }
@@ -50,7 +51,7 @@ describe.skipIf(!TEST_URL || !BIN)("page queries through PostgREST", () => {
     await db.admin.query(`do $$ begin
       if not exists (select 1 from pg_roles where rolname='authenticator') then
         create role authenticator noinherit login; end if; end $$`);
-    await db.admin.query("grant anon, authenticated to authenticator");
+    await db.admin.query("grant anon, authenticated, service_role to authenticator");
     const uri = new URL(TEST_URL!);
     uri.pathname = "/" + (db.admin as unknown as { database: string }).database;
     server = spawn(BIN!, [], {
@@ -317,6 +318,39 @@ describe.skipIf(!TEST_URL || !BIN)("page queries through PostgREST", () => {
     expect((asAdmin.data ?? []).length).toBeGreaterThan(5);
     const asUser = await rij.from("profiles").select(cols);
     expect((asUser.data ?? []).map((p) => p.id)).toEqual([db.users.rijin]);
+  });
+
+  it("reads every export table with the exact columns the export lists, as the service role", async () => {
+    const service = new PostgrestClient(`http://127.0.0.1:${PORT}`, {
+      headers: {
+        Authorization: `Bearer ${jwt("00000000-0000-0000-0000-000000000000", "service_role")}`,
+      },
+    });
+    for (const t of TABLES) {
+      const r = await service
+        .from(t.name)
+        .select(t.columns.join(","))
+        .order(t.columns[0])
+        .range(0, 999);
+      expect(r.error, t.name).toBeNull();
+    }
+    const people = await service.from("people").select("id");
+    expect(people.data).toHaveLength(40);
+    // The service role sees records that ordinary users cannot, which is why the export route
+    // checks the administrator role and an approved request first.
+    const notes = await service.from("activity_logs").select("id", { count: "exact", head: true });
+    expect(notes.count).toBeGreaterThan(0);
+  });
+
+  it("keeps export requests out of reach of ordinary users over the API", async () => {
+    const r = await client("rijin").from("export_requests").select("id");
+    expect(r.data ?? []).toEqual([]);
+    const rpc = await client("rijin").rpc("request_export", { p_note: null });
+    expect(rpc.error?.message).toMatch(/Not authorized/);
+    const direct = await client("jibin")
+      .from("export_requests")
+      .insert({ requested_by: db.users.jibin });
+    expect(direct.error?.message).toMatch(/permission denied/);
   });
 
   it("serves nothing without a valid user token", async () => {

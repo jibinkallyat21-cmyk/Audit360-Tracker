@@ -163,3 +163,11 @@ Automated tests cover role permissions (including guessed IDs and direct URLs), 
 - **Account matching.** The administrator sees a suggestion built from the email name. A single close match is preselected; several similar names are flagged "needs confirmation" with nothing preselected. The administrator always approves.
 - **Team structure.** Reviewers, supporting roles and Production Leads appear as org-level role tags (visible to every approved user). Which processes a selected person works on is limited to processes the viewer can access, except for the Project Lead, Project Head and administrators.
 - **Roles screen.** Manages the four global roles only; other roles come from assignments. An administrator cannot remove their own administrator role.
+
+## 15. Phase 6 implementation notes
+
+- **Export approval.** The administrator requests, the Project Head approves (never their own request), and each approval allows one export. Archiving needs a completed export, records a one-year retention date, and deletes nothing. There is no delete function anywhere in the application.
+- **Why the export uses the service role.** The archive must be complete, which row-level security would prevent even for the administrator (who deliberately cannot read records). The export route therefore checks the administrator role and an approved, unused request before it reads anything, and every step is logged.
+- **Archive contents.** CSV tables with explicit columns, readable summaries (assignments, status and stage history, countdown history), every document version with a manifest (process, step, document, version, original storage path, size, checksum), a standard `CHECKSUMS.sha256` and a README. A version that cannot be retrieved is listed as `included = no`, never dropped silently.
+- **Streaming.** The ZIP is written as it is built, so memory stays low. A failure while gathering aborts the download and leaves the approval unused.
+- **Safety net tests.** `tests/db/grants.test.ts` fails if any future migration exposes a table, write path or function to the wrong role. The test database mirrors Supabase's default grants so the migrations' revokes are what is being tested.

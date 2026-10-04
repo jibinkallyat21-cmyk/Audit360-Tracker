@@ -17,6 +17,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <Link href="/activity">Activity</Link>
           <Link href="/team">Team</Link>
           {caps.roles.has("system_admin") && <Link href="/admin">Admin</Link>}
+          {(caps.roles.has("system_admin") || caps.roles.has("project_head")) && (
+            <Link href="/export">Export</Link>
+          )}
         </nav>
         <span className="spacer" />
         <Link href="/notifications" className="bell" aria-label={`Notifications, ${unread} unread`}>

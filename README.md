@@ -9,6 +9,12 @@ Internal portal for tracking 20 business processes. See `docs/DESIGN.md` for the
 3. Apply `supabase/migrations/*.sql` to your Supabase project (SQL editor, or the Supabase CLI).
 4. `npm run dev`
 
+## Documents
+
+- `docs/DESIGN.md`: design and decisions.
+- `docs/RUNBOOK.md`: setup, deployment, backup, restore, end of project.
+- `docs/ACCEPTANCE.md`: each acceptance criterion and how it is verified.
+
 ## Checks
 
 `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`
@@ -26,6 +32,7 @@ Without it the database tests are skipped. To also run the page queries through 
 ## Status
 
 - Phase 1 (foundation and authentication): done.
+- Phase 6 (export and archive with Project Head approval, backup and restore drill, acceptance checklist, runbook, CI): done. See `docs/RUNBOOK.md` and `docs/ACCEPTANCE.md`. Not yet exercised against a live Supabase project: sign-in and email, Storage uploads and downloads, and the file-restore scripts.
 - Phase 5 (notifications, administration, team structure, filters): done. The admin screens (Users, Roles, Assignments, Teams) are visible only to System Administrators. The initial process import is the generated seed (`supabase/seed.sql`), not a screen. Export and archive arrive in Phase 6.
 - Phase 4 (documents, review points, comments, testing records, approvals, activity history): done. Uploads are validated on the server (size, extension, declared type, file signature, macros) and stored in a private bucket; downloads go through an authenticated route that issues a link valid for one minute. The upload and download routes need a real Supabase project with the `SUPABASE_SERVICE_ROLE_KEY` set, so they have not been run end to end yet.
 - Phase 3 (dashboard, workflow explorer, process pages, stage/status controls, countdown): done.

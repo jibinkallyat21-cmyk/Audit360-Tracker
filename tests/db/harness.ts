@@ -7,6 +7,12 @@ const read = (p: string) => readFileSync(new URL(p, root), "utf8");
 
 export const TEST_URL = process.env.TEST_DATABASE_URL;
 
+export const databaseUrl = (db: { admin: Client }) => {
+  const u = new URL(TEST_URL!);
+  u.pathname = "/" + (db.admin as unknown as { database: string }).database;
+  return u.toString();
+};
+
 export interface Db {
   /** Run as a superuser (setup/inspection only). */
   admin: Client;
@@ -53,6 +59,7 @@ export async function setup(): Promise<Db> {
     "supabase/migrations/0004_rls.sql",
     "supabase/migrations/0005_documents_support.sql",
     "supabase/migrations/0006_notifications_admin.sql",
+    "supabase/migrations/0007_export_archive.sql",
     "supabase/seed.sql",
   ];
   for (const f of files) await admin.query(read(f));
@@ -130,4 +137,39 @@ export async function failure(p: Promise<unknown>): Promise<string | null> {
   } catch (e) {
     return (e as Error).message;
   }
+}
+
+/** A database with the schema applied but no seed or users, as a fresh project would be. */
+export async function emptyDatabase() {
+  const base = new URL(TEST_URL!);
+  const name = "tracker_restore_" + randomUUID().replace(/-/g, "").slice(0, 10);
+  const root_ = new Client({ connectionString: TEST_URL });
+  await root_.connect();
+  await root_.query(`create database ${name}`);
+  await root_.end();
+  base.pathname = "/" + name;
+  const client = new Client({ connectionString: base.toString() });
+  await client.connect();
+  const files = [
+    "tests/db/stub-auth.sql",
+    "supabase/migrations/0001_foundation.sql",
+    "supabase/migrations/0002_schema.sql",
+    "supabase/migrations/0003_functions.sql",
+    "supabase/migrations/0004_rls.sql",
+    "supabase/migrations/0005_documents_support.sql",
+    "supabase/migrations/0006_notifications_admin.sql",
+    "supabase/migrations/0007_export_archive.sql",
+  ];
+  for (const f of files) await client.query(read(f));
+  return {
+    client,
+    url: base.toString(),
+    async drop() {
+      await client.end();
+      const c = new Client({ connectionString: TEST_URL });
+      await c.connect();
+      await c.query(`drop database ${name} with (force)`);
+      await c.end();
+    },
+  };
 }
