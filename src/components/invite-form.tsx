@@ -4,6 +4,7 @@ import { useActionState } from "react";
 
 export interface InviteResult {
   email: string;
+  name?: string;
   ok: boolean;
   detail: string;
   link?: string;
@@ -16,8 +17,28 @@ type Action = (state: InviteState, form: FormData) => Promise<InviteState>;
 
 export interface InviteRow {
   email: string;
+  /** The account already exists (never signed in); a fresh link will be made. */
+  existing?: boolean;
   suggestedId: string;
   note: string;
+}
+
+const csvCell = (v: string) => `"${v.replace(/"/g, '""')}"`;
+
+/** Email, Name, InviteLink: ready for a Word mail merge sent from Outlook. */
+function downloadCsv(results: InviteResult[]) {
+  const lines = [
+    "Email,Name,InviteLink",
+    ...results
+      .filter((r) => r.link)
+      .map((r) => [r.email, r.name ?? "", r.link!].map(csvCell).join(",")),
+  ];
+  const url = URL.createObjectURL(new Blob([lines.join("\r\n")], { type: "text/csv" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "invite-links.csv";
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 /** Review step: confirm who each email belongs to, then send the invites. */
@@ -34,6 +55,17 @@ export function InviteForm({
   if (state.results) {
     return (
       <div className="stack">
+        {state.results.some((r) => r.link) && (
+          <div>
+            <button type="button" onClick={() => downloadCsv(state.results!)}>
+              Download links as CSV
+            </button>
+            <p className="muted">
+              For an Outlook mail merge. The links expire (see the setup note), so send them soon
+              after downloading. Keep the file private and delete it afterwards.
+            </p>
+          </div>
+        )}
         <ul className="row-list">
           {state.results.map((r) => (
             <li key={r.email}>

@@ -43,18 +43,51 @@ export async function sendInvites(_: InviteState, form: FormData): Promise<Invit
       continue;
     }
     // Refuse before sending anything if the person or the email already has an account.
-    const [byEmail, byPerson] = await Promise.all([
-      admin.from("profiles").select("id").eq("email", e.data).limit(1),
+    const [byEmail, byPerson, person] = await Promise.all([
+      admin.from("profiles").select("id, person_id").eq("email", e.data).limit(1),
       admin.from("profiles").select("id").eq("person_id", p.data).limit(1),
+      admin.from("people").select("display_name").eq("id", p.data).single(),
     ]);
-    if ((byEmail.data?.length ?? 0) > 0 || (byPerson.data?.length ?? 0) > 0) {
+    const name = person.data?.display_name;
+    const existing = byEmail.data?.[0];
+    if (existing) {
+      // An account that exists but was never used may get a fresh link (the first one expired).
+      // Anyone who has signed in is left alone: an administrator must not be able to reset them.
+      const { data: u } = await admin.auth.admin.getUserById(existing.id);
+      if (mode === "link" && existing.person_id === p.data && u.user && !u.user.last_sign_in_at) {
+        const { data, error } = await admin.auth.admin.generateLink({
+          type: "recovery",
+          email: e.data,
+        });
+        results.push(
+          error
+            ? { email: e.data, name, ok: false, detail: "The link could not be made." }
+            : {
+                email: e.data,
+                name,
+                ok: true,
+                detail: "Fresh link for an account that has not been used yet.",
+                link: `${siteUrl()}/auth/confirm?token_hash=${data.properties.hashed_token}&type=recovery&next=/reset-password`,
+              },
+        );
+      } else {
+        results.push({
+          email: e.data,
+          name,
+          ok: false,
+          detail: u.user?.last_sign_in_at
+            ? "This person has already signed in."
+            : 'This email already has an account. Choose "show me each link" for a fresh one.',
+        });
+      }
+      continue;
+    }
+    if ((byPerson.data?.length ?? 0) > 0) {
       results.push({
         email: e.data,
+        name,
         ok: false,
-        detail:
-          (byEmail.data?.length ?? 0) > 0
-            ? "This email already has an account."
-            : "That person is already linked to another account.",
+        detail: "That person is already linked to another account.",
       });
       continue;
     }
@@ -88,6 +121,7 @@ export async function sendInvites(_: InviteState, form: FormData): Promise<Invit
     });
     results.push({
       email: e.data,
+      name,
       ok: !error,
       link,
       detail: error

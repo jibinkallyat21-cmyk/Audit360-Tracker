@@ -37,19 +37,25 @@ export default async function InvitePage({
   const linked = new Set(profiles.map((p) => p.person_id).filter(Boolean));
   const existing = new Set(profiles.map((p) => p.email.toLowerCase()));
   const lite = org.people.map((p) => ({ ...p, linked: linked.has(p.id) }));
-  const rows: InviteRow[] = valid
-    .filter((e) => !existing.has(e))
-    .map((e) => {
-      const m = suggestPersons(e, null, lite);
-      const note =
-        m.status === "single" && m.suggested
-          ? `Suggested: ${m.suggested.displayName} (${m.candidates[0].confidence} match). Please confirm.`
-          : m.status === "ambiguous"
-            ? `Similar names: ${m.candidates.map((c) => c.person.displayName).join(", ")}. Choose one.`
-            : "No match found. Choose the person.";
-      return { email: e, suggestedId: m.status === "single" ? (m.suggested?.id ?? "") : "", note };
-    });
-  const already = valid.filter((e) => existing.has(e));
+  const personOf = new Map(profiles.map((p) => [p.email.toLowerCase(), p.person_id]));
+  const rows: InviteRow[] = valid.map((e) => {
+    if (existing.has(e)) {
+      return {
+        email: e,
+        existing: true,
+        suggestedId: personOf.get(e) ?? "",
+        note: "Already has an account. If they have never signed in, a fresh link is made (link mode).",
+      };
+    }
+    const m = suggestPersons(e, null, lite);
+    const note =
+      m.status === "single" && m.suggested
+        ? `Suggested: ${m.suggested.displayName} (${m.candidates[0].confidence} match). Please confirm.`
+        : m.status === "ambiguous"
+          ? `Similar names: ${m.candidates.map((c) => c.person.displayName).join(", ")}. Choose one.`
+          : "No match found. Choose the person.";
+    return { email: e, suggestedId: m.status === "single" ? (m.suggested?.id ?? "") : "", note };
+  });
   const people = org.people.map((p) => ({
     id: p.id,
     label: p.displayName + (linked.has(p.id) ? " (linked)" : ""),
@@ -77,9 +83,6 @@ export default async function InvitePage({
           <p role="alert" className="error">
             Not a valid email, skipped: {invalid.join(", ")}
           </p>
-        )}
-        {already.length > 0 && (
-          <p className="muted">Already have an account, skipped: {already.join(", ")}</p>
         )}
       </section>
 
