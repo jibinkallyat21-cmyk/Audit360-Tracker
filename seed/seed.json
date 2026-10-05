@@ -1,1003 +1,963 @@
 {
- "phases": [
-  "Lead and proposal",
-  "Engagement and advance",
-  "Audit execution",
-  "Review",
-  "Reporting and submission",
-  "File management and closure"
- ],
- "processes": [
-  {
-   "code": "1.1",
-   "title": "Lead Scoring & Proposal Generation",
-   "phase": "Lead and proposal",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 1.1",
-   "production_lead": "Pavithra",
-   "team_members": [
-    "Rijin"
-   ],
-   "reviewers": [
-    "Fayis"
-   ],
-   "supporting": [
-    "Mohammed Ali",
-    "Uvais"
-   ],
-   "subprocesses": [
+  "phases": [
+    "Lead and proposal",
+    "Engagement and advance",
+    "Audit execution",
+    "Review",
+    "Reporting and submission",
+    "File management and closure"
+  ],
+  "processes": [
     {
-     "seq": 1,
-     "title": "AI scores & ranks 2,000+ leads by conversion potential"
+      "code": "1.1",
+      "title": "Lead Scoring & Proposal Generation",
+      "phase": "Lead and proposal",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 1.1",
+      "production_lead": "Pavithra",
+      "team_members": [
+        "Rijin"
+      ],
+      "reviewers": [
+        "Fayis"
+      ],
+      "supporting": [
+        "Mohammed Ali",
+        "Uvais"
+      ],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "AI scores & ranks 2,000+ leads by conversion potential"
+        },
+        {
+          "seq": 2,
+          "title": "Proposal currently generated through Odoo will be auto-generated through AI integrated dashboard."
+        },
+        {
+          "seq": 3,
+          "title": "Internal approval routed in-app; FO edits & sends"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "FO picks from list of leads(appx.2000+) randomly or by rough priority",
+          "FO assesses potential via call / WhatsApp / email",
+          "FO drafts proposal (scope, period, framework, fee, terms) manually",
+          "Internal approval sought over odoo (As per set Hierarchy)"
+        ],
+        "after_ai_steps": [
+          "AI scores & ranks 2,000+ leads by conversion potential",
+          "FO contacts top-scored leads first",
+          "Proposal currently generated through Odoo will be auto-generated through AI integrated dashboard.",
+          "Internal approval routed in-app; FO edits & sends"
+        ]
+      }
     },
     {
-     "seq": 2,
-     "title": "FO contacts top-scored leads first"
+      "code": "1.2",
+      "title": "Signed Proposal & Basic Documents Collection",
+      "phase": "Lead and proposal",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 1.2",
+      "production_lead": "Pavithra",
+      "team_members": [
+        "Rijin"
+      ],
+      "reviewers": [
+        "Fayis"
+      ],
+      "supporting": [
+        "Mohammed Ali",
+        "Uvais"
+      ],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Portal issues a document checklist automatically"
+        },
+        {
+          "seq": 2,
+          "title": "Client uploads; AI classifies & validates each file (type, readability, completeness)"
+        },
+        {
+          "seq": 3,
+          "title": "PY audit client auto fetched through PY Data"
+        },
+        {
+          "seq": 4,
+          "title": "Standardized client folder auto-created and indexed"
+        },
+        {
+          "seq": 5,
+          "title": "Missing / invalid items auto-flagged for follow-up"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "FO emails client for signed proposal + CR, AOA, prior audit report, Zakat/tax, Turnover etc",
+          "Poroject Co-ordinator downloads, renames and files each doc",
+          "Standardized client folder created manually",
+          "Missing items chased informally"
+        ],
+        "after_ai_steps": [
+          "Portal issues a document checklist automatically",
+          "Client uploads; AI classifies & validates each file (type, readability, completeness)",
+          "PY audit client auto fetched through PY Data",
+          "Standardized client folder auto-created and indexed",
+          "Missing / invalid items auto-flagged for follow-up"
+        ]
+      }
     },
     {
-     "seq": 3,
-     "title": "Proposal currently generated through Odoo will be auto-generated through AI integrated dashboard."
+      "code": "2.1",
+      "title": "Engagement Letter (EL) Processing & Confirmation",
+      "phase": "Engagement and advance",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 2.1",
+      "production_lead": "Pavithra",
+      "team_members": [
+        "Anna"
+      ],
+      "reviewers": [
+        "Fayis"
+      ],
+      "supporting": [
+        "Mohammed Ali",
+        "Uvais"
+      ],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Based on the signed proposal, once the required parameters are satisfied, EL request will be automatically made by the AI platform"
+        },
+        {
+          "seq": 2,
+          "title": "EL received from auditor verifed by AI"
+        },
+        {
+          "seq": 3,
+          "title": "AI verifies EL fields against the proposal; flags mismatches"
+        },
+        {
+          "seq": 4,
+          "title": "Signed EL + stamp tracked to completion"
+        },
+        {
+          "seq": 5,
+          "title": "Engagement auto-confirmed only when signed EL AND advance received"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Project Coordinator requests EL from auditors",
+          "Verifies legal name, FY, scope, framework, fee, terms, signatory manually",
+          "Chases signed EL with authorised signature & stamp",
+          "Confirmation judged manually"
+        ],
+        "after_ai_steps": [
+          "Based on the signed proposal, once the required parameters are satisfied, EL request will be automatically made by the AI platform",
+          "EL received from auditor verifed by AI",
+          "AI verifies EL fields against the proposal; flags mismatches",
+          "Signed EL + stamp tracked to completion",
+          "Engagement auto-confirmed only when signed EL AND advance received"
+        ]
+      }
     },
     {
-     "seq": 4,
-     "title": "Internal approval routed in-app; FO edits & sends"
+      "code": "2.2",
+      "title": "Advance Payment & Invoice Issuance",
+      "phase": "Engagement and advance",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 2.2",
+      "production_lead": "Pavithra",
+      "team_members": [
+        "Anna"
+      ],
+      "reviewers": [
+        "Fayis"
+      ],
+      "supporting": [
+        "Mohammed Ali",
+        "Uvais",
+        "Sajad"
+      ],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Invoice received verified by AI with EL/Proposal"
+        },
+        {
+          "seq": 2,
+          "title": "Payment status tracked in AI platform"
+        },
+        {
+          "seq": 3,
+          "title": "Tiered automated reminders (Tier 1/2/3)"
+        },
+        {
+          "seq": 4,
+          "title": "Engagement auto-unlocks for fieldwork on receipt"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Follows up for advance payment by email / call /Whatsapp",
+          "Payment team issues invoice per agreed terms",
+          "Monitors status on a spreadsheet",
+          "Escalates delays informally"
+        ],
+        "after_ai_steps": [
+          "Invoice received verified by AI with EL/Proposal",
+          "Payment status tracked in AI platform",
+          "Tiered automated reminders (Tier 1/2/3)",
+          "Engagement auto-unlocks for fieldwork on receipt"
+        ]
+      }
+    },
+    {
+      "code": "3.1",
+      "title": "Audit Kick-off Meeting & Planning",
+      "phase": "Audit execution",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.1",
+      "production_lead": "Pavithra",
+      "team_members": [
+        "Neeraja",
+        "Hiba",
+        "Devika T G"
+      ],
+      "reviewers": [
+        "Syam",
+        "Azhar"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Microsoft Teams meeting auto-scheduled"
+        },
+        {
+          "seq": 2,
+          "title": "AI drafts agenda + requirement list from the file profile"
+        },
+        {
+          "seq": 3,
+          "title": "Actions & responsibilities, minutes of meeting logged to the file tracker"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Audit lead/Associate schedules meeting by email / WhatsApp",
+          "Prepares agenda manually (timelines, deadlines, responsibilities, confirmations, sampling, draft-FS date)",
+          "Notes actions in personal tracker"
+        ],
+        "after_ai_steps": [
+          "Microsoft Teams meeting auto-scheduled",
+          "AI drafts agenda + requirement list from the file profile",
+          "Actions & responsibilities, minutes of meeting logged to the file tracker"
+        ]
+      }
+    },
+    {
+      "code": "3.2",
+      "title": "Document Verification(Initial + Statutory Data)",
+      "phase": "Audit execution",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.2",
+      "production_lead": "Pavithra",
+      "team_members": [
+        "Ashly",
+        "Ananthakrishan"
+      ],
+      "reviewers": [
+        "Syam",
+        "Azhar"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Client uploads via portal"
+        },
+        {
+          "seq": 2,
+          "title": "AI verifies against pre-defined criteria automatically"
+        },
+        {
+          "seq": 3,
+          "title": "Auto-classified & filed to the standard folder"
+        },
+        {
+          "seq": 4,
+          "title": "Missing statutory items auto-flagged; human approves"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Client sends docs via email / WhatsApp",
+          "Associate downloads manually",
+          "Checks each against requirements",
+          "Renames & files ; chases missing statutory data (ZATCA, Zakat, VAT, GOSI, Qiwa)"
+        ],
+        "after_ai_steps": [
+          "Client uploads via portal",
+          "AI verifies against pre-defined criteria automatically",
+          "Auto-classified & filed to the standard folder",
+          "Missing statutory items auto-flagged; human approves"
+        ]
+      }
+    },
+    {
+      "code": "3.3",
+      "title": "Initial TB Verification & Opening-Balance Reconciliation",
+      "phase": "Audit execution",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.3",
+      "production_lead": "Pavithra",
+      "team_members": [
+        "Neeraja",
+        "Jeffin",
+        "Darly",
+        "Ramees"
+      ],
+      "reviewers": [
+        "Syam",
+        "Azhar"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Rules engine of AI platform verifies TB structure & completeness"
+        },
+        {
+          "seq": 2,
+          "title": "Opening balances auto-checked vs prior-year AFS"
+        },
+        {
+          "seq": 3,
+          "title": "TB ↔ GL reconciled automatically with variance flags"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Audit Lead/Associate checks TB completeness & structure manually",
+          "Ties opening balances to prior-year audited FS by hand",
+          "Reconciles TB ↔ GL/SoA in Excel",
+          "Investigates differences manually"
+        ],
+        "after_ai_steps": [
+          "Rules engine of AI platform verifies TB structure & completeness",
+          "Opening balances auto-checked vs prior-year AFS",
+          "TB ↔ GL reconciled automatically with variance flags",
+          "Flagged variance will be verified by Audit Lead/Associate"
+        ]
+      }
+    },
+    {
+      "code": "3.4",
+      "title": "Sampling, Vouching & External Confirmations",
+      "phase": "Audit execution",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.4",
+      "production_lead": "Pavithra",
+      "team_members": [
+        "Rijin",
+        "Cini",
+        "Sandhya",
+        "Bisnu",
+        "Devika T G"
+      ],
+      "reviewers": [
+        "Syam",
+        "Azhar"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Auditors logic for sample selection will be fed into the rules engine & samples will be automatically populated"
+        },
+        {
+          "seq": 2,
+          "title": "Sample auto-matched to source with a confidence score"
+        },
+        {
+          "seq": 3,
+          "title": "Confirmation letters auto-generated and tracked"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Associate selects samples judgmentally",
+          "Vouches invoice-by-invoice to source manually",
+          "Drafts bank / customer / supplier / related-party confirmations",
+          "Chases confirmation responses"
+        ],
+        "after_ai_steps": [
+          "Auditors logic for sample selection will be fed into the rules engine & samples will be automatically populated",
+          "Sample auto-matched to source with a confidence score",
+          "Confirmation letters auto-generated and tracked",
+          "Audit Lead/Associate reviews matches & concludes"
+        ]
+      }
+    },
+    {
+      "code": "3.5",
+      "title": "Substantive Procedures & KSA Schedules (EOSB / GOSI / Prepaid / Depreciation)",
+      "phase": "Audit execution",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.5",
+      "production_lead": "Rustham",
+      "team_members": [
+        "Ajay",
+        "Elizabeth",
+        "Jewel"
+      ],
+      "reviewers": [
+        "Syam",
+        "Azhar"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Rules engine computes EOSB, GOSI, prepaid & depreciation from payroll / FA data"
+        },
+        {
+          "seq": 2,
+          "title": "Auto-reconciled to GL with variance flags"
+        },
+        {
+          "seq": 3,
+          "title": "Adjustment entries passed automatically"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Associate builds each schedule manually in Excel",
+          "Reconciles schedules to GL",
+          "Re-checks calculations on review",
+          "Passing adjustment entries"
+        ],
+        "after_ai_steps": [
+          "Rules engine computes EOSB, GOSI, prepaid & depreciation from payroll / FA data",
+          "Auto-reconciled to GL with variance flags",
+          "Human reviews and approves",
+          "Adjustment entries passed automatically"
+        ]
+      }
+    },
+    {
+      "code": "3.6",
+      "title": "IFRS FS Preparation (Uploading to Draftworx / 1Audit)",
+      "phase": "Audit execution",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.6",
+      "production_lead": "Rustham",
+      "team_members": [
+        "Vineetha",
+        "Aswathy",
+        "Liya",
+        "Nihal",
+        "Deepak",
+        "Arnold"
+      ],
+      "reviewers": [
+        "Syam",
+        "Azhar"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "IFRS FS preparation for zakat filing with the help of rules engine of AI"
+        },
+        {
+          "seq": 2,
+          "title": "AI-assisted TB mapping & note drafting"
+        },
+        {
+          "seq": 3,
+          "title": "Lead schedules auto-linked"
+        },
+        {
+          "seq": 4,
+          "title": "FS-to-TB agreement auto-checked(MISCPA related workflow)"
+        },
+        {
+          "seq": 5,
+          "title": "Cross-references & comparatives auto-validated; audit lead approves"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "IFRS FS preparation for zakat filing manually",
+          "Associate imports TB to Draftworx / 1Audit",
+          "Maps accounts & links lead schedules manually",
+          "Builds SFP, P&L, SOCE, Cash Flows and notes & checked manually with 1Audit FS",
+          "Checks comparatives & cross-references"
+        ],
+        "after_ai_steps": [
+          "IFRS FS preparation for zakat filing with the help of rules engine of AI",
+          "AI-assisted TB mapping & note drafting",
+          "Lead schedules auto-linked",
+          "FS-to-TB agreement auto-checked(MISCPA related workflow)",
+          "Cross-references & comparatives auto-validated; audit lead approves"
+        ]
+      }
+    },
+    {
+      "code": "3.7",
+      "title": "Self-Review by Audit Lead",
+      "phase": "Audit execution",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.7",
+      "production_lead": "Rustham",
+      "team_members": [
+        "Athira",
+        "Arnold"
+      ],
+      "reviewers": [
+        "Syam",
+        "Azhar"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "AI pre-check surfaces gaps (missing evidence, open items, FS–TB differences)"
+        },
+        {
+          "seq": 2,
+          "title": "Every decision logged as evidence"
+        },
+        {
+          "seq": 3,
+          "title": "Outstanding points auto-compiled & review points auto generated."
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Verifies FS-to-TB agreement",
+          "Lead verifies the completeness of the audit documentation based on checklist manually",
+          "Re-checks evidence, confirmations, adjustments,schedules etc",
+          "Lists outstanding review points & confirms review corrections"
+        ],
+        "after_ai_steps": [
+          "AI pre-check surfaces gaps (missing evidence, open items, FS–TB differences)",
+          "Lead dispositions each item (accept / edit / reject / escalate)",
+          "Every decision logged as evidence",
+          "Outstanding points auto-compiled & review points auto generated."
+        ]
+      }
+    },
+    {
+      "code": "4.1",
+      "title": "Team Lead / Manager Review & Correction",
+      "phase": "Review",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 4.1",
+      "production_lead": "Rustham",
+      "team_members": [
+        "Athira",
+        "Arnold",
+        "Deepak"
+      ],
+      "reviewers": [
+        "Jismy"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Version-aware warnings prevent use of superseded evidence(this step will help at the time of multiple review & review ctrns at this stage)"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Reviewer checks working-paper quality, sampling, calculations, adjustments, FS consistency",
+          "Raises review points & monitors corrections manually"
+        ],
+        "after_ai_steps": [
+          "Log of self review by Audit Lead will be rechecked",
+          "Based on the AI generated analytical procedures, reviewer will check the overall audit consistency & raise review points.  Review points structured with owner, status & evidence links",
+          "Version-aware warnings prevent use of superseded evidence(this step will help at the time of multiple review & review ctrns at this stage)"
+        ]
+      }
+    },
+    {
+      "code": "4.2",
+      "title": "Auditor Review & Review-Point Clearance",
+      "phase": "Review",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 4.2",
+      "production_lead": "Rustham",
+      "team_members": [
+        "Athira",
+        "Arnold",
+        "Deepak"
+      ],
+      "reviewers": [
+        "Jismy"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Review points remarks will be captured on AI platform ensuring systematic response to the auditor;s query & closure of audit"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Auditor reviews significant risks, material balances, evidence, opinion, disclosures, going concern etc",
+          "Review points chased (client) and closed manually",
+          "Responses to auditor's comments obtained before closing"
+        ],
+        "after_ai_steps": [
+          "Review points remarks will be captured on AI platform ensuring systematic response to the auditor;s query & closure of audit"
+        ]
+      }
+    },
+    {
+      "code": "5.1",
+      "title": "Draft FS Preparation & Client Confirmation",
+      "phase": "Reporting and submission",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 5.1",
+      "production_lead": "Pavithra",
+      "team_members": [
+        "Jeffin",
+        "Anna"
+      ],
+      "reviewers": [
+        "Fayis"
+      ],
+      "supporting": [
+        "Mohammed Ali",
+        "Uvais",
+        "Allen",
+        "Dhanhaj"
+      ],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Agrees figures of finalised TB automatically with the draft FS"
+        },
+        {
+          "seq": 2,
+          "title": "Shared with client via AI platform"
+        },
+        {
+          "seq": 3,
+          "title": "Client comments tracked against items"
+        },
+        {
+          "seq": 4,
+          "title": "Changes in the draft version-controlled automatically"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Prepare Draft FS after review points cleared",
+          "Agree figures to audited TB",
+          "Share Draft FS with client; collect comments",
+          "Signed draft verified manually",
+          "Revise and re-issue updated draft if required."
+        ],
+        "after_ai_steps": [
+          "Agrees figures of finalised TB automatically with the draft FS",
+          "Shared with client via AI platform",
+          "Client comments tracked against items",
+          "Changes in the draft version-controlled automatically"
+        ]
+      }
+    },
+    {
+      "code": "5.2",
+      "title": "Final AFS Issuance & Balance Payment",
+      "phase": "Reporting and submission",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 5.2",
+      "production_lead": "Pavithra",
+      "team_members": [
+        "Jeffin",
+        "Anna"
+      ],
+      "reviewers": [
+        "Fayis"
+      ],
+      "supporting": [
+        "Sajad"
+      ],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Balance payment auto-reminders triggers upon issuance of draft."
+        },
+        {
+          "seq": 2,
+          "title": "AFS issued will be verified with signed draft automatically"
+        },
+        {
+          "seq": 3,
+          "title": "Approval gate enforces review + payment controls before AFS issuance"
+        },
+        {
+          "seq": 4,
+          "title": "AFS shared with client automatically after gatekeeping (Human-vetting)"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Follow up outstanding balance payment",
+          "Issuance of AFS after approvals & review clearance",
+          "AFS issued will be verified with signed draft manually",
+          "Upon full payment, AFS will be shared with client (via mail/whatsapp)"
+        ],
+        "after_ai_steps": [
+          "Balance payment auto-reminders triggers upon issuance of draft.",
+          "AFS issued will be verified with signed draft automatically",
+          "Approval gate enforces review + payment controls before AFS issuance",
+          "AFS shared with client automatically after gatekeeping (Human-vetting)"
+        ]
+      }
+    },
+    {
+      "code": "5.3",
+      "title": "Qawaem Upload & Submission Confirmation",
+      "phase": "Reporting and submission",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 5.3",
+      "production_lead": "Pavithra",
+      "team_members": [
+        "Jeffin",
+        "Anna"
+      ],
+      "reviewers": [
+        "Fayis"
+      ],
+      "supporting": [
+        "Mohammed Ali",
+        "Uvais"
+      ],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Pre-upload checklist for Qawaem upload auto-verified & send to auditors along with signed draft."
+        },
+        {
+          "seq": 2,
+          "title": "Qawaem upload status will be automatically checked & reflected in AI platform."
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Collecting details for Qawaem upload (Iqama Expiry date, Mail Id, etc) & sharing with auditors",
+          "Upload to Qawaem by auditors (Qawaem uplaod is purely done by auditors , so the process do not have any impact to Analytix employees)",
+          "Checking Qawaem upload status manually through SBC site & saving confirmation to the folder"
+        ],
+        "after_ai_steps": [
+          "Pre-upload checklist for Qawaem upload auto-verified & send to auditors along with signed draft.",
+          "Qawaem upload status will be automatically checked & reflected in AI platform."
+        ]
+      }
+    },
+    {
+      "code": "6.1",
+      "title": "File Allocation & Workload Management",
+      "phase": "File management and closure",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 6.1",
+      "production_lead": "Rustham",
+      "team_members": [
+        "Sreenanda",
+        "Emanuval",
+        "Maria"
+      ],
+      "reviewers": [
+        "Jismy"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "File auto-routes to the allotted team"
+        },
+        {
+          "seq": 2,
+          "title": "AI platform provides 360 view including suggestions of work allocation, Ensures smart planning of workload"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "File created manually after engagement confirmed",
+          "Audit Manager checks team availability from memory &Allocates to an Audit Lead",
+          "Re-balances workload informally"
+        ],
+        "after_ai_steps": [
+          "File created by FO; profile (ABCPA / MISCPA) & auditor selected",
+          "File auto-routes to the allotted team",
+          "AI platform provides 360 view including suggestions of work allocation, Ensures smart planning of workload",
+          "Manager confirms / reallocates"
+        ]
+      }
+    },
+    {
+      "code": "6.2",
+      "title": "Client Query Management & Follow-up",
+      "phase": "File management and closure",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 6.2",
+      "production_lead": "Rustham",
+      "team_members": [
+        "Sreenanda",
+        "Emanuval",
+        "Maria"
+      ],
+      "reviewers": [
+        "Jismy"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Audit requirements will be readily available in the AI platform for clients hence avoiding manual push for requirements 2 AI detects the anomaly during document check"
+        },
+        {
+          "seq": 2,
+          "title": "AI drafts the query automatically"
+        },
+        {
+          "seq": 3,
+          "title": "Query tracked with tiered reminders"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Associate follow ups for audit requirements with clients",
+          "Associate spots an anomaly manually during review of documents",
+          "Drafts a query by email or WhatsApp",
+          "Chases the client for a response",
+          "Repeats until documents are completed & escalates verbally for delays or non- response",
+          "Tracks status manually"
+        ],
+        "after_ai_steps": [
+          "Audit requirements will be readily available in the AI platform for clients hence avoiding manual push for requirements 2 AI detects the anomaly during document check",
+          "AI drafts the query automatically",
+          "Query tracked with tiered reminders",
+          "Human approves before it is sent"
+        ]
+      }
+    },
+    {
+      "code": "6.3",
+      "title": "Audit Log & Traceability",
+      "phase": "File management and closure",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 6.3",
+      "production_lead": "Rustham",
+      "team_members": [
+        "Sreenanda",
+        "Emanuval",
+        "Maria"
+      ],
+      "reviewers": [
+        "Jismy"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "Every action auto-logged with timestamp & user"
+        },
+        {
+          "seq": 2,
+          "title": "All events in one searchable, append-only trail"
+        },
+        {
+          "seq": 3,
+          "title": "Covers uploads, accepts, rejects, queries, approvals (Ensures compliance with ISA 230:Audit Documentation )"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Events noted manually in email or a personal tracker",
+          "Records scattered across inboxes and files",
+          "Reconstructing who-did-what is difficult to trace"
+        ],
+        "after_ai_steps": [
+          "Every action auto-logged with timestamp & user",
+          "All events in one searchable, append-only trail",
+          "Covers uploads, accepts, rejects, queries, approvals (Ensures compliance with ISA 230:Audit Documentation )"
+        ]
+      }
+    },
+    {
+      "code": "6.4",
+      "title": "Final File Closure & Archiving (18-point checklist Refer SoP)",
+      "phase": "File management and closure",
+      "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 6.4",
+      "production_lead": "Rustham",
+      "team_members": [
+        "Sreenanda",
+        "Emanuval",
+        "Maria"
+      ],
+      "reviewers": [
+        "Jismy"
+      ],
+      "supporting": [],
+      "subprocesses": [
+        {
+          "seq": 1,
+          "title": "System enforces the 18-point closure checklist"
+        },
+        {
+          "seq": 2,
+          "title": "Closure blocked until every checklist are satisfied"
+        },
+        {
+          "seq": 3,
+          "title": "File auto-archived with an index and lock"
+        }
+      ],
+      "context": {
+        "before_ai_steps": [
+          "Lead verifies the closure checklist manually across scattered files",
+          "Confirms EL, payments, evidence, adjustments, cleared points, signed Draft, AFS & Qawaem evidence",
+          "Archives the file manually"
+        ],
+        "after_ai_steps": [
+          "System enforces the 18-point closure checklist",
+          "Closure blocked until every checklist are satisfied",
+          "File auto-archived with an index and lock"
+        ]
+      }
     }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "FO picks from list of leads(appx.2000+) randomly or by rough priority",
-     "FO assesses potential via call / WhatsApp / email",
-     "FO drafts proposal (scope, period, framework, fee, terms) manually",
-     "Internal approval sought over odoo (As per set Hierarchy)"
-    ],
-    "after_ai_steps": [
-     "AI scores & ranks 2,000+ leads by conversion potential",
-     "FO contacts top-scored leads first",
-     "Proposal currently generated through Odoo will be auto-generated through AI integrated dashboard.",
-     "Internal approval routed in-app; FO edits & sends"
-    ]
-   }
-  },
-  {
-   "code": "1.2",
-   "title": "Signed Proposal & Basic Documents Collection",
-   "phase": "Lead and proposal",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 1.2",
-   "production_lead": "Pavithra",
-   "team_members": [
-    "Rijin"
-   ],
-   "reviewers": [
-    "Fayis"
-   ],
-   "supporting": [
-    "Mohammed Ali",
-    "Uvais"
-   ],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Portal issues a document checklist automatically"
-    },
-    {
-     "seq": 2,
-     "title": "Client uploads; AI classifies & validates each file (type, readability, completeness)"
-    },
-    {
-     "seq": 3,
-     "title": "PY audit client auto fetched through PY Data"
-    },
-    {
-     "seq": 4,
-     "title": "Standardized client folder auto-created and indexed"
-    },
-    {
-     "seq": 5,
-     "title": "Missing / invalid items auto-flagged for follow-up"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "FO emails client for signed proposal + CR, AOA, prior audit report, Zakat/tax, Turnover etc",
-     "Poroject Co-ordinator downloads, renames and files each doc",
-     "Standardized client folder created manually",
-     "Missing items chased informally"
-    ],
-    "after_ai_steps": [
-     "Portal issues a document checklist automatically",
-     "Client uploads; AI classifies & validates each file (type, readability, completeness)",
-     "PY audit client auto fetched through PY Data",
-     "Standardized client folder auto-created and indexed",
-     "Missing / invalid items auto-flagged for follow-up"
-    ]
-   }
-  },
-  {
-   "code": "2.1",
-   "title": "Engagement Letter (EL) Processing & Confirmation",
-   "phase": "Engagement and advance",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 2.1",
-   "production_lead": "Pavithra",
-   "team_members": [
-    "Anna"
-   ],
-   "reviewers": [
-    "Fayis"
-   ],
-   "supporting": [
-    "Mohammed Ali",
-    "Uvais"
-   ],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Based on the signed proposal, once the required parameters are satisfied, EL request will be automatically made by the AI platform"
-    },
-    {
-     "seq": 2,
-     "title": "EL received from auditor verifed by AI"
-    },
-    {
-     "seq": 3,
-     "title": "AI verifies EL fields against the proposal; flags mismatches"
-    },
-    {
-     "seq": 4,
-     "title": "Signed EL + stamp tracked to completion"
-    },
-    {
-     "seq": 5,
-     "title": "Engagement auto-confirmed only when signed EL AND advance received"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Project Coordinator requests EL from auditors",
-     "Verifies legal name, FY, scope, framework, fee, terms, signatory manually",
-     "Chases signed EL with authorised signature & stamp",
-     "Confirmation judged manually"
-    ],
-    "after_ai_steps": [
-     "Based on the signed proposal, once the required parameters are satisfied, EL request will be automatically made by the AI platform",
-     "EL received from auditor verifed by AI",
-     "AI verifies EL fields against the proposal; flags mismatches",
-     "Signed EL + stamp tracked to completion",
-     "Engagement auto-confirmed only when signed EL AND advance received"
-    ]
-   }
-  },
-  {
-   "code": "2.2",
-   "title": "Advance Payment & Invoice Issuance",
-   "phase": "Engagement and advance",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 2.2",
-   "production_lead": "Pavithra",
-   "team_members": [
-    "Anna"
-   ],
-   "reviewers": [
-    "Fayis"
-   ],
-   "supporting": [
-    "Mohammed Ali",
-    "Uvais",
-    "Sajad"
-   ],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Invoice received verified by AI with EL/Proposal"
-    },
-    {
-     "seq": 2,
-     "title": "Payment status tracked in AI platform"
-    },
-    {
-     "seq": 3,
-     "title": "Tiered automated reminders (Tier 1/2/3)"
-    },
-    {
-     "seq": 4,
-     "title": "Engagement auto-unlocks for fieldwork on receipt"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Follows up for advance payment by email / call /Whatsapp",
-     "Payment team issues invoice per agreed terms",
-     "Monitors status on a spreadsheet",
-     "Escalates delays informally"
-    ],
-    "after_ai_steps": [
-     "Invoice received verified by AI with EL/Proposal",
-     "Payment status tracked in AI platform",
-     "Tiered automated reminders (Tier 1/2/3)",
-     "Engagement auto-unlocks for fieldwork on receipt"
-    ]
-   }
-  },
-  {
-   "code": "3.1",
-   "title": "Audit Kick-off Meeting & Planning",
-   "phase": "Audit execution",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.1",
-   "production_lead": "Pavithra",
-   "team_members": [
-    "Neeraja",
-    "Hiba",
-    "Devika T G"
-   ],
-   "reviewers": [
-    "Syam",
-    "Azhar"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Microsoft Teams meeting auto-scheduled"
-    },
-    {
-     "seq": 2,
-     "title": "AI drafts agenda + requirement list from the file profile"
-    },
-    {
-     "seq": 3,
-     "title": "Actions & responsibilities, minutes of meeting logged to the file tracker"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Audit lead/Associate schedules meeting by email / WhatsApp",
-     "Prepares agenda manually (timelines, deadlines, responsibilities, confirmations, sampling, draft-FS date)",
-     "Notes actions in personal tracker"
-    ],
-    "after_ai_steps": [
-     "Microsoft Teams meeting auto-scheduled",
-     "AI drafts agenda + requirement list from the file profile",
-     "Actions & responsibilities, minutes of meeting logged to the file tracker"
-    ]
-   }
-  },
-  {
-   "code": "3.2",
-   "title": "Document Verification(Initial + Statutory Data)",
-   "phase": "Audit execution",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.2",
-   "production_lead": "Pavithra",
-   "team_members": [
-    "Ashly",
-    "Ananthakrishan"
-   ],
-   "reviewers": [
-    "Syam",
-    "Azhar"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Client uploads via portal"
-    },
-    {
-     "seq": 2,
-     "title": "AI verifies against pre-defined criteria automatically"
-    },
-    {
-     "seq": 3,
-     "title": "Auto-classified & filed to the standard folder"
-    },
-    {
-     "seq": 4,
-     "title": "Missing statutory items auto-flagged; human approves"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Client sends docs via email / WhatsApp",
-     "Associate downloads manually",
-     "Checks each against requirements",
-     "Renames & files ; chases missing statutory data (ZATCA, Zakat, VAT, GOSI, Qiwa)"
-    ],
-    "after_ai_steps": [
-     "Client uploads via portal",
-     "AI verifies against pre-defined criteria automatically",
-     "Auto-classified & filed to the standard folder",
-     "Missing statutory items auto-flagged; human approves"
-    ]
-   }
-  },
-  {
-   "code": "3.3",
-   "title": "Initial TB Verification & Opening-Balance Reconciliation",
-   "phase": "Audit execution",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.3",
-   "production_lead": "Pavithra",
-   "team_members": [
-    "Neeraja",
-    "Jeffin",
-    "Darly",
-    "Ramees"
-   ],
-   "reviewers": [
-    "Syam",
-    "Azhar"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Rules engine of AI platform verifies TB structure & completeness"
-    },
-    {
-     "seq": 2,
-     "title": "Opening balances auto-checked vs prior-year AFS"
-    },
-    {
-     "seq": 3,
-     "title": "TB ↔ GL reconciled automatically with variance flags"
-    },
-    {
-     "seq": 4,
-     "title": "Flagged variance will be verified by Audit Lead/Associate"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Audit Lead/Associate checks TB completeness & structure manually",
-     "Ties opening balances to prior-year audited FS by hand",
-     "Reconciles TB ↔ GL/SoA in Excel",
-     "Investigates differences manually"
-    ],
-    "after_ai_steps": [
-     "Rules engine of AI platform verifies TB structure & completeness",
-     "Opening balances auto-checked vs prior-year AFS",
-     "TB ↔ GL reconciled automatically with variance flags",
-     "Flagged variance will be verified by Audit Lead/Associate"
-    ]
-   }
-  },
-  {
-   "code": "3.4",
-   "title": "Sampling, Vouching & External Confirmations",
-   "phase": "Audit execution",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.4",
-   "production_lead": "Pavithra",
-   "team_members": [
-    "Rijin",
-    "Cini",
-    "Sandhya",
-    "Bisnu",
-    "Devika T G"
-   ],
-   "reviewers": [
-    "Syam",
-    "Azhar"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Auditors logic for sample selection will be fed into the rules engine & samples will be automatically populated"
-    },
-    {
-     "seq": 2,
-     "title": "Sample auto-matched to source with a confidence score"
-    },
-    {
-     "seq": 3,
-     "title": "Confirmation letters auto-generated and tracked"
-    },
-    {
-     "seq": 4,
-     "title": "Audit Lead/Associate reviews matches & concludes"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Associate selects samples judgmentally",
-     "Vouches invoice-by-invoice to source manually",
-     "Drafts bank / customer / supplier / related-party confirmations",
-     "Chases confirmation responses"
-    ],
-    "after_ai_steps": [
-     "Auditors logic for sample selection will be fed into the rules engine & samples will be automatically populated",
-     "Sample auto-matched to source with a confidence score",
-     "Confirmation letters auto-generated and tracked",
-     "Audit Lead/Associate reviews matches & concludes"
-    ]
-   }
-  },
-  {
-   "code": "3.5",
-   "title": "Substantive Procedures & KSA Schedules (EOSB / GOSI / Prepaid / Depreciation)",
-   "phase": "Audit execution",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.5",
-   "production_lead": "Rustham",
-   "team_members": [
+  ],
+  "people": [
     "Ajay",
-    "Elizabeth",
-    "Jewel"
-   ],
-   "reviewers": [
-    "Syam",
-    "Azhar"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Rules engine computes EOSB, GOSI, prepaid & depreciation from payroll / FA data"
-    },
-    {
-     "seq": 2,
-     "title": "Auto-reconciled to GL with variance flags"
-    },
-    {
-     "seq": 3,
-     "title": "Human reviews and approves"
-    },
-    {
-     "seq": 4,
-     "title": "Adjustment entries passed automatically"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Associate builds each schedule manually in Excel",
-     "Reconciles schedules to GL",
-     "Re-checks calculations on review",
-     "Passing adjustment entries"
-    ],
-    "after_ai_steps": [
-     "Rules engine computes EOSB, GOSI, prepaid & depreciation from payroll / FA data",
-     "Auto-reconciled to GL with variance flags",
-     "Human reviews and approves",
-     "Adjustment entries passed automatically"
-    ]
-   }
-  },
-  {
-   "code": "3.6",
-   "title": "IFRS FS Preparation (Uploading to Draftworx / 1Audit)",
-   "phase": "Audit execution",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.6",
-   "production_lead": "Rustham",
-   "team_members": [
-    "Vineetha",
-    "Aswathy",
-    "Liya",
-    "Nihal",
-    "Deepak",
-    "Arnold"
-   ],
-   "reviewers": [
-    "Syam",
-    "Azhar"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "IFRS FS preparation for zakat filing with the help of rules engine of AI"
-    },
-    {
-     "seq": 2,
-     "title": "AI-assisted TB mapping & note drafting"
-    },
-    {
-     "seq": 3,
-     "title": "Lead schedules auto-linked"
-    },
-    {
-     "seq": 4,
-     "title": "FS-to-TB agreement auto-checked(MISCPA related workflow)"
-    },
-    {
-     "seq": 5,
-     "title": "Cross-references & comparatives auto-validated; audit lead approves"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "IFRS FS preparation for zakat filing manually",
-     "Associate imports TB to Draftworx / 1Audit",
-     "Maps accounts & links lead schedules manually",
-     "Builds SFP, P&L, SOCE, Cash Flows and notes & checked manually with 1Audit FS",
-     "Checks comparatives & cross-references"
-    ],
-    "after_ai_steps": [
-     "IFRS FS preparation for zakat filing with the help of rules engine of AI",
-     "AI-assisted TB mapping & note drafting",
-     "Lead schedules auto-linked",
-     "FS-to-TB agreement auto-checked(MISCPA related workflow)",
-     "Cross-references & comparatives auto-validated; audit lead approves"
-    ]
-   }
-  },
-  {
-   "code": "3.7",
-   "title": "Self-Review by Audit Lead",
-   "phase": "Audit execution",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 3.7",
-   "production_lead": "Rustham",
-   "team_members": [
-    "Athira",
-    "Arnold"
-   ],
-   "reviewers": [
-    "Syam",
-    "Azhar"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "AI pre-check surfaces gaps (missing evidence, open items, FS–TB differences)"
-    },
-    {
-     "seq": 2,
-     "title": "Lead dispositions each item (accept / edit / reject / escalate)"
-    },
-    {
-     "seq": 3,
-     "title": "Every decision logged as evidence"
-    },
-    {
-     "seq": 4,
-     "title": "Outstanding points auto-compiled & review points auto generated."
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Verifies FS-to-TB agreement",
-     "Lead verifies the completeness of the audit documentation based on checklist manually",
-     "Re-checks evidence, confirmations, adjustments,schedules etc",
-     "Lists outstanding review points & confirms review corrections"
-    ],
-    "after_ai_steps": [
-     "AI pre-check surfaces gaps (missing evidence, open items, FS–TB differences)",
-     "Lead dispositions each item (accept / edit / reject / escalate)",
-     "Every decision logged as evidence",
-     "Outstanding points auto-compiled & review points auto generated."
-    ]
-   }
-  },
-  {
-   "code": "4.1",
-   "title": "Team Lead / Manager Review & Correction",
-   "phase": "Review",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 4.1",
-   "production_lead": "Rustham",
-   "team_members": [
-    "Athira",
-    "Arnold",
-    "Deepak"
-   ],
-   "reviewers": [
-    "Jismy"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Log of self review by Audit Lead will be rechecked"
-    },
-    {
-     "seq": 2,
-     "title": "Based on the AI generated analytical procedures, reviewer will check the overall audit consistency & raise review points.  Review points structured with owner, status & evidence links"
-    },
-    {
-     "seq": 3,
-     "title": "Version-aware warnings prevent use of superseded evidence(this step will help at the time of multiple review & review ctrns at this stage)"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Reviewer checks working-paper quality, sampling, calculations, adjustments, FS consistency",
-     "Raises review points & monitors corrections manually"
-    ],
-    "after_ai_steps": [
-     "Log of self review by Audit Lead will be rechecked",
-     "Based on the AI generated analytical procedures, reviewer will check the overall audit consistency & raise review points.  Review points structured with owner, status & evidence links",
-     "Version-aware warnings prevent use of superseded evidence(this step will help at the time of multiple review & review ctrns at this stage)"
-    ]
-   }
-  },
-  {
-   "code": "4.2",
-   "title": "Auditor Review & Review-Point Clearance",
-   "phase": "Review",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 4.2",
-   "production_lead": "Rustham",
-   "team_members": [
-    "Athira",
-    "Arnold",
-    "Deepak"
-   ],
-   "reviewers": [
-    "Jismy"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Review points remarks will be captured on AI platform ensuring systematic response to the auditor;s query & closure of audit"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Auditor reviews significant risks, material balances, evidence, opinion, disclosures, going concern etc",
-     "Review points chased (client) and closed manually",
-     "Responses to auditor's comments obtained before closing"
-    ],
-    "after_ai_steps": [
-     "Review points remarks will be captured on AI platform ensuring systematic response to the auditor;s query & closure of audit"
-    ]
-   }
-  },
-  {
-   "code": "5.1",
-   "title": "Draft FS Preparation & Client Confirmation",
-   "phase": "Reporting and submission",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 5.1",
-   "production_lead": "Pavithra",
-   "team_members": [
-    "Jeffin",
-    "Anna"
-   ],
-   "reviewers": [
-    "Fayis"
-   ],
-   "supporting": [
-    "Mohammed Ali",
-    "Uvais",
     "Allen",
-    "Dhanhaj"
-   ],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Agrees figures of finalised TB automatically with the draft FS"
-    },
-    {
-     "seq": 2,
-     "title": "Shared with client via AI platform"
-    },
-    {
-     "seq": 3,
-     "title": "Client comments tracked against items"
-    },
-    {
-     "seq": 4,
-     "title": "Changes in the draft version-controlled automatically"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Prepare Draft FS after review points cleared",
-     "Agree figures to audited TB",
-     "Share Draft FS with client; collect comments",
-     "Signed draft verified manually",
-     "Revise and re-issue updated draft if required."
-    ],
-    "after_ai_steps": [
-     "Agrees figures of finalised TB automatically with the draft FS",
-     "Shared with client via AI platform",
-     "Client comments tracked against items",
-     "Changes in the draft version-controlled automatically"
-    ]
-   }
-  },
-  {
-   "code": "5.2",
-   "title": "Final AFS Issuance & Balance Payment",
-   "phase": "Reporting and submission",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 5.2",
-   "production_lead": "Pavithra",
-   "team_members": [
+    "Ananthakrishan",
+    "Anna",
+    "Arnold",
+    "Ashly",
+    "Aswathy",
+    "Athira",
+    "Azhar",
+    "Bisnu",
+    "Cini",
+    "Darly",
+    "Deepak",
+    "Devika T G",
+    "Dhanhaj",
+    "Elizabeth",
+    "Emanuval",
+    "Fayis",
+    "Hiba",
     "Jeffin",
-    "Anna"
-   ],
-   "reviewers": [
-    "Fayis"
-   ],
-   "supporting": [
-    "Sajad"
-   ],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Balance payment auto-reminders triggers upon issuance of draft."
-    },
-    {
-     "seq": 2,
-     "title": "AFS issued will be verified with signed draft automatically"
-    },
-    {
-     "seq": 3,
-     "title": "Approval gate enforces review + payment controls before AFS issuance"
-    },
-    {
-     "seq": 4,
-     "title": "AFS shared with client automatically after gatekeeping (Human-vetting)"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Follow up outstanding balance payment",
-     "Issuance of AFS after approvals & review clearance",
-     "AFS issued will be verified with signed draft manually",
-     "Upon full payment, AFS will be shared with client (via mail/whatsapp)"
-    ],
-    "after_ai_steps": [
-     "Balance payment auto-reminders triggers upon issuance of draft.",
-     "AFS issued will be verified with signed draft automatically",
-     "Approval gate enforces review + payment controls before AFS issuance",
-     "AFS shared with client automatically after gatekeeping (Human-vetting)"
-    ]
-   }
-  },
-  {
-   "code": "5.3",
-   "title": "Qawaem Upload & Submission Confirmation",
-   "phase": "Reporting and submission",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 5.3",
-   "production_lead": "Pavithra",
-   "team_members": [
-    "Jeffin",
-    "Anna"
-   ],
-   "reviewers": [
-    "Fayis"
-   ],
-   "supporting": [
+    "Jewel",
+    "Jibin K K",
+    "Jismy",
+    "Liya",
+    "Maria",
     "Mohammed Ali",
-    "Uvais"
-   ],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Pre-upload checklist for Qawaem upload auto-verified & send to auditors along with signed draft."
-    },
-    {
-     "seq": 2,
-     "title": "Qawaem upload status will be automatically checked & reflected in AI platform."
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Collecting details for Qawaem upload (Iqama Expiry date, Mail Id, etc) & sharing with auditors",
-     "Upload to Qawaem by auditors (Qawaem uplaod is purely done by auditors , so the process do not have any impact to Analytix employees)",
-     "Checking Qawaem upload status manually through SBC site & saving confirmation to the folder"
-    ],
-    "after_ai_steps": [
-     "Pre-upload checklist for Qawaem upload auto-verified & send to auditors along with signed draft.",
-     "Qawaem upload status will be automatically checked & reflected in AI platform."
-    ]
-   }
-  },
-  {
-   "code": "6.1",
-   "title": "File Allocation & Workload Management",
-   "phase": "File management and closure",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 6.1",
-   "production_lead": "Rustham",
-   "team_members": [
+    "Neeraja",
+    "Nihal",
+    "Pavithra",
+    "Ramees",
+    "Rijin",
+    "Rustham",
+    "Sajad",
+    "Sandhya",
+    "Shon Domnic",
+    "Shon J Iype",
     "Sreenanda",
-    "Emanuval",
-    "Maria"
-   ],
-   "reviewers": [
-    "Jismy"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "File created by FO; profile (ABCPA / MISCPA) & auditor selected"
-    },
-    {
-     "seq": 2,
-     "title": "File auto-routes to the allotted team"
-    },
-    {
-     "seq": 3,
-     "title": "AI platform provides 360 view including suggestions of work allocation, Ensures smart planning of workload"
-    },
-    {
-     "seq": 4,
-     "title": "Manager confirms / reallocates"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "File created manually after engagement confirmed",
-     "Audit Manager checks team availability from memory &Allocates to an Audit Lead",
-     "Re-balances workload informally"
-    ],
-    "after_ai_steps": [
-     "File created by FO; profile (ABCPA / MISCPA) & auditor selected",
-     "File auto-routes to the allotted team",
-     "AI platform provides 360 view including suggestions of work allocation, Ensures smart planning of workload",
-     "Manager confirms / reallocates"
-    ]
-   }
-  },
-  {
-   "code": "6.2",
-   "title": "Client Query Management & Follow-up",
-   "phase": "File management and closure",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 6.2",
-   "production_lead": "Rustham",
-   "team_members": [
-    "Sreenanda",
-    "Emanuval",
-    "Maria"
-   ],
-   "reviewers": [
-    "Jismy"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Audit requirements will be readily available in the AI platform for clients hence avoiding manual push for requirements 2 AI detects the anomaly during document check"
-    },
-    {
-     "seq": 2,
-     "title": "AI drafts the query automatically"
-    },
-    {
-     "seq": 3,
-     "title": "Query tracked with tiered reminders"
-    },
-    {
-     "seq": 4,
-     "title": "Human approves before it is sent"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Associate follow ups for audit requirements with clients",
-     "Associate spots an anomaly manually during review of documents",
-     "Drafts a query by email or WhatsApp",
-     "Chases the client for a response",
-     "Repeats until documents are completed & escalates verbally for delays or non- response",
-     "Tracks status manually"
-    ],
-    "after_ai_steps": [
-     "Audit requirements will be readily available in the AI platform for clients hence avoiding manual push for requirements 2 AI detects the anomaly during document check",
-     "AI drafts the query automatically",
-     "Query tracked with tiered reminders",
-     "Human approves before it is sent"
-    ]
-   }
-  },
-  {
-   "code": "6.3",
-   "title": "Audit Log & Traceability",
-   "phase": "File management and closure",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 6.3",
-   "production_lead": "Rustham",
-   "team_members": [
-    "Sreenanda",
-    "Emanuval",
-    "Maria"
-   ],
-   "reviewers": [
-    "Jismy"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "Every action auto-logged with timestamp & user"
-    },
-    {
-     "seq": 2,
-     "title": "All events in one searchable, append-only trail"
-    },
-    {
-     "seq": 3,
-     "title": "Covers uploads, accepts, rejects, queries, approvals (Ensures compliance with ISA 230:Audit Documentation )"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Events noted manually in email or a personal tracker",
-     "Records scattered across inboxes and files",
-     "Reconstructing who-did-what is difficult to trace"
-    ],
-    "after_ai_steps": [
-     "Every action auto-logged with timestamp & user",
-     "All events in one searchable, append-only trail",
-     "Covers uploads, accepts, rejects, queries, approvals (Ensures compliance with ISA 230:Audit Documentation )"
-    ]
-   }
-  },
-  {
-   "code": "6.4",
-   "title": "Final File Closure & Archiving (18-point checklist Refer SoP)",
-   "phase": "File management and closure",
-   "source_reference": "Analytix AI Before/After workbook, SOP Before vs After (Full), row 6.4",
-   "production_lead": "Rustham",
-   "team_members": [
-    "Sreenanda",
-    "Emanuval",
-    "Maria"
-   ],
-   "reviewers": [
-    "Jismy"
-   ],
-   "supporting": [],
-   "subprocesses": [
-    {
-     "seq": 1,
-     "title": "System enforces the 18-point closure checklist"
-    },
-    {
-     "seq": 2,
-     "title": "Closure blocked until every checklist are satisfied"
-    },
-    {
-     "seq": 3,
-     "title": "File auto-archived with an index and lock"
-    }
-   ],
-   "context": {
-    "before_ai_steps": [
-     "Lead verifies the closure checklist manually across scattered files",
-     "Confirms EL, payments, evidence, adjustments, cleared points, signed Draft, AFS & Qawaem evidence",
-     "Archives the file manually"
-    ],
-    "after_ai_steps": [
-     "System enforces the 18-point closure checklist",
-     "Closure blocked until every checklist are satisfied",
-     "File auto-archived with an index and lock"
-    ]
-   }
-  }
- ],
- "people": [
-  "Ajay",
-  "Allen",
-  "Ananthakrishan",
-  "Anna",
-  "Arnold",
-  "Ashly",
-  "Aswathy",
-  "Athira",
-  "Azhar",
-  "Bisnu",
-  "Cini",
-  "Darly",
-  "Deepak",
-  "Devika T G",
-  "Dhanhaj",
-  "Elizabeth",
-  "Emanuval",
-  "Fayis",
-  "Hiba",
-  "Jeffin",
-  "Jewel",
-  "Jibin K K",
-  "Jismy",
-  "Liya",
-  "Maria",
-  "Mohammed Ali",
-  "Neeraja",
-  "Nihal",
-  "Pavithra",
-  "Ramees",
-  "Rijin",
-  "Rustham",
-  "Sajad",
-  "Sandhya",
-  "Shon Domnic",
-  "Shon J Iype",
-  "Sreenanda",
-  "Syam",
-  "Uvais",
-  "Vineetha"
- ]
+    "Syam",
+    "Uvais",
+    "Vineetha"
+  ]
 }

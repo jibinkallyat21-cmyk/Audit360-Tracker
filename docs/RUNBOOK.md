@@ -13,7 +13,7 @@ Create **two** Supabase projects, one for development and one for production, an
 ### 2.1 Database
 
 1. Open the SQL editor (or use the Supabase CLI) and run, in order, every file in `supabase/migrations/` (`0001` to `0008`).
-2. Run `supabase/seed.sql` **once**. It loads the 20 processes, 74 subprocesses, 6 phases, 40 people, assignments, teams and role tags. It is generated from `seed/seed.json` by `node scripts/generate-seed.mjs`; do not edit it by hand.
+2. Run `supabase/seed.sql` **once**. It loads the 20 processes, 64 subprocesses, 6 phases, 40 people, assignments, teams and role tags. It is generated from `seed/seed.json` by `node scripts/generate-seed.mjs`; do not edit it by hand.
 3. Check that the storage bucket `documents` exists and is **private** (Storage page). Migration `0005` creates it.
 
 Migrations that add tables or functions later must repeat the revoke/grant pattern at the end of `0004_rls.sql`, because Supabase grants new objects to the `anon` and `authenticated` roles by default.

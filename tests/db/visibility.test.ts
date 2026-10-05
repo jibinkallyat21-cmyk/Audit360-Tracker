@@ -13,11 +13,11 @@ describe.skipIf(!TEST_URL)("visibility and direct access", () => {
       await db.as(db.users[user], (q) => q.query("select process_code from processes order by 1"))
     ).rows.map((r) => r.process_code as string);
 
-  it("loads the seed: 20 processes, 74 subprocesses, 40 people", async () => {
+  it("loads the seed: 20 processes, 64 subprocesses, 40 people", async () => {
     const r = await db.admin.query(
       "select (select count(*) from processes) p, (select count(*) from subprocesses) s, (select count(*) from people) pe",
     );
-    expect(r.rows[0]).toEqual({ p: "20", s: "74", pe: "40" });
+    expect(r.rows[0]).toEqual({ p: "20", s: "64", pe: "40" });
   });
 
   it("shows an unapproved account nothing", async () => {

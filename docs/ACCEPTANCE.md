@@ -17,7 +17,7 @@
 
 | Criterion                                              | Status                                              | Where                                                                                          |
 | ------------------------------------------------------ | --------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| All 20 processes are loaded                            | Automated                                           | `visibility.test.ts` (20 processes, 74 subprocesses, 40 people)                                |
+| All 20 processes are loaded                            | Automated                                           | `visibility.test.ts` (20 processes, 64 subprocesses, 40 people)                                |
 | Subprocess descriptions are loaded from the source     | Automated for counts; **please review** the wording | `seed/seed.json` was extracted from the workbook; spot-check it                                |
 | Existing team, lead and reviewer assignments preserved | Automated                                           | the seed is generated from the supplied HTML; `rest.test.ts` checks both teams have 13 members |
 | Users see stage and status of permitted records        | Automated                                           | `rest.test.ts`, `visibility.test.ts`                                                           |

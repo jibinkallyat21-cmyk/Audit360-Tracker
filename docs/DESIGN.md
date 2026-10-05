@@ -27,7 +27,7 @@ Status: **Draft v1 — awaiting approval before Phase 1.** Source of truth: the 
 
 ## 2. Seed data extracted from the source files
 
-- **20 processes** (1.1 to 6.4), **74 subprocesses**, **6 phases**, **40 people**.
+- **20 processes** (1.1 to 6.4), **64 subprocesses**, **6 phases**, **40 people**.
 - Phases: Lead and proposal (1.1–1.2), Engagement and advance (2.1–2.2), Audit execution (3.1–3.7), Review (4.1–4.2), Reporting and submission (5.1–5.3), File management and closure (6.1–6.4).
 - Production Leads: Pavithra (1.1–2.2, 3.1–3.4, 5.1–5.3), Rustham (3.5–3.7, 4.1–4.2, 6.1–6.4). No person is on both leads' teams.
 - Reviewers: Fayis (phases 1, 2, 5), Syam and Azhar (phase 3), Jismy (phases 4 and 6).
@@ -87,7 +87,7 @@ Archive deletion and the final export require Project Head approval, recorded in
 
 All PRD tables are kept, with these additions or clarifications:
 
-- `processes`: becomes the process level (20 rows). New table `subprocesses` (74 rows): `id, process_id, seq, title, current_stage, current_status, review_decision, dashboard_status, updated_by, updated_at`.
+- `processes`: becomes the process level (20 rows). New table `subprocesses` (64 rows): `id, process_id, seq, title, current_stage, current_status, review_decision, dashboard_status, updated_by, updated_at`.
 - `phases`: 6 rows with `display_order`.
 - `people` (the 40 seeded names, first name plus display name) and `profiles.person_id`. This lets assignments exist before anyone registers; approval links the account to a person.
 - `profiles.approval_state`: pending, approved, rejected, deactivated. RLS denies all project data unless `approved` and `is_active`.
