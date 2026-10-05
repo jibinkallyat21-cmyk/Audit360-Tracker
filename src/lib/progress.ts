@@ -127,3 +127,29 @@ export function rollupProcesses(rows: SubprocessRow[]): ProcessRollup[] {
     .map((p) => ({ ...p, percent: Math.round((p.done / p.total) * 100) }))
     .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
 }
+
+export type ProcessStatus =
+  "completed" | "blocked" | "changes_required" | "awaiting_review" | "in_progress" | "not_started";
+
+export const PROCESS_STATUS_LABEL: Record<ProcessStatus, string> = {
+  completed: "Completed",
+  blocked: "Blocked",
+  changes_required: "Changes Required",
+  awaiting_review: "Awaiting Review",
+  in_progress: "In Progress",
+  not_started: "Not Started",
+};
+
+/** One status for a whole process, worst news first. Completed only when every step is done. */
+export function processStatus(rows: SubprocessRow[]): ProcessStatus {
+  if (rows.length > 0 && rows.every(isDone)) return "completed";
+  if (rows.some((r) => r.status === "blocked")) return "blocked";
+  if (rows.some((r) => r.status === "changes_required")) return "changes_required";
+  if (rows.some((r) => r.stage === "review" && r.reviewDecision === "pending_review")) {
+    return "awaiting_review";
+  }
+  if (rows.some((r) => r.status === "in_progress" || r.status === "completed")) {
+    return "in_progress";
+  }
+  return "not_started";
+}

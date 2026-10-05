@@ -13,10 +13,12 @@ import {
   type SubprocessRow,
 } from "@/lib/domain";
 import { rollupProcesses } from "@/lib/progress";
+import { PhaseCards } from "./phase-cards";
 import { EmptyState, Pips, StageBadge, StatusBadge } from "./ui";
 
-type View = "flow" | "board" | "list";
+type View = "cards" | "flow" | "board" | "list";
 const VIEWS: { id: View; label: string }[] = [
+  { id: "cards", label: "Overview" },
   { id: "flow", label: "Flow" },
   { id: "board", label: "Board" },
   { id: "list", label: "List" },
@@ -32,13 +34,16 @@ export function WorkflowExplorer({
   mineProcessIds,
   leadByProcess,
   peopleByProcess,
+  teamByProcess = {},
 }: {
   rows: SubprocessRow[];
   mineProcessIds: string[];
   leadByProcess: Record<string, string>;
   peopleByProcess: Record<string, string[]>;
+  /** Team members per process (without the lead), for the overview cards. */
+  teamByProcess?: Record<string, string[]>;
 }) {
-  const [view, setView] = useState<View>("flow");
+  const [view, setView] = useState<View>("cards");
   const [q, setQ] = useState("");
   const [stage, setStage] = useState<Stage | "">("");
   const [status, setStatus] = useState<Status | "">("");
@@ -189,6 +194,10 @@ export function WorkflowExplorer({
 
       <div id={`${tabsId}-panel`} role="tabpanel" aria-labelledby={`${tabsId}-${view}`}>
         {visible.length === 0 && <EmptyState>No items match.</EmptyState>}
+
+        {view === "cards" && visible.length > 0 && (
+          <PhaseCards rows={visible} leadByProcess={leadByProcess} teamByProcess={teamByProcess} />
+        )}
 
         {view === "flow" && visible.length > 0 && (
           <div className="flow">

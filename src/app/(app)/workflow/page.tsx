@@ -11,9 +11,11 @@ export default async function WorkflowPage() {
   // Both maps come from assignments the database already limited to what this user may see.
   const leadByProcess: Record<string, string> = {};
   const peopleByProcess: Record<string, string[]> = {};
+  const teamByProcess: Record<string, string[]> = {};
   for (const a of assignments) {
     if (a.type === "production_lead") leadByProcess[a.processId] = a.personName;
     (peopleByProcess[a.processId] ??= []).push(a.personName);
+    if (a.type === "team_member") (teamByProcess[a.processId] ??= []).push(a.personName);
   }
   return (
     <main className="stack-lg">
@@ -26,6 +28,7 @@ export default async function WorkflowPage() {
         mineProcessIds={[...caps.assignments.keys()]}
         leadByProcess={leadByProcess}
         peopleByProcess={peopleByProcess}
+        teamByProcess={teamByProcess}
       />
     </main>
   );
