@@ -9,6 +9,7 @@ const PUBLIC_PATHS = [
   "/forgot-password",
   "/reset-password",
   "/auth/confirm",
+  "/auth/continue",
 ];
 
 // The design style guide is reachable without signing in only when ENABLE_STYLEGUIDE=1 (local checks).

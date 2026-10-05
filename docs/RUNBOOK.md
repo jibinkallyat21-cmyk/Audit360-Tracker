@@ -144,3 +144,7 @@ With "Don't email" selected, the page shows each invite link and a CSV (Email, N
 ## 11. Maintenance mode
 
 `src/lib/maintenance.ts`. While on, everyone except the emails in `MAINTENANCE_ALLOWED_EMAILS` (default: the project administrator) sees an "Under maintenance" page (HTTP 503); the administrator signs in at `/login` and works as usual. Set `MAINTENANCE_MODE=0` in Vercel to turn it off, or `1` to turn it on; with no value the default in that file applies (currently off).
+
+## 12. Email links are not used up by previews
+
+Invite, confirm and reset links point at `/auth/confirm`, which only redirects to `/auth/continue`. That page shows a button; pressing it uses the single-use link. This stops mail scanners and chat previews (Outlook Safe Links, Teams) from spending a link before the person clicks. The Supabase email templates keep using `/auth/confirm?...`; no change is needed there.
