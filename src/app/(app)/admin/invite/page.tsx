@@ -3,11 +3,10 @@ import { PageHero } from "@/components/ui";
 import { getOrg } from "@/lib/data";
 import { getPersona } from "@/lib/demo";
 import { demoProfiles } from "@/lib/demo-data";
+import { parseInvites } from "@/lib/invite-parse";
 import { suggestPersons } from "@/lib/matching";
 import { createClient } from "@/lib/supabase/server";
 import { sendInvites } from "./actions";
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default async function InvitePage({
   searchParams,
@@ -15,16 +14,9 @@ export default async function InvitePage({
   searchParams: Promise<{ emails?: string }>;
 }) {
   const raw = (await searchParams).emails ?? "";
-  const list = [
-    ...new Set(
-      raw
-        .split(/[\s,;]+/)
-        .map((x) => x.trim().toLowerCase())
-        .filter(Boolean),
-    ),
-  ].slice(0, 100);
-  const valid = list.filter((x) => EMAIL.test(x));
-  const invalid = list.filter((x) => !EMAIL.test(x));
+  const { entries, invalid } = parseInvites(raw);
+  const nameOf = new Map(entries.map((x) => [x.email, x.name]));
+  const valid = entries.map((x) => x.email);
 
   const demo = await getPersona();
   const [org, profiles] = await Promise.all([
@@ -47,7 +39,7 @@ export default async function InvitePage({
         note: "Already has an account. If they have never signed in, a fresh link is made (link mode).",
       };
     }
-    const m = suggestPersons(e, null, lite);
+    const m = suggestPersons(e, nameOf.get(e) || null, lite);
     const note =
       m.status === "single" && m.suggested
         ? `Suggested: ${m.suggested.displayName} (${m.candidates[0].confidence} match). Please confirm.`
