@@ -21,6 +21,8 @@ export async function login(_: FormState, form: FormData): Promise<FormState> {
     .object({ email, password: z.string().min(1, "Enter your password.") })
     .safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: parsed.error.issues[0].message };
+  // A real sign-in always leaves prototype demo mode, so the real data shows.
+  (await cookies()).delete(DEMO_COOKIE);
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   // One message for every failure so accounts cannot be enumerated.
