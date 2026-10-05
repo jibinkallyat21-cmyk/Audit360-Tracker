@@ -134,3 +134,9 @@ The export reads everything with the service role so that it is complete. That i
 ## 9. Prototype demo (optional)
 
 Set `ENABLE_DEMO=1` in Vercel and the login page gains a "Try the demo" box: one button per role. It shows made-up data (`src/lib/demo-data.ts`), reads nothing from Supabase, creates no accounts and refuses every change. Remove `ENABLE_DEMO` for real use.
+
+## 10. Inviting people (Admin → Invite)
+
+Paste employee emails, confirm the person for each, and send. The app creates the account, links and approves it, and Supabase emails a link to set a password. Needs `SUPABASE_SERVICE_ROLE_KEY` in Vercel, and the Supabase **Invite user** email template set to:
+`<h2>You have been invited</h2><p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=/reset-password">Accept the invite and choose your password</a></p>`
+With "Don't email" selected, the page shows each invite link instead (send them yourself). Raise Supabase's custom-SMTP rate limit (Authentication → Rate Limits) or invite in batches of about 25.
