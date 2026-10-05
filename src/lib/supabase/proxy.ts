@@ -1,6 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { DEMO_COOKIE } from "@/lib/demo-constants";
 import { maintenanceAllowed, maintenanceOn, maintenancePublic } from "@/lib/maintenance";
 import { publicEnv } from "@/lib/env";
 
@@ -26,11 +25,6 @@ export async function updateSession(request: NextRequest) {
   const maintenance = maintenanceOn();
   // The notice page itself never needs a session check.
   if (maintenance && request.nextUrl.pathname.startsWith("/maintenance")) {
-    return NextResponse.next({ request });
-  }
-  // Prototype demo: a visitor who picked a sample role needs no account (see src/lib/demo.ts).
-  // (Not during maintenance: then only the listed administrators get through.)
-  if (!maintenance && process.env.ENABLE_DEMO === "1" && request.cookies.get(DEMO_COOKIE)) {
     return NextResponse.next({ request });
   }
   let response = NextResponse.next({ request });

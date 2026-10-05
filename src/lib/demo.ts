@@ -86,7 +86,8 @@ export const PERSONAS: Persona[] = [
   },
 ];
 
-export const demoEnabled = () => process.env.ENABLE_DEMO === "1";
+/** The prototype demo is switched off for good: no setting turns it back on. */
+export const demoEnabled = () => false;
 
 /** The sample role this visitor picked, or null outside demo mode. */
 export const getPersona = cache(async (): Promise<Persona | null> => {

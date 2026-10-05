@@ -131,9 +131,9 @@ The export reads everything with the service role so that it is complete. That i
 - **Administrator access to the database or Supabase dashboard** is outside the application's controls.
 - **Not run live**: auth emails, Supabase Storage uploads and downloads, and the file-restore scripts. They need a real project; see the marked items above.
 
-## 9. Prototype demo (optional)
+## 9. Prototype demo (switched off)
 
-Set `ENABLE_DEMO=1` in Vercel and the login page gains a "Try the demo" box: one button per role. It shows made-up data (`src/lib/demo-data.ts`), reads nothing from Supabase, creates no accounts and refuses every change. Remove `ENABLE_DEMO` for real use.
+The sample-data demo (`src/lib/demo.ts`, `src/lib/demo-data.ts`) is disabled in code: `demoEnabled()` always returns false, so no setting can turn it on and the login page shows no demo box. The code can be deleted outright if it is not wanted.
 
 ## 10. Inviting people (Admin → Invite)
 
