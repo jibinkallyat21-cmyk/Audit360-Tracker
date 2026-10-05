@@ -2,6 +2,7 @@ import Link from "next/link";
 import { demoLogin, login } from "../actions";
 import { AuthForm, Field } from "../form";
 import { PERSONAS, demoEnabled } from "@/lib/demo";
+import { maintenanceOn } from "@/lib/maintenance";
 import { AuthShell } from "@/components/auth-shell";
 
 export default async function LoginPage({
@@ -35,7 +36,7 @@ export default async function LoginPage({
           <Link href="/register">Create account</Link>
         </p>
       </main>
-      {demoEnabled() && (
+      {demoEnabled() && !maintenanceOn() && (
         <section className="card demo">
           <h2>Try the demo</h2>
           <p className="muted">

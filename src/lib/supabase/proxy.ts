@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { DEMO_COOKIE } from "@/lib/demo-constants";
+import { maintenanceAllowed, maintenanceOn, maintenancePublic } from "@/lib/maintenance";
 import { publicEnv } from "@/lib/env";
 
 const PUBLIC_PATHS = [
@@ -22,8 +23,14 @@ export function isPublicPath(pathname: string) {
 
 /** Refreshes the session cookie and sends signed-out visitors to /login. */
 export async function updateSession(request: NextRequest) {
+  const maintenance = maintenanceOn();
+  // The notice page itself never needs a session check.
+  if (maintenance && request.nextUrl.pathname.startsWith("/maintenance")) {
+    return NextResponse.next({ request });
+  }
   // Prototype demo: a visitor who picked a sample role needs no account (see src/lib/demo.ts).
-  if (process.env.ENABLE_DEMO === "1" && request.cookies.get(DEMO_COOKIE)) {
+  // (Not during maintenance: then only the listed administrators get through.)
+  if (!maintenance && process.env.ENABLE_DEMO === "1" && request.cookies.get(DEMO_COOKIE)) {
     return NextResponse.next({ request });
   }
   let response = NextResponse.next({ request });
@@ -41,6 +48,15 @@ export async function updateSession(request: NextRequest) {
 
   const { data } = await supabase.auth.getClaims();
   const signedIn = Boolean(data?.claims);
+
+  // Maintenance: everyone except the listed administrators sees the notice (HTTP 503).
+  if (
+    maintenance &&
+    !maintenanceAllowed(data?.claims?.email as string | undefined) &&
+    !maintenancePublic(request.nextUrl.pathname)
+  ) {
+    return NextResponse.rewrite(new URL("/maintenance", request.url), { status: 503 });
+  }
 
   if (!signedIn && !isPublicPath(request.nextUrl.pathname)) {
     const redirect = request.nextUrl.clone();

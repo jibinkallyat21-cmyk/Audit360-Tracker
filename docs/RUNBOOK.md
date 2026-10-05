@@ -140,3 +140,7 @@ Set `ENABLE_DEMO=1` in Vercel and the login page gains a "Try the demo" box: one
 Paste employee emails, confirm the person for each, and send. The app creates the account, links and approves it, and Supabase emails a link to set a password. Needs `SUPABASE_SERVICE_ROLE_KEY` in Vercel, and the Supabase **Invite user** email template set to:
 `<h2>You have been invited</h2><p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=/reset-password">Accept the invite and choose your password</a></p>`
 With "Don't email" selected, the page shows each invite link and a CSV (Email, Name, InviteLink) for an Outlook mail merge. Links expire after Supabase's "Email OTP expiration" (Authentication → Providers → Email); set it to the maximum (86400 seconds = 24 hours) before sending. For an account that exists but was never used, link mode makes a fresh link. Raise Supabase's custom-SMTP rate limit (Authentication → Rate Limits) or invite in batches of about 25.
+
+## 11. Maintenance mode
+
+`src/lib/maintenance.ts`. While on, everyone except the emails in `MAINTENANCE_ALLOWED_EMAILS` (default: the project administrator) sees an "Under maintenance" page (HTTP 503); the administrator signs in at `/login` and works as usual. Set `MAINTENANCE_MODE=0` in Vercel to turn it off, or `1` to turn it on; with no value the default in that file applies (currently on).
