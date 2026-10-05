@@ -60,10 +60,13 @@ export function PhaseCards({
   rows,
   leadByProcess,
   teamByProcess,
+  mode = "phases",
 }: {
   rows: SubprocessRow[];
   leadByProcess: Record<string, string>;
   teamByProcess: Record<string, string[]>;
+  /** "phases": phase list that opens into its processes. "all": every process, grouped by phase. */
+  mode?: "phases" | "all";
 }) {
   const [open, setOpen] = useState<string | null>(null);
 
@@ -127,44 +130,43 @@ export function PhaseCards({
           </div>
         </header>
 
-        <ul className="proc-cards">
-          {current.procs.map((p) => {
-            const lead = leadByProcess[p.processId];
-            const team = teamByProcess[p.processId] ?? [];
-            const stage = furthestBack(p.rows);
-            return (
-              <li key={p.processId} className={`proc-card tone-${toneForLead(lead)}`}>
-                <div className="proc-main">
-                  <h3>
-                    <span className="mono">{p.code}</span> {p.title} <StageBadge stage={stage} />
-                  </h3>
-                  {lead && (
-                    <p className="proc-owner">
-                      <strong>Lead:</strong> {lead}
-                    </p>
-                  )}
-                  <p className="proc-meta">
-                    {team.length > 0 && <span>Team: {team.join(", ")}</span>}
-                    <span className="tag">
-                      {p.rows.length} {p.rows.length === 1 ? "step" : "steps"}
-                    </span>
-                    <Pill status={p.status} />
-                  </p>
-                  <p className="proc-desc">{p.rows.map((r) => r.title).join(" · ")}</p>
-                </div>
-                <Link href={`/processes/${p.code}`} className="button">
-                  View details →
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        <ProcessCards
+          procs={current.procs}
+          leadByProcess={leadByProcess}
+          teamByProcess={teamByProcess}
+        />
       </section>
     );
   }
 
+  if (mode === "all") {
+    return (
+      <div className="stack-lg">
+        {phases.map((ph) => (
+          <section key={ph.name} className="stack" aria-label={ph.name}>
+            <h2 className="phase-heading">
+              <span className="phase-icon" aria-hidden="true">
+                {ph.order}
+              </span>
+              {ph.name}
+              <span className="muted">
+                {" "}
+                · {ph.procs.length} {ph.procs.length === 1 ? "process" : "processes"}
+              </span>
+            </h2>
+            <ProcessCards
+              procs={ph.procs}
+              leadByProcess={leadByProcess}
+              teamByProcess={teamByProcess}
+            />
+          </section>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <ul className="phase-grid">
+    <ul className="proc-cards">
       {phases.map((ph) => {
         const steps = ph.procs.flatMap((p) => p.rows);
         const done = steps.filter(
@@ -172,22 +174,71 @@ export function PhaseCards({
         ).length;
         const percent = steps.length === 0 ? 0 : Math.round((done / steps.length) * 100);
         return (
-          <li key={ph.name}>
-            <button type="button" className="phase-card" onClick={() => setOpen(ph.name)}>
+          <li key={ph.name} className="proc-card phase-row">
+            <div className="proc-main">
               <span className="eyebrow">Phase {ph.order}</span>
-              <strong>{ph.name}</strong>
-              <span className="muted">
-                {ph.procs.length} {ph.procs.length === 1 ? "process" : "processes"} · {steps.length}{" "}
-                {steps.length === 1 ? "step" : "steps"}
-              </span>
-              <Meter percent={percent} label={`${ph.name} progress`} />
-              <span className="phase-chips">
+              <h3>{ph.name}</h3>
+              <p className="proc-meta">
+                <span>
+                  {ph.procs.length} {ph.procs.length === 1 ? "process" : "processes"}
+                </span>
+                <span className="tag">
+                  {steps.length} {steps.length === 1 ? "step" : "steps"}
+                </span>
                 {countBy(ph.procs).map(([s, n]) => (
                   <Pill key={s} status={s} count={n} />
                 ))}
-              </span>
-              <span className="phase-open">Open →</span>
+              </p>
+              <Meter percent={percent} label={`${ph.name} progress`} />
+            </div>
+            <button type="button" onClick={() => setOpen(ph.name)}>
+              Open →
             </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function ProcessCards({
+  procs,
+  leadByProcess,
+  teamByProcess,
+}: {
+  procs: Proc[];
+  leadByProcess: Record<string, string>;
+  teamByProcess: Record<string, string[]>;
+}) {
+  return (
+    <ul className="proc-cards">
+      {procs.map((p) => {
+        const lead = leadByProcess[p.processId];
+        const team = teamByProcess[p.processId] ?? [];
+        const stage = furthestBack(p.rows);
+        return (
+          <li key={p.processId} className={`proc-card tone-${toneForLead(lead)}`}>
+            <div className="proc-main">
+              <h3>
+                <span className="mono">{p.code}</span> {p.title} <StageBadge stage={stage} />
+              </h3>
+              {lead && (
+                <p className="proc-owner">
+                  <strong>Lead:</strong> {lead}
+                </p>
+              )}
+              <p className="proc-meta">
+                {team.length > 0 && <span>Team: {team.join(", ")}</span>}
+                <span className="tag">
+                  {p.rows.length} {p.rows.length === 1 ? "step" : "steps"}
+                </span>
+                <Pill status={p.status} />
+              </p>
+              <p className="proc-desc">{p.rows.map((r) => r.title).join(" · ")}</p>
+            </div>
+            <Link href={`/processes/${p.code}`} className="button">
+              View details →
+            </Link>
           </li>
         );
       })}

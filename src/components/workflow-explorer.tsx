@@ -14,7 +14,7 @@ import {
 } from "@/lib/domain";
 import { rollupProcesses } from "@/lib/progress";
 import { PhaseCards } from "./phase-cards";
-import { EmptyState, Pips, StageBadge, StatusBadge } from "./ui";
+import { EmptyState, Pips, StatusBadge } from "./ui";
 
 type View = "cards" | "flow" | "board" | "list";
 const VIEWS: { id: View; label: string }[] = [
@@ -92,16 +92,6 @@ export function WorkflowExplorer({
     }
     return [...byPhase.entries()].sort((a, b) => (order.get(a[0]) ?? 0) - (order.get(b[0]) ?? 0));
   }, [rows, visible]);
-
-  const listGroups = useMemo(() => {
-    const byPhase = new Map<string, { order: number; processes: Map<string, SubprocessRow[]> }>();
-    for (const r of visible) {
-      const g = byPhase.get(r.phaseName) ?? { order: r.phaseOrder, processes: new Map() };
-      g.processes.set(r.processCode, [...(g.processes.get(r.processCode) ?? []), r]);
-      byPhase.set(r.phaseName, g);
-    }
-    return [...byPhase.entries()].sort((a, b) => a[1].order - b[1].order);
-  }, [visible]);
 
   return (
     <div className="stack-lg">
@@ -275,30 +265,14 @@ export function WorkflowExplorer({
           </div>
         )}
 
-        {view === "list" &&
-          listGroups.map(([name, { processes }]) => (
-            <section key={name} className="panel" style={{ marginBottom: 18 }}>
-              <h2>{name}</h2>
-              {[...processes.entries()].map(([code, subs]) => (
-                <div key={code} className={`process-block ${tone(subs[0].processId)}`}>
-                  <h3>
-                    <span className="dot" aria-hidden="true" />
-                    <Link href={`/processes/${code}`}>
-                      {code} {subs[0].processTitle}
-                    </Link>
-                  </h3>
-                  <ul className="list">
-                    {subs.map((r) => (
-                      <li key={r.id}>
-                        <span className="muted">Step {r.seq}:</span> {r.title}{" "}
-                        <StageBadge stage={r.stage} /> <StatusBadge status={r.status} />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </section>
-          ))}
+        {view === "list" && visible.length > 0 && (
+          <PhaseCards
+            mode="all"
+            rows={visible}
+            leadByProcess={leadByProcess}
+            teamByProcess={teamByProcess}
+          />
+        )}
       </div>
     </div>
   );

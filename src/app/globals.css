@@ -1628,3 +1628,15 @@ a.button:hover {
     white-space: normal;
   }
 }
+
+.phase-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 20px;
+}
+.phase-row .proc-main h3 {
+  font-size: 19px;
+}
