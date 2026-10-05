@@ -10,24 +10,21 @@ export default async function WorkflowPage() {
   ]);
   // Both maps come from assignments the database already limited to what this user may see.
   const leadByProcess: Record<string, string> = {};
-  const peopleByProcess: Record<string, string[]> = {};
   const teamByProcess: Record<string, string[]> = {};
   for (const a of assignments) {
     if (a.type === "production_lead") leadByProcess[a.processId] = a.personName;
-    (peopleByProcess[a.processId] ??= []).push(a.personName);
     if (a.type === "team_member") (teamByProcess[a.processId] ??= []).push(a.personName);
   }
   return (
     <main className="stack-lg">
       <PageHero eyebrow="Workflow" title="Process flow">
-        Phase, process and step, with the current stage and status. You see only your permitted
+        Phases, and the processes inside them, with the current status. You see only your permitted
         scope.
       </PageHero>
       <WorkflowExplorer
         rows={rows}
         mineProcessIds={[...caps.assignments.keys()]}
         leadByProcess={leadByProcess}
-        peopleByProcess={peopleByProcess}
         teamByProcess={teamByProcess}
       />
     </main>

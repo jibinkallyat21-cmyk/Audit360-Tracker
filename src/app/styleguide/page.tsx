@@ -21,7 +21,7 @@ import { sampleDeadlines, sampleRows } from "./sample";
 /** Visual check of the design with sample data. Hidden unless ENABLE_STYLEGUIDE=1. */
 export default function StyleGuide() {
   if (process.env.ENABLE_STYLEGUIDE !== "1") notFound();
-  const { rows, leadByProcess, peopleByProcess } = sampleRows();
+  const { rows, leadByProcess } = sampleRows();
   const counts = Object.fromEntries(
     STAGES.map((s) => [s, rows.filter((r) => r.stage === s).length]),
   ) as Record<(typeof STAGES)[number], number>;
@@ -81,12 +81,7 @@ export default function StyleGuide() {
           <EmptyState>An empty state looks like this.</EmptyState>
         </section>
 
-        <WorkflowExplorer
-          rows={rows}
-          mineProcessIds={["1.1"]}
-          leadByProcess={leadByProcess}
-          peopleByProcess={peopleByProcess}
-        />
+        <WorkflowExplorer rows={rows} mineProcessIds={["1.1"]} leadByProcess={leadByProcess} />
 
         <TeamChart
           people={[
