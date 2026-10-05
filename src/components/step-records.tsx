@@ -123,7 +123,7 @@ export function StepRecords({
 
   return (
     <div className="records">
-      <details open>
+      <details open={docs.length > 0}>
         <summary>Documents ({docs.length})</summary>
         {docs.length === 0 ? (
           <EmptyState>No documents yet.</EmptyState>
@@ -162,7 +162,7 @@ export function StepRecords({
         )}
       </details>
 
-      <details open>
+      <details open={tests.length > 0}>
         <summary>Testing ({tests.length})</summary>
         {tests.length === 0 ? (
           <EmptyState>No test results recorded.</EmptyState>
@@ -186,7 +186,7 @@ export function StepRecords({
         )}
       </details>
 
-      <details open>
+      <details open={points.length > 0}>
         <summary>
           Review points ({openPoints.length} open of {points.length})
         </summary>
@@ -261,6 +261,7 @@ export function StepRecords({
                       action={updateReviewPoint}
                       fields={{ rp: p.id, action: "return" }}
                       label="Return for changes"
+                      quiet
                     >
                       <input
                         name="note"
@@ -328,6 +329,7 @@ export function StepRecords({
               action={recordReviewDecision}
               fields={{ sub: row.id, decision: "changes_required" }}
               label="Request changes"
+              quiet
             >
               <input
                 name="note"
@@ -344,7 +346,7 @@ export function StepRecords({
         )}
       </details>
 
-      <details open>
+      <details open={general.length > 0}>
         <summary>Comments ({general.length})</summary>
         {general.length === 0 && <EmptyState>No comments yet.</EmptyState>}
         <CommentThread

@@ -13,32 +13,46 @@ import {
 } from "@/components/ui";
 import { toneForLead } from "@/lib/brand";
 import { getCapabilities, getDeadline, listAssignments, listSubprocesses } from "@/lib/data";
-import { STAGES, STAGE_LABEL, STATUSES, STATUS_LABEL, type SubprocessRow } from "@/lib/domain";
+import { STAGE_LABEL, STATUSES, type SubprocessRow } from "@/lib/domain";
 import { canSetDeadline, dashboardKind } from "@/lib/permissions";
 import { byLead, byPhase, rollupProcesses, summarize, type GroupProgress } from "@/lib/progress";
+
+const LIMIT = 5;
 
 function ItemList({
   rows,
   empty,
   leadOf,
+  limit = LIMIT,
 }: {
   rows: SubprocessRow[];
   empty: string;
   leadOf: Map<string, string>;
+  limit?: number;
 }) {
   if (rows.length === 0) return <EmptyState>{empty}</EmptyState>;
   return (
-    <ul className="list">
-      {rows.map((r) => (
+    <ul className="items">
+      {rows.slice(0, limit).map((r) => (
         <li key={r.id} className={`tone-${toneForLead(leadOf.get(r.processId))}`}>
-          <span className="dot" aria-hidden="true" />
-          <Link href={`/processes/${r.processCode}`}>
-            <strong className="mono">{r.processCode}</strong> {r.processTitle}
+          <Link href={`/processes/${r.processCode}`} className="item-main">
+            <span className="dot" aria-hidden="true" />
+            <strong className="mono">{r.processCode}</strong>
+            <span className="item-title">{r.processTitle}</span>
           </Link>
-          <span className="muted"> · step {r.seq}</span> <StageBadge stage={r.stage} />{" "}
-          <StatusBadge status={r.status} />
+          <span className="item-meta">
+            <span className="muted">
+              Step {r.seq} · {STAGE_LABEL[r.stage]}
+            </span>
+            <StatusBadge status={r.status} />
+          </span>
         </li>
       ))}
+      {rows.length > limit && (
+        <li className="more">
+          <Link href="/workflow">+{rows.length - limit} more in Workflow</Link>
+        </li>
+      )}
     </ul>
   );
 }
@@ -82,16 +96,18 @@ export default async function DashboardPage() {
 
   return (
     <main className="stack-lg">
-      <Countdown deadline={deadline} />
-      {isDashboardLead && (
-        <section className="panel">
-          <h2>Countdown controls</h2>
-          <p className="muted">
-            Only the Dashboard Lead can set or change the shared deadline. Every change is logged.
-          </p>
-          <DeadlineForm current={deadline} />
-        </section>
-      )}
+      <div className="stack">
+        <Countdown deadline={deadline} />
+        {isDashboardLead && (
+          <details className="panel deadline-panel">
+            <summary>Change the deadline</summary>
+            <p className="muted">
+              Only the Dashboard Lead can set the shared deadline. Every change is logged.
+            </p>
+            <DeadlineForm current={deadline} />
+          </details>
+        )}
+      </div>
 
       <div className="stats">
         {kind === "member" ? (
@@ -126,7 +142,7 @@ export default async function DashboardPage() {
       {kind === "member" && (
         <section className="panel">
           <h2>My work</h2>
-          <ItemList rows={mine} empty="You have no assigned work yet." leadOf={leadOf} />
+          <ItemList rows={mine} empty="You have no assigned work yet." leadOf={leadOf} limit={50} />
         </section>
       )}
 
@@ -139,32 +155,14 @@ export default async function DashboardPage() {
               {s.done} of {s.total} items finished in Production.
             </p>
             <Meter percent={s.percent} label="Overall completion" />
+            <ul className="chips" aria-label="Items by status">
+              {STATUSES.map((st) => (
+                <li key={st}>
+                  <StatusBadge status={st} /> <strong>{s.byStatus[st]}</strong>
+                </li>
+              ))}
+            </ul>
           </section>
-
-          <div className="grid">
-            <section className="panel">
-              <h2>By stage</h2>
-              <ul className="counts">
-                {STAGES.map((st) => (
-                  <li key={st}>
-                    <span>{STAGE_LABEL[st]}</span>
-                    <strong>{s.byStage[st]}</strong>
-                  </li>
-                ))}
-              </ul>
-            </section>
-            <section className="panel">
-              <h2>By status</h2>
-              <ul className="counts">
-                {STATUSES.map((st) => (
-                  <li key={st}>
-                    <span>{STATUS_LABEL[st]}</span>
-                    <strong>{s.byStatus[st]}</strong>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          </div>
 
           <div className="grid">
             <section className="panel">
@@ -177,28 +175,31 @@ export default async function DashboardPage() {
             </section>
           </div>
 
-          <div className="grid">
-            <section className="panel">
-              <h2>Awaiting review</h2>
-              <ItemList
-                rows={s.awaitingReview}
-                empty="Nothing is waiting for review."
-                leadOf={leadOf}
-              />
-            </section>
-            <section className="panel">
-              <h2>Blocked</h2>
-              <ItemList rows={s.blocked} empty="Nothing is blocked." leadOf={leadOf} />
-            </section>
-            <section className="panel">
-              <h2>Changes required</h2>
-              <ItemList
-                rows={s.changesRequired}
-                empty="No changes are outstanding."
-                leadOf={leadOf}
-              />
-            </section>
-          </div>
+          <section className="panel">
+            <h2>Needs attention</h2>
+            <div className="attention">
+              <div>
+                <h3>Awaiting review ({s.awaitingReview.length})</h3>
+                <ItemList
+                  rows={s.awaitingReview}
+                  empty="Nothing is waiting for review."
+                  leadOf={leadOf}
+                />
+              </div>
+              <div>
+                <h3>Blocked ({s.blocked.length})</h3>
+                <ItemList rows={s.blocked} empty="Nothing is blocked." leadOf={leadOf} />
+              </div>
+              <div>
+                <h3>Changes required ({s.changesRequired.length})</h3>
+                <ItemList
+                  rows={s.changesRequired}
+                  empty="No changes are outstanding."
+                  leadOf={leadOf}
+                />
+              </div>
+            </div>
+          </section>
 
           {kind === "management" && (
             <section className="panel">
@@ -240,7 +241,7 @@ export default async function DashboardPage() {
 
           <section className="panel">
             <h2>Recently updated</h2>
-            <ItemList rows={s.recent} empty="No activity yet." leadOf={leadOf} />
+            <ItemList rows={s.recent} empty="No activity yet." leadOf={leadOf} limit={6} />
           </section>
         </>
       )}
@@ -252,12 +253,12 @@ export default async function DashboardPage() {
           {inProduction.length === 0 ? (
             <EmptyState>No item has reached Production yet.</EmptyState>
           ) : (
-            <ul className="list">
+            <ul className="row-list">
               {inProduction.map((r) => (
-                <li key={r.id}>
-                  <Link href={`/processes/${r.processCode}`}>
+                <li key={r.id} className="build-row">
+                  <Link href={`/processes/${r.processCode}`} className="build-name">
                     <strong className="mono">{r.processCode}</strong> {r.title}
-                  </Link>{" "}
+                  </Link>
                   <BuildBadge status={r.dashboardStatus} />
                   <ItemActions row={r} caps={caps} />
                 </li>

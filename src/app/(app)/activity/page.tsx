@@ -106,37 +106,39 @@ export default async function ActivityPage({
       {logs.length === 0 ? (
         <EmptyState>No activity matches.</EmptyState>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>When</th>
-              <th>Who</th>
-              <th>What</th>
-              <th>Process</th>
-              <th>Change</th>
-            </tr>
-          </thead>
-          <tbody>
-            {logs.map((l) => {
-              const proc = l.process_id ? processes.get(l.process_id) : undefined;
-              return (
-                <tr key={l.id}>
-                  <td>{stamp(l.created_at)}</td>
-                  <td>{l.actor_id ? (names.get(l.actor_id) ?? "A team member") : "System"}</td>
-                  <td>{actionLabel(l.action_type)}</td>
-                  <td>
-                    {proc ? (
-                      <Link href={`/processes/${proc.processCode}`}>{proc.processCode}</Link>
-                    ) : (
-                      <span className="muted">—</span>
-                    )}
-                  </td>
-                  <td>{describeChange(l.previous_value, l.new_value)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Who</th>
+                <th>What</th>
+                <th>Process</th>
+                <th>Change</th>
+              </tr>
+            </thead>
+            <tbody>
+              {logs.map((l) => {
+                const proc = l.process_id ? processes.get(l.process_id) : undefined;
+                return (
+                  <tr key={l.id}>
+                    <td>{stamp(l.created_at)}</td>
+                    <td>{l.actor_id ? (names.get(l.actor_id) ?? "A team member") : "System"}</td>
+                    <td>{actionLabel(l.action_type)}</td>
+                    <td>
+                      {proc ? (
+                        <Link href={`/processes/${proc.processCode}`}>{proc.processCode}</Link>
+                      ) : (
+                        <span className="muted">—</span>
+                      )}
+                    </td>
+                    <td>{describeChange(l.previous_value, l.new_value)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
       <nav aria-label="Pages" className="inline-form">
         {page > 1 && <Link href={params(page - 1)}>← Newer</Link>}

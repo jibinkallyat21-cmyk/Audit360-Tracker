@@ -13,12 +13,15 @@ export function ActionForm({
   label,
   children,
   className,
+  quiet,
 }: {
   action: Action;
   fields: Record<string, string>;
   label: string;
   children?: React.ReactNode;
   className?: string;
+  /** Secondary look for destructive or less important actions. */
+  quiet?: boolean;
 }) {
   const [state, formAction, pending] = useActionState(action, {});
   return (
@@ -27,7 +30,7 @@ export function ActionForm({
         <input key={k} type="hidden" name={k} value={v} />
       ))}
       {children}
-      <button type="submit" disabled={pending}>
+      <button type="submit" disabled={pending} className={quiet ? "secondary" : undefined}>
         {pending ? "Saving…" : label}
       </button>
       {state.error && (

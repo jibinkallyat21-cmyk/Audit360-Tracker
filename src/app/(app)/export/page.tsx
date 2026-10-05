@@ -110,6 +110,7 @@ export default async function ExportPage() {
               action={decideExport}
               fields={{ request: open.id, approve: "false" }}
               label="Reject"
+              quiet
             >
               <input
                 name="note"
@@ -199,30 +200,32 @@ export default async function ExportPage() {
         {requests.length === 0 ? (
           <EmptyState>No export requests yet.</EmptyState>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Requested</th>
-                <th>Status</th>
-                <th>Files</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requests.map((r) => (
-                <tr key={r.id}>
-                  <td>{stamp(r.requested_at)}</td>
-                  <td>{LABEL[r.status]}</td>
-                  <td>
-                    {r.file_count === null
-                      ? "—"
-                      : `${r.file_count}${r.missing_count ? ` (${r.missing_count} missing)` : ""}`}
-                  </td>
-                  <td>{[r.note, r.decision_note].filter(Boolean).join(" · ")}</td>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Requested</th>
+                  <th>Status</th>
+                  <th>Files</th>
+                  <th>Notes</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {requests.map((r) => (
+                  <tr key={r.id}>
+                    <td>{stamp(r.requested_at)}</td>
+                    <td>{LABEL[r.status]}</td>
+                    <td>
+                      {r.file_count === null
+                        ? "—"
+                        : `${r.file_count}${r.missing_count ? ` (${r.missing_count} missing)` : ""}`}
+                    </td>
+                    <td>{[r.note, r.decision_note].filter(Boolean).join(" · ")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
     </main>

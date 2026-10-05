@@ -98,7 +98,7 @@ export default async function AdminUsersPage() {
                       required
                     />
                   </ActionForm>
-                  <ActionForm action={rejectUser} fields={{ user: u.id }} label="Reject" />
+                  <ActionForm action={rejectUser} fields={{ user: u.id }} label="Reject" quiet />
                 </div>
               </li>
             );
@@ -108,49 +108,52 @@ export default async function AdminUsersPage() {
 
       <section className="panel">
         <h2>Accounts ({members.length})</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Person</th>
-              <th>State</th>
-              <th>
-                <span className="sr-only">Action</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {members.map((u) => (
-              <tr key={u.id}>
-                <td>{u.full_name ?? "—"}</td>
-                <td>{u.email}</td>
-                <td>{u.person_id ? nameOf.get(u.person_id) : "—"}</td>
-                <td>{u.approval_state === "approved" ? "Active" : "Deactivated"}</td>
-                <td>
-                  {u.id === me.id ? (
-                    <span className="muted">You</span>
-                  ) : (
-                    <ActionForm
-                      action={setUserActive}
-                      fields={{
-                        user: u.id,
-                        active: u.approval_state === "approved" ? "false" : "true",
-                      }}
-                      label={u.approval_state === "approved" ? "Deactivate" : "Reactivate"}
-                    />
-                  )}
-                </td>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Person</th>
+                <th>State</th>
+                <th>
+                  <span className="sr-only">Action</span>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {members.map((u) => (
+                <tr key={u.id}>
+                  <td>{u.full_name ?? "—"}</td>
+                  <td>{u.email}</td>
+                  <td>{u.person_id ? nameOf.get(u.person_id) : "—"}</td>
+                  <td>{u.approval_state === "approved" ? "Active" : "Deactivated"}</td>
+                  <td>
+                    {u.id === me.id ? (
+                      <span className="muted">You</span>
+                    ) : (
+                      <ActionForm
+                        action={setUserActive}
+                        fields={{
+                          user: u.id,
+                          active: u.approval_state === "approved" ? "false" : "true",
+                        }}
+                        label={u.approval_state === "approved" ? "Deactivate" : "Reactivate"}
+                        quiet
+                      />
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       {rejected.length > 0 && (
         <section className="panel">
           <h2>Rejected ({rejected.length})</h2>
-          <ul className="list">
+          <ul className="row-list">
             {rejected.map((u) => (
               <li key={u.id}>
                 {u.full_name ?? u.email} · <span className="muted">{u.email}</span>

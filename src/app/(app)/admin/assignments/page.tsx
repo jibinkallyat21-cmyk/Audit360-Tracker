@@ -61,7 +61,7 @@ export default async function AssignmentsPage({
                   {list.length === 0 ? (
                     <EmptyState>None.</EmptyState>
                   ) : (
-                    <ul className="list">
+                    <ul className="row-list">
                       {list.map((a) => (
                         <li key={a.personId}>
                           {a.personName}
@@ -74,6 +74,7 @@ export default async function AssignmentsPage({
                               assigned: "false",
                             }}
                             label="Remove"
+                            quiet
                           />
                         </li>
                       ))}

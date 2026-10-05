@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SubNav } from "@/components/nav";
 import { notFound } from "next/navigation";
 import { getCapabilities } from "@/lib/data";
 
@@ -8,12 +8,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!caps.roles.has("system_admin")) notFound();
   return (
     <div className="stack-lg">
-      <nav aria-label="Administration" className="subnav">
-        <Link href="/admin">Users</Link>
-        <Link href="/admin/roles">Roles</Link>
-        <Link href="/admin/assignments">Assignments</Link>
-        <Link href="/admin/teams">Teams</Link>
-      </nav>
+      <SubNav
+        label="Administration"
+        items={[
+          { href: "/admin", label: "Users" },
+          { href: "/admin/roles", label: "Roles" },
+          { href: "/admin/assignments", label: "Assignments" },
+          { href: "/admin/teams", label: "Teams" },
+        ]}
+      />
       {children}
     </div>
   );
