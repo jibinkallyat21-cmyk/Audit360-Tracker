@@ -120,10 +120,13 @@ export function StepRecords({
   ];
   const openPoints = points.filter((p) => p.status !== "closed");
   const commenting = canComment(caps, row.processId);
+  const uploading = canUpload(caps, row.processId);
+  const raising = canRaiseReviewPoint(caps, row);
+  const deciding = canRecordDecision(caps, row);
 
   return (
     <div className="records">
-      <details open={docs.length > 0}>
+      <details open={docs.length > 0 || uploading}>
         <summary>Documents ({docs.length})</summary>
         {docs.length === 0 ? (
           <EmptyState>No documents yet.</EmptyState>
@@ -153,7 +156,7 @@ export function StepRecords({
             ))}
           </ul>
         )}
-        {canUpload(caps, row.processId) && (
+        {uploading && (
           <UploadForm
             subId={row.id}
             documents={docs.map((d) => ({ id: d.id, name: d.original_filename }))}
@@ -186,7 +189,7 @@ export function StepRecords({
         )}
       </details>
 
-      <details open={points.length > 0}>
+      <details open={points.length > 0 || raising || deciding}>
         <summary>
           Review points ({openPoints.length} open of {points.length})
         </summary>
@@ -285,7 +288,7 @@ export function StepRecords({
             );
           })}
         </ul>
-        {canRaiseReviewPoint(caps, row) && (
+        {raising && (
           <ActionForm
             action={raiseReviewPoint}
             fields={{ sub: row.id }}
@@ -311,7 +314,7 @@ export function StepRecords({
             </label>
           </ActionForm>
         )}
-        {canRecordDecision(caps, row) && (
+        {deciding && (
           <div className="actions">
             <ActionForm
               action={recordReviewDecision}
@@ -346,7 +349,7 @@ export function StepRecords({
         )}
       </details>
 
-      <details open={general.length > 0}>
+      <details open={general.length > 0 || commenting}>
         <summary>Comments ({general.length})</summary>
         {general.length === 0 && <EmptyState>No comments yet.</EmptyState>}
         <CommentThread

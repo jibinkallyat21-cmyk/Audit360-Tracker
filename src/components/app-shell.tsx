@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { logout } from "@/app/actions";
 import { BRAND } from "@/lib/brand";
+import { MaintenanceWatch } from "./maintenance-watch";
 import { NavLinks, type NavItem } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -21,6 +22,7 @@ export function AppShell({
 }) {
   return (
     <div className="shell">
+      <MaintenanceWatch />
       <aside className="sidebar">
         <Link href="/" className="brand">
           <strong>
