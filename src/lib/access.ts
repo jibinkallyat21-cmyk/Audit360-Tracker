@@ -44,10 +44,20 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     .eq("id", userId)
     .single();
   if (!profile) return null;
+  // Invited accounts have no name of their own; show the person they are linked to.
+  let fullName = profile.full_name;
+  if (!fullName && profile.person_id) {
+    const { data: person } = await supabase
+      .from("people")
+      .select("display_name")
+      .eq("id", profile.person_id)
+      .maybeSingle();
+    fullName = person?.display_name ?? null;
+  }
   return {
     id: userId,
     email: profile.email,
-    fullName: profile.full_name,
+    fullName,
     personId: profile.person_id,
     approvalState: profile.approval_state as ApprovalState,
     isActive: profile.is_active,

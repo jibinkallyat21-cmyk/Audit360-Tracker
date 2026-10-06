@@ -95,9 +95,16 @@ export async function sendInvites(_: InviteState, form: FormData): Promise<Invit
     let userId: string | undefined;
     let link: string | undefined;
     if (mode === "email") {
-      const { data, error } = await admin.auth.admin.inviteUserByEmail(e.data);
+      const { data, error } = await admin.auth.admin.inviteUserByEmail(e.data, {
+        data: { full_name: name },
+      });
       if (error) {
-        results.push({ email: e.data, ok: false, detail: "The invite email could not be sent." });
+        results.push({
+          email: e.data,
+          name,
+          ok: false,
+          detail: "The invite email could not be sent.",
+        });
         continue;
       }
       userId = data.user.id;
@@ -105,9 +112,15 @@ export async function sendInvites(_: InviteState, form: FormData): Promise<Invit
       const { data, error } = await admin.auth.admin.generateLink({
         type: "invite",
         email: e.data,
+        options: { data: { full_name: name } },
       });
       if (error) {
-        results.push({ email: e.data, ok: false, detail: "The invite link could not be made." });
+        results.push({
+          email: e.data,
+          name,
+          ok: false,
+          detail: "The invite link could not be made.",
+        });
         continue;
       }
       userId = data.user.id;

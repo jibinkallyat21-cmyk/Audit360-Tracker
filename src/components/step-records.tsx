@@ -8,6 +8,7 @@ import type { AssignmentRow, SubprocessRow } from "@/lib/domain";
 import {
   canComment,
   canRaiseReviewPoint,
+  canReview,
   canRecordDecision,
   canUpload,
   reviewPointActions,
@@ -123,6 +124,7 @@ export function StepRecords({
   const uploading = canUpload(caps, row.processId);
   const raising = canRaiseReviewPoint(caps, row);
   const deciding = canRecordDecision(caps, row);
+  const reviewer = canReview(caps, row.processId);
 
   return (
     <div className="records">
@@ -189,7 +191,7 @@ export function StepRecords({
         )}
       </details>
 
-      <details open={points.length > 0 || raising || deciding}>
+      <details open={points.length > 0 || raising || deciding || reviewer}>
         <summary>
           Review points ({openPoints.length} open of {points.length})
         </summary>
@@ -288,6 +290,12 @@ export function StepRecords({
             );
           })}
         </ul>
+        {reviewer && !raising && (
+          <p className="muted">
+            You can raise review points and record a decision once this step reaches Testing or
+            Review. You can comment on it at any time.
+          </p>
+        )}
         {raising && (
           <ActionForm
             action={raiseReviewPoint}

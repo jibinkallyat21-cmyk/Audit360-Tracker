@@ -124,7 +124,7 @@ export default async function AdminUsersPage() {
             <tbody>
               {members.map((u) => (
                 <tr key={u.id}>
-                  <td>{u.full_name ?? "—"}</td>
+                  <td>{u.full_name ?? (u.person_id ? nameOf.get(u.person_id) : null) ?? "—"}</td>
                   <td>{u.email}</td>
                   <td>{u.person_id ? nameOf.get(u.person_id) : "—"}</td>
                   <td>{u.approval_state === "approved" ? "Active" : "Deactivated"}</td>
