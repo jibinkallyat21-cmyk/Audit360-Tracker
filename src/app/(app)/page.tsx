@@ -70,10 +70,7 @@ function Progress({ items }: { items: GroupProgress[] }) {
       {items.map((g) => (
         <li key={g.key}>
           <div>
-            <span>
-              {g.label}
-              {g.weight ? <span className="muted"> · counts {g.weight}% of the total</span> : null}
-            </span>
+            <span>{g.label}</span>
             <span className="num">
               {g.done}/{g.total} · {g.percent}%
             </span>
