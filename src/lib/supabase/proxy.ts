@@ -16,6 +16,8 @@ const PUBLIC_PATHS = [
 const STYLEGUIDE = process.env.ENABLE_STYLEGUIDE === "1" ? ["/styleguide"] : [];
 
 export function isPublicPath(pathname: string) {
+  // The notification worker must load without a session cookie.
+  if (pathname === "/sw.js") return true;
   return [...PUBLIC_PATHS, ...STYLEGUIDE].some(
     (p) => pathname === p || pathname.startsWith(p + "/"),
   );

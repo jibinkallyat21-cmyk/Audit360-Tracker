@@ -39,6 +39,10 @@ describe.skipIf(!TEST_URL || !hasPg)("backup and restore drill", () => {
     "profiles",
     "notifications",
     "export_requests",
+    "conversations",
+    "chat_messages",
+    "chat_reads",
+    "push_subscriptions",
   ];
   const fingerprint = async (
     c: { query: (s: string) => Promise<{ rows: { h: string }[] }> },

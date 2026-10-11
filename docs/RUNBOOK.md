@@ -12,7 +12,7 @@ Create **two** Supabase projects, one for development and one for production, an
 
 ### 2.1 Database
 
-1. Open the SQL editor (or use the Supabase CLI) and run, in order, every file in `supabase/migrations/` (`0001` to `0008`).
+1. Open the SQL editor (or use the Supabase CLI) and run, in order, every file in `supabase/migrations/` (`0001` to `0010`).
 2. Run `supabase/seed.sql` **once**. It loads the 20 processes, 64 subprocesses, 6 phases, 40 people, assignments, teams and role tags. It is generated from `seed/seed.json` by `node scripts/generate-seed.mjs`; do not edit it by hand.
 3. Check that the storage bucket `documents` exists and is **private** (Storage page). Migration `0005` creates it.
 
@@ -83,7 +83,7 @@ Store backups outside Supabase, in an access-controlled location. They contain i
 
 Use a new Supabase project (or an empty one).
 
-1. Apply migrations `0001` to `0008` (not the seed; the data comes from the backup).
+1. Apply migrations `0001` to `0010` (not the seed; the data comes from the backup).
 2. Load the data in replica mode so triggers do not re-create notifications or history:
 
    ```
@@ -148,3 +148,11 @@ With "Don't email" selected, the page shows each invite link and a CSV (Email, N
 ## 12. Email links are not used up by previews
 
 Invite, confirm and reset links point at `/auth/confirm`, which only redirects to `/auth/continue`. That page shows a button; pressing it uses the single-use link. This stops mail scanners and chat previews (Outlook Safe Links, Teams) from spending a link before the person clicks. The Supabase email templates keep using `/auth/confirm?...`; no change is needed there.
+
+## 13. Chat and desktop alerts
+
+Run `supabase/migrations/0010_chat_push.sql` once in the Supabase SQL editor (after 0009). Nothing else needs setting up: the push signing keys are created by the app on first use and kept in the database table `push_keys`, which only the server can read.
+
+- **Chat** (`/chat`): one chat for everyone, private chats between two people, and one group chat per process for the people assigned to it. The database decides who can read each conversation; direct chats are invisible to everyone else, including the administrator. Messages cannot be edited or deleted by clients.
+- **Desktop alerts**: each person presses "Turn on" under their name in the sidebar and allows notifications in the browser. They then get an alert for new chat messages and for workflow notifications (a review point assigned to them, and so on), even when the tab is closed, as long as the browser is running. Chrome, Edge and Firefox on Windows and Mac are supported; Safari needs macOS 13 or later.
+- **Removing an account** also removes its direct chats and its push subscriptions. Its messages in the shared chats stay, shown as "Former member".

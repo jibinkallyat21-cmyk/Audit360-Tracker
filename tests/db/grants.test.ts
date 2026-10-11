@@ -38,6 +38,17 @@ const CLIENT_CALLABLE = [
   "decide_export",
   "record_export_run",
   "archive_project",
+  // chat and desktop push
+  "can_access_conversation",
+  "chat_people",
+  "chat_ensure_groups",
+  "chat_open_direct",
+  "chat_send",
+  "chat_mark_read",
+  "chat_overview",
+  "chat_unread_total",
+  "push_subscribe",
+  "push_unsubscribe",
 ].sort();
 
 describe.skipIf(!TEST_URL)(

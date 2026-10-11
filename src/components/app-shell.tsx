@@ -2,6 +2,7 @@ import Link from "next/link";
 import { logout } from "@/app/actions";
 import { BRAND } from "@/lib/brand";
 import { MaintenanceWatch } from "./maintenance-watch";
+import { PushToggle } from "./push-toggle";
 import { NavLinks, type NavItem } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -33,6 +34,7 @@ export function AppShell({
         <NavLinks items={items} />
         <div className="side-foot">
           <span className="who">{userLabel}</span>
+          <PushToggle />
           <div className="side-actions">
             <Link
               href="/notifications"

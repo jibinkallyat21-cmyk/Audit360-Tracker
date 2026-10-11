@@ -142,6 +142,13 @@ export interface NotificationRow {
   processCode: string | null;
 }
 
+export const getChatUnread = cache(async (): Promise<number> => {
+  if (await getPersona()) return 0;
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("chat_unread_total");
+  return Number(data ?? 0);
+});
+
 export const getUnreadCount = cache(async (): Promise<number> => {
   const persona = await getPersona();
   if (persona) return demo.demoNotifications(persona).filter((n) => !n.isRead).length;

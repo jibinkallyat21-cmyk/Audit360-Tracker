@@ -1,7 +1,9 @@
 import "server-only";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import type { FormState } from "@/app/actions";
 import { getPersona } from "@/lib/demo";
+import { pushPendingNotifications } from "@/lib/push";
 import { createClient } from "@/lib/supabase/server";
 
 /** Turns a database rejection into a short message without exposing internals. */
@@ -19,5 +21,7 @@ export async function rpc(name: string, args: Record<string, unknown>): Promise<
   const { error } = await supabase.rpc(name, args);
   if (error) return { error: friendly(error.message) };
   revalidatePath("/", "layout");
+  // Workflow notifications the change just created go out as desktop alerts, after the reply.
+  after(() => pushPendingNotifications());
   return { message: "Saved." };
 }

@@ -180,3 +180,11 @@ Automated tests cover role permissions (including guessed IDs and direct URLs), 
 - **Team colors.** Sky for Pavithra's team, violet for Rustham's, amber for reviewers, in `src/lib/brand.ts`. Color is never the only signal: statuses keep their symbols and labels, and the stage bar prints its counts.
 - **Workflow page.** Three views of the same filtered items: Flow (the phase-and-step overview, colored by team with live progress), Board (five stage columns) and List. "Highlight person" dims everything that person is not part of.
 - **Style guide.** `/styleguide` renders the real components with sample data. It exists only when `ENABLE_STYLEGUIDE=1` is set (local checks) and is hidden in production. `node scripts/screenshot-styleguide.mjs <folder>` takes dark, light and phone screenshots of it.
+
+## 17. Chat and desktop alerts
+
+- **Three kinds of conversation**, all enforced by row-level security through `can_access_conversation`: everyone (every approved active user), direct (exactly two people), and process (people assigned to that process in any role). Process chats exclude the Project Lead, Project Head and administrator unless they are assigned, in line with the record-visibility rules.
+- **Writes only through functions** (`chat_send`, `chat_open_direct`, `chat_ensure_groups`, `chat_mark_read`). Clients have read-only table access; messages are 1 to 4000 characters.
+- **Freshness**: open conversations poll every four seconds, the list and the sidebar badge every 10 to 15 seconds. This avoids a realtime service and keeps access control in one place.
+- **Desktop alerts** use Web Push. The server sends after a chat message and after any change that created a workflow notification (`notifications.pushed_at` marks what has been sent). Subscriptions and signing keys sit in tables no client can read.
+- **Not included**: chat is not part of the end-of-project export yet.
