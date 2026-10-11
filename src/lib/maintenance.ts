@@ -5,7 +5,7 @@
  * Switch: set MAINTENANCE_MODE=1 (on) or MAINTENANCE_MODE=0 (off) in Vercel.
  * With no value set, the default below applies.
  */
-const DEFAULT_ON = true;
+const DEFAULT_ON = false;
 
 export const maintenanceOn = () => {
   const v = process.env.MAINTENANCE_MODE;
