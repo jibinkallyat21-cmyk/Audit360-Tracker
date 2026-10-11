@@ -9,6 +9,9 @@ import {
   TESTING_SELECT,
 } from "./queries";
 
+/** Drops the line_id column from a select string (database without the lines migration). */
+const noLine = (select: string) => select.replace(/ line_id,/, "");
+
 export interface CommentRec {
   id: string;
   subprocess_id: string;
@@ -116,10 +119,13 @@ export async function getRecords(subIds: string[]): Promise<Records> {
   const persona = await getPersona();
   if (persona) return demoRecords(persona, subIds);
   const supabase = await createClient();
+  const probe = await supabase.from("documents").select("line_id").limit(1);
+  const legacy = Boolean(probe.error);
+  const pick = (select: string) => (legacy ? noLine(select) : select);
   const [c, r, d, t, a] = await Promise.all([
     supabase
       .from("comments")
-      .select(COMMENTS_SELECT)
+      .select(pick(COMMENTS_SELECT))
       .in("subprocess_id", subIds)
       .order("created_at")
       .returns<CommentRec[]>(),
@@ -131,19 +137,19 @@ export async function getRecords(subIds: string[]): Promise<Records> {
       .returns<ReviewPointRec[]>(),
     supabase
       .from("documents")
-      .select(DOCUMENTS_SELECT)
+      .select(pick(DOCUMENTS_SELECT))
       .in("subprocess_id", subIds)
       .order("created_at")
       .returns<DocumentRec[]>(),
     supabase
       .from("testing_records")
-      .select(TESTING_SELECT)
+      .select(pick(TESTING_SELECT))
       .in("subprocess_id", subIds)
       .order("created_at")
       .returns<TestingRec[]>(),
     supabase
       .from("approvals")
-      .select(APPROVALS_SELECT)
+      .select(pick(APPROVALS_SELECT))
       .in("subprocess_id", subIds)
       .order("decided_at")
       .returns<ApprovalRec[]>(),

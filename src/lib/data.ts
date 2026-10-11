@@ -22,6 +22,7 @@ import {
   PERSON_ROLES_SELECT,
   ROLE_TAGS_SELECT,
   SUBPROCESS_SELECT,
+  SUBPROCESS_SELECT_LEGACY,
   TEAMS_SELECT,
 } from "./queries";
 
@@ -49,11 +50,18 @@ export const listSubprocesses = cache(async (): Promise<SubprocessRow[]> => {
   const persona = await getPersona();
   if (persona) return demo.demoRows(persona);
   const supabase = await createClient();
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from("subprocesses")
     .select(SUBPROCESS_SELECT)
     .returns<RawSub[]>();
-  if (error) throw new Error("Could not load items.");
+  if (error) {
+    // Lines not set up in the database yet: show the steps without them.
+    ({ data, error } = await supabase
+      .from("subprocesses")
+      .select(SUBPROCESS_SELECT_LEGACY)
+      .returns<RawSub[]>());
+  }
+  if (error || !data) throw new Error("Could not load items.");
   return data
     .map((r) => ({
       id: r.id,

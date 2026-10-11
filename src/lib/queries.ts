@@ -1,6 +1,11 @@
 /** Select strings shared by the pages and the PostgREST integration test. */
 export const SUBPROCESS_SELECT =
   "id, seq, title, current_stage, current_status, review_decision, dashboard_status, updated_at, subprocess_lines(id, seq, title, status, updated_at), processes!inner(id, process_code, title, phases!inner(name, display_order))";
+/** The same query without lines, used if the lines migration (0012) has not been run yet. */
+export const SUBPROCESS_SELECT_LEGACY = SUBPROCESS_SELECT.replace(
+  /subprocess_lines\([^)]*\), /,
+  "",
+);
 export const ASSIGNMENT_SELECT =
   "process_id, person_id, assignment_type, people!inner(display_name)";
 export const PERSON_ROLES_SELECT = "roles!inner(name)";
