@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { StepRecords } from "@/components/step-records";
 import { StepLines, lineSummary } from "@/components/step-lines";
 import { ItemActions } from "@/components/item-actions";
-import { BuildBadge, DecisionBadge, PageHero, StageTrack, StatusBadge } from "@/components/ui";
+import { BuildBadge, DecisionBadge, FlowBadge, PageHero, StageTrack } from "@/components/ui";
 import { toneForLead } from "@/lib/brand";
 import { getCapabilities, listAssignments, listSubprocesses } from "@/lib/data";
 import { PROCESS_DETAIL_SELECT } from "@/lib/queries";
@@ -77,7 +77,8 @@ export default async function ProcessPage({ params }: { params: Promise<{ code: 
             </h3>
             <StageTrack stage={r.stage} />
             <p>
-              <StatusBadge status={r.status} /> <DecisionBadge decision={r.reviewDecision} />{" "}
+              <FlowBadge row={r} />{" "}
+              {r.reviewDecision === "approved" && <DecisionBadge decision={r.reviewDecision} />}{" "}
               <BuildBadge status={r.dashboardStatus} />
             </p>
             {r.lines && r.lines.length > 0 && <p className="muted">{lineSummary(r.lines)}</p>}

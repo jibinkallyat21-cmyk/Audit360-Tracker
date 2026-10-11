@@ -102,6 +102,7 @@ export interface LineRow {
   seq: number;
   title: string;
   status: LineStatus;
+  updatedAt?: string;
 }
 
 /** A row as the tracker screens use it (already filtered by the database to what the viewer may see). */
@@ -133,3 +134,32 @@ export interface AssignmentRow {
 /** Done means it reached Production and was completed there. */
 export const isDone = (r: Pick<SubprocessRow, "stage" | "status">) =>
   r.stage === "production" && r.status === "completed";
+
+/**
+ * One plain word for where a step stands, for people reading lists. The stage already says
+ * where it is, so the status is reduced to what matters: who has to act next.
+ */
+export type FlowState =
+  "done" | "blocked" | "changes" | "review" | "working" | "ready" | "not_started";
+
+export const FLOW_LABEL: Record<FlowState, string> = {
+  done: "Done",
+  blocked: "Blocked",
+  changes: "Changes required",
+  review: "Waiting on review",
+  working: "Working",
+  ready: "In Production",
+  not_started: "Not started",
+};
+
+export function flowState(
+  r: Pick<SubprocessRow, "stage" | "status" | "reviewDecision">,
+): FlowState {
+  if (r.stage === "production" && r.status === "completed") return "done";
+  if (r.status === "blocked") return "blocked";
+  if (r.status === "changes_required") return "changes";
+  if (r.stage === "review" && r.reviewDecision === "pending_review") return "review";
+  if (r.stage === "production" && r.status === "not_started") return "ready";
+  if (r.status === "in_progress") return "working";
+  return "not_started";
+}

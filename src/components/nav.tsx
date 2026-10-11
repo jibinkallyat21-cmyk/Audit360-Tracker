@@ -50,6 +50,11 @@ export function NavLinks({ items }: { items: NavItem[] }) {
         <Link key={i.href} href={i.href} aria-current={active(i.href) ? "page" : undefined}>
           {i.label}
           {i.href === "/chat" && <ChatBadge initial={i.badge ?? 0} />}
+          {i.href === "/queue" && (i.badge ?? 0) > 0 && (
+            <span className="nav-count" aria-label={`${i.badge} items need you`}>
+              {(i.badge ?? 0) > 99 ? "99+" : i.badge}
+            </span>
+          )}
         </Link>
       ))}
     </nav>

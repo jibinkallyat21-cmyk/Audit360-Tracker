@@ -587,6 +587,17 @@ code {
 .badge.line-approved {
   border-color: var(--ok);
 }
+.badge.flow-done {
+  border-color: var(--ok);
+}
+.badge.flow-blocked,
+.badge.flow-changes {
+  border-color: var(--danger);
+}
+.badge.flow-changes,
+.badge.flow-review {
+  border-style: dashed;
+}
 .badge.line-blocked,
 .badge.line-changes_required {
   border-color: var(--danger);

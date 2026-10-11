@@ -171,3 +171,7 @@ Run `supabase/migrations/0012_lines.sql` once in the Supabase SQL editor (after 
 - The Production Lead and the System Administrator add, rename and remove lines on any step (Process page → Lines). A line that is in review, approved or has comments on record cannot be removed.
 - Uploading a new file to an approved line sends that line back to review. Files of a line that is in review or approved cannot be moved.
 - Steps without lines work exactly as before.
+
+## 16. My queue and plain status words
+
+**My queue** (sidebar, with a count) lists what needs the signed-in person now: for reviewers the steps and lines waiting for a decision (oldest first); for Production Leads what was sent back, what is blocked and what has had no activity for 5 days; for the Project Lead approved steps ready for Production. It needs no setup. In lists the status shows one plain word: Not started, Working, Waiting on review, Changes required, Blocked, In Production, Done (`flowState` in `src/lib/domain.ts`); the stage is shown separately.

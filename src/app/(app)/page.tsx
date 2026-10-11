@@ -10,6 +10,7 @@ import {
   StageBar,
   StatCard,
   StatusBadge,
+  FlowBadge,
 } from "@/components/ui";
 import { toneForLead } from "@/lib/brand";
 import { getCapabilities, getDeadline, listAssignments, listSubprocesses } from "@/lib/data";
@@ -44,7 +45,7 @@ function ItemList({
             <span className="muted">
               Step {r.seq} · {STAGE_LABEL[r.stage]}
             </span>
-            <StatusBadge status={r.status} />
+            <FlowBadge row={r} />
           </span>
         </li>
       ))}

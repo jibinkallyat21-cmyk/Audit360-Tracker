@@ -36,7 +36,7 @@ interface RawSub {
   review_decision: ReviewDecision | null;
   dashboard_status: DashboardStatus | null;
   updated_at: string;
-  subprocess_lines: LineRow[] | null;
+  subprocess_lines: (Omit<LineRow, "updatedAt"> & { updated_at: string })[] | null;
   processes: {
     id: string;
     process_code: string;
@@ -64,7 +64,15 @@ export const listSubprocesses = cache(async (): Promise<SubprocessRow[]> => {
       reviewDecision: r.review_decision,
       dashboardStatus: r.dashboard_status,
       updatedAt: r.updated_at,
-      lines: [...(r.subprocess_lines ?? [])].sort((a, b) => a.seq - b.seq),
+      lines: [...(r.subprocess_lines ?? [])]
+        .sort((a, b) => a.seq - b.seq)
+        .map((l) => ({
+          id: l.id,
+          seq: l.seq,
+          title: l.title,
+          status: l.status,
+          updatedAt: l.updated_at,
+        })),
       processId: r.processes.id,
       processCode: r.processes.process_code,
       processTitle: r.processes.title,

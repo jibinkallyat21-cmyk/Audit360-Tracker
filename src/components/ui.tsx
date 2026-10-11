@@ -1,5 +1,7 @@
 import {
   DASHBOARD_STATUS_LABEL,
+  FLOW_LABEL,
+  flowState,
   REVIEW_DECISION_LABEL,
   STAGES,
   STAGE_LABEL,
@@ -9,6 +11,7 @@ import {
   type ReviewDecision,
   type Stage,
   type Status,
+  type SubprocessRow,
 } from "@/lib/domain";
 
 /** Status shown as symbol + text + colour, so colour is never the only signal. */
@@ -18,6 +21,16 @@ export function StatusBadge({ status }: { status: Status }) {
       <span aria-hidden="true">{STATUS_SYMBOL[status]}</span> {STATUS_LABEL[status]}
     </span>
   );
+}
+
+/** The plain-word status used in lists: who has to act next. */
+export function FlowBadge({
+  row,
+}: {
+  row: Pick<SubprocessRow, "stage" | "status" | "reviewDecision">;
+}) {
+  const f = flowState(row);
+  return <span className={`badge flow-${f}`}>{FLOW_LABEL[f]}</span>;
 }
 
 export function StageBadge({ stage }: { stage: Stage }) {
