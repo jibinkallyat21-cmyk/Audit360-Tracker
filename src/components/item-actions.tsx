@@ -2,6 +2,7 @@ import { completeStage, recordTesting, setDashboardStatus, setStatus } from "@/a
 import {
   DASHBOARD_STATUSES,
   DASHBOARD_STATUS_LABEL,
+  STAGES,
   STAGE_LABEL,
   type SubprocessRow,
 } from "@/lib/domain";
@@ -19,6 +20,21 @@ const SETTABLE = [
   { value: "in_progress", label: "In Progress" },
   { value: "blocked", label: "Blocked" },
 ];
+
+/** Tells a Production Lead how to move a step on, since "Complete" only appears once it is In Progress. */
+function nextStepHint(caps: Capabilities, row: SubprocessRow): string | null {
+  if (!canSetStatus(caps, row) || row.stage === "production" || canCompleteStage(caps, row)) {
+    return null;
+  }
+  if (row.stage === "review") {
+    return "This step is with the reviewers. The Project Lead moves it to Production once it is approved.";
+  }
+  const next = STAGE_LABEL[STAGES[STAGES.indexOf(row.stage) + 1]];
+  const finish = `press “Complete ${STAGE_LABEL[row.stage]}” to move it to ${next}`;
+  return row.stage === "testing"
+    ? `To send this step to Review: record a passing test result, set the status to In Progress, then ${finish.replace(" to move it to Review", "")}. The reviewers see it once it is in Review.`
+    : `To move this step on: set the status to In Progress, then ${finish}.`;
+}
 
 /**
  * Shows only the actions this user can take. This is a convenience: the database
@@ -104,6 +120,12 @@ export function ItemActions({
       </ActionForm>
     ),
   ].filter(Boolean);
-  if (parts.length === 0) return null;
-  return <div className="actions">{parts}</div>;
+  const hint = nextStepHint(caps, row);
+  if (parts.length === 0 && !hint) return null;
+  return (
+    <>
+      {parts.length > 0 && <div className="actions">{parts}</div>}
+      {hint && <p className="muted">{hint}</p>}
+    </>
+  );
 }
