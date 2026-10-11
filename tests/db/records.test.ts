@@ -55,6 +55,41 @@ describe.skipIf(!TEST_URL)("documents, history, countdown and administration", (
     ]);
   });
 
+  it("lets the administrator read and download documents, and nothing else of the records", async () => {
+    const sub = await db.sub("1.1", 1);
+    const v = await run(
+      "rijin",
+      "select register_document_version($1,null,null,'for-admin.docx','a/admin',1000,$2) id",
+      [sub, DOCX],
+    );
+    const versionId = (
+      await db.admin.query("select id from document_versions where storage_path='a/admin'")
+    ).rows[0].id;
+    expect(v.rows).toHaveLength(1);
+    // Read access, and a logged download.
+    expect(
+      (await run("jibin", "select count(*) from document_versions where storage_path='a/admin'"))
+        .rows[0].count,
+    ).toBe("1");
+    expect((await run("jibin", "select count(*) from documents")).rows[0].count).not.toBe("0");
+    await run("jibin", "select log_document_download($1)", [versionId]);
+    const logged = await db.admin.query(
+      "select actor_id from activity_logs where action_type='document_downloaded' and entity_id=$1",
+      [versionId],
+    );
+    expect(logged.rows).toEqual([{ actor_id: db.users.jibin }]);
+    // Still no comments, review points, testing, approvals or process history, and no uploads.
+    for (const t of ["comments", "review_points", "testing_records", "approvals"]) {
+      expect((await run("jibin", `select count(*) from ${t}`)).rows[0].count, t).toBe("0");
+    }
+    await denied("jibin", "select register_document_version($1,null,null,'x.docx','a/x',10,$2)", [
+      sub,
+      DOCX,
+    ]);
+    // Management without the administrator role still sees no documents.
+    expect((await run("shonJ", "select count(*) from document_versions")).rows[0].count).toBe("0");
+  });
+
   it("rejects unsupported types, wrong extensions and files over 2 MB at the database", async () => {
     const sub = await db.sub("1.1", 1);
     const bad = [
@@ -170,7 +205,10 @@ describe.skipIf(!TEST_URL)("documents, history, countdown and administration", (
     await denied("jibin", "select complete_stage($1)", [sub]);
     await denied("jibin", "select add_comment($1,'x')", [sub]);
     await denied("jibin", "select record_review_decision($1,'approved')", [sub]);
-    expect((await run("jibin", "select count(*) from document_versions")).rows[0].count).toBe("0");
+    // The administrator can read documents (migration 0009) but no other record.
+    for (const t of ["comments", "review_points", "testing_records", "approvals"]) {
+      expect((await run("jibin", `select count(*) from ${t}`)).rows[0].count, t).toBe("0");
+    }
   });
 
   it("lets assignments be changed without code, with an audit entry", async () => {
@@ -198,7 +236,7 @@ describe.skipIf(!TEST_URL)("documents, history, countdown and administration", (
     expect(n.rows[0].count).toBe("2");
   });
 
-  it("logs downloads only for people who may view the document", async () => {
+  it("logs downloads, and only for people who may view the document", async () => {
     const sub = await db.sub("1.1", 1);
     const v = await run(
       "rijin",
@@ -207,13 +245,17 @@ describe.skipIf(!TEST_URL)("documents, history, countdown and administration", (
     );
     const vid = v.rows[0].id;
     await run("pavithra", "select log_document_download($1)", [vid]);
-    for (const u of ["rustham", "shonJ", "jibin"])
+    for (const u of ["rustham", "shonJ"])
       await denied(u, "select log_document_download($1)", [vid]);
+    // The administrator may download (read-only access, migration 0009), and it is logged.
+    await run("jibin", "select log_document_download($1)", [vid]);
     const log = await db.admin.query(
       "select actor_id from activity_logs where action_type='document_downloaded' and entity_id=$1",
       [vid],
     );
-    expect(log.rows.map((r) => r.actor_id)).toEqual([db.users.pavithra]);
+    expect(log.rows.map((r) => r.actor_id).sort()).toEqual(
+      [db.users.pavithra, db.users.jibin].sort(),
+    );
   });
 
   it("resolves author names without exposing emails", async () => {

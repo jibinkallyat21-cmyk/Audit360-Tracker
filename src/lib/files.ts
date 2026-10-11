@@ -85,3 +85,21 @@ export function validateUpload(
   }
   return { ok: true, ext: e, mime: expected, safeName: sanitizeFilename(filename) };
 }
+
+/** Path of a file inside a download ZIP: process / step / name, with repeats numbered. */
+export function zipEntryPath(
+  processCode: string,
+  seq: number,
+  filename: string,
+  taken: Set<string>,
+): string {
+  const folder = `${sanitizeFilename(processCode)}/step-${seq}`;
+  const name = sanitizeFilename(filename);
+  let path = `${folder}/${name}`;
+  for (let n = 2; taken.has(path.toLowerCase()); n++) {
+    const dot = name.lastIndexOf(".");
+    path = `${folder}/${dot > 0 ? `${name.slice(0, dot)} (${n})${name.slice(dot)}` : `${name} (${n})`}`;
+  }
+  taken.add(path.toLowerCase());
+  return path;
+}

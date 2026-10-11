@@ -8,6 +8,9 @@ import { createClient } from "@/lib/supabase/server";
 import { DOCUMENTS_SELECT } from "@/lib/queries";
 import type { DocumentRec } from "@/lib/records";
 
+/** A file download, not a page, so it is a plain link. */
+const ZIP_URL = "/api/documents/zip";
+
 const when = (iso: string) =>
   new Intl.DateTimeFormat("en-GB", {
     dateStyle: "medium",
@@ -63,6 +66,17 @@ export default async function DocumentsPage({
         </label>
         <button type="submit">Search</button>
       </form>
+      {docs.length > 0 && (
+        <p>
+          <a href={ZIP_URL} className="button">
+            Download all current files (ZIP)
+          </a>{" "}
+          <span className="muted">
+            {docs.length} {docs.length === 1 ? "document" : "documents"}, grouped by process and
+            step, with a manifest.
+          </span>
+        </p>
+      )}
       {shown.length === 0 && <EmptyState>No documents found.</EmptyState>}
       <ul className="list">
         {shown.map((d) => {

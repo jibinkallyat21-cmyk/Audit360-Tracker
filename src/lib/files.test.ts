@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MAX_FILE_BYTES, sanitizeFilename, validateUpload } from "./files";
+import { MAX_FILE_BYTES, sanitizeFilename, validateUpload, zipEntryPath } from "./files";
 
 const enc = (s: string) => new TextEncoder().encode(s);
 const zip = (...names: string[]) =>
@@ -66,5 +66,17 @@ describe("sanitizeFilename", () => {
     expect(sanitizeFilename("../../etc/passwd.docx")).toBe("passwd.docx");
     expect(sanitizeFilename("C:\\x\\y z.docx")).toBe("y z.docx");
     expect(sanitizeFilename("a<b>|c.xlsx")).toBe("a_b__c.xlsx");
+  });
+});
+
+describe("zipEntryPath", () => {
+  it("groups by process and step and numbers repeated names", () => {
+    const taken = new Set<string>();
+    expect(zipEntryPath("3.4", 1, "SAMPLING.docx", taken)).toBe("3.4/step-1/SAMPLING.docx");
+    expect(zipEntryPath("3.4", 1, "sampling.docx", taken)).toBe("3.4/step-1/sampling (2).docx");
+    expect(zipEntryPath("3.4", 2, "SAMPLING.docx", taken)).toBe("3.4/step-2/SAMPLING.docx");
+  });
+  it("never lets a name climb out of its folder", () => {
+    expect(zipEntryPath("1.1", 1, "../../evil.docx", new Set())).toBe("1.1/step-1/evil.docx");
   });
 });
