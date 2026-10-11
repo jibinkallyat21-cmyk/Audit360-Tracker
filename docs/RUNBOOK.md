@@ -179,3 +179,7 @@ Run `supabase/migrations/0012_lines.sql` once in the Supabase SQL editor (after 
 ## 17. Late reviewers and the top bar
 
 Run `supabase/migrations/0013_reviewer_backlog.sql` once (after 0012). When a reviewer is added to a process that already has work waiting for review, they get a notification ("N items are already waiting for your review") and see it at once under **Review pending** on their dashboard and in **My queue**. The bell, theme switch and Sign out sit in a slim bar at the top right of every page.
+
+## 18. Chat oversight, and running 0012–0014 together
+
+Run `supabase/migrations/0014_chat_oversight.sql` (after 0013). Process group chats then include the System Administrator, the Project Lead and the Project Head as well as the assigned people (direct chats stay private). Those three get the group chat of every process when they open Chat. `supabase/run-0012-to-0014.sql` contains migrations 0012, 0013 and 0014 in one file: paste it into the SQL editor once instead of running them one by one.

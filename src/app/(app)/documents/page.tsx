@@ -5,7 +5,7 @@ import { resolveNames } from "@/lib/records";
 import { getPersona } from "@/lib/demo";
 import { demoDocuments } from "@/lib/demo-data";
 import { createClient } from "@/lib/supabase/server";
-import { DOCUMENTS_SELECT } from "@/lib/queries";
+import { DOCUMENTS_SELECT, withoutLineId } from "@/lib/queries";
 import type { DocumentRec } from "@/lib/records";
 
 /** A file download, not a page, so it is a plain link. */
@@ -30,14 +30,18 @@ export default async function DocumentsPage({
   if (persona) {
     docs = demoDocuments(persona);
   } else {
-    const { data } = await (
-      await createClient()
-    )
-      .from("documents")
-      .select(DOCUMENTS_SELECT)
-      .order("created_at", { ascending: false })
-      .returns<DocumentRec[]>();
-    docs = data ?? [];
+    const supabase = await createClient();
+    const load = (select: string) =>
+      supabase
+        .from("documents")
+        .select(select)
+        .order("created_at", { ascending: false })
+        .returns<DocumentRec[]>();
+    let res = await load(DOCUMENTS_SELECT);
+    // Database without the lines migration yet: the same list without the line column.
+    if (res.error) res = await load(withoutLineId(DOCUMENTS_SELECT));
+    if (res.error) throw new Error("Could not load documents.");
+    docs = res.data ?? [];
   }
   const names = await resolveNames(
     docs.flatMap((d) => d.document_versions.map((v) => v.uploaded_by)),

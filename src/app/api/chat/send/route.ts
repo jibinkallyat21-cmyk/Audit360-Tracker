@@ -32,6 +32,21 @@ async function recipients(conversation: string, sender: string) {
       .eq("approval_state", "approved")
       .eq("is_active", true);
     ids = (profiles ?? []).map((p) => p.id);
+    // The administrator, Project Lead and Project Head are in every process group.
+    const { data: overseers } = await admin
+      .from("person_roles")
+      .select("person_id, roles!inner(name)")
+      .in("roles.name", ["system_admin", "project_lead", "project_head"]);
+    const overseerPeople = [...new Set((overseers ?? []).map((r) => r.person_id))];
+    if (overseerPeople.length > 0) {
+      const { data: extra } = await admin
+        .from("profiles")
+        .select("id")
+        .in("person_id", overseerPeople)
+        .eq("approval_state", "approved")
+        .eq("is_active", true);
+      ids = [...new Set([...ids, ...(extra ?? []).map((p) => p.id)])];
+    }
   } else {
     const { data: profiles } = await admin
       .from("profiles")

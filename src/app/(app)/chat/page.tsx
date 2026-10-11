@@ -48,6 +48,7 @@ export default async function ChatPage({
     )
       .map(([type, names]) => `${ASSIGNMENT_LABEL_PLURAL[type] ?? type}: ${names.join(", ")}`)
       .join(" · ");
+    members += " · Also in every group: Administrator, Project Lead, Project Head";
   }
 
   return (

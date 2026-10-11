@@ -76,11 +76,25 @@ describe.skipIf(!TEST_URL)("chat: everyone, one person, or the people of one pro
     for (const u of ["rijin", "fayis"]) {
       expect(await messages(u, conv!), u).toEqual(["team of 1.1 only"]);
     }
-    // Not assigned: the Project Lead, the Project Head, the administrator, another lead.
-    for (const u of ["shonD", "shonJ", "jibin", "rustham"]) {
-      expect(await messages(u, conv!), u).toEqual([]);
-      await denied(u, "select chat_send($1,'x')", [conv]);
+    // The Project Lead, the Project Head and the administrator are in every process group.
+    for (const u of ["shonD", "shonJ", "jibin"]) {
+      expect(await messages(u, conv!), u).toEqual(["team of 1.1 only"]);
     }
+    for (const u of ["shonD", "shonJ", "jibin"]) {
+      await run(u, "select chat_send($1,$2)", [conv, `hello from ${u}`]);
+    }
+    expect(await messages("rijin", conv!)).toContain("hello from jibin");
+    // Another team's lead is not.
+    expect(await messages("rustham", conv!)).toEqual([]);
+    await denied("rustham", "select chat_send($1,'x')", [conv]);
+    // The administrator gets the group of every process, not only the ones they are assigned to.
+    await run("jibin", "select chat_ensure_groups()");
+    const all = await run(
+      "jibin",
+      "select count(*)::int n from chat_overview() where kind='process'",
+    );
+    const procs = await db.admin.query("select count(*)::int n from processes");
+    expect(all.rows[0].n).toBe(procs.rows[0].n);
     expect(await convOf("rustham", "process", "1.1")).toBeUndefined();
   });
 

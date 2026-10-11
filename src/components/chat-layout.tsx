@@ -115,7 +115,8 @@ export function ChatLayout({
                     ? "Everyone with an account can read this."
                     : current.kind === "direct"
                       ? "Only you and this person can read this."
-                      : members || "Only the people assigned to this process can read this."}
+                      : members ||
+                        "Only the people assigned to this process, the Administrator, the Project Lead and the Project Head can read this."}
                 </p>
               </header>
               <ChatView key={current.conversation_id} conversationId={current.conversation_id} />

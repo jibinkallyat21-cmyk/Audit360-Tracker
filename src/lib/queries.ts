@@ -27,3 +27,6 @@ export const NOTIFICATIONS_SELECT =
 export const PEOPLE_SELECT = "id, display_name, first_name";
 export const ROLE_TAGS_SELECT = "person_id, roles!inner(name)";
 export const TEAMS_SELECT = "id, name, production_lead_person_id, team_members(person_id)";
+
+/** Drops the line_id column from a select string (database without the lines migration). */
+export const withoutLineId = (select: string) => select.replace(/ line_id,/, "");

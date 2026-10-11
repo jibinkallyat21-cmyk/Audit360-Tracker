@@ -7,10 +7,8 @@ import {
   DOCUMENTS_SELECT,
   REVIEW_POINTS_SELECT,
   TESTING_SELECT,
+  withoutLineId,
 } from "./queries";
-
-/** Drops the line_id column from a select string (database without the lines migration). */
-const noLine = (select: string) => select.replace(/ line_id,/, "");
 
 export interface CommentRec {
   id: string;
@@ -121,7 +119,7 @@ export async function getRecords(subIds: string[]): Promise<Records> {
   const supabase = await createClient();
   const probe = await supabase.from("documents").select("line_id").limit(1);
   const legacy = Boolean(probe.error);
-  const pick = (select: string) => (legacy ? noLine(select) : select);
+  const pick = (select: string) => (legacy ? withoutLineId(select) : select);
   const [c, r, d, t, a] = await Promise.all([
     supabase
       .from("comments")
