@@ -12,6 +12,7 @@ export function AppShell({
   unread,
   userLabel,
   demoRole,
+  maintenance,
   children,
 }: {
   items: NavItem[];
@@ -19,6 +20,8 @@ export function AppShell({
   userLabel: string;
   /** Set in prototype demo mode: the sample role being shown. */
   demoRole?: string;
+  /** Maintenance mode is on: only allowed administrators see the site, so they are reminded. */
+  maintenance?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -39,6 +42,20 @@ export function AppShell({
       </aside>
       <div className="main">
         <header className="topbar">
+          {maintenance && (
+            <Link href="/admin/maintenance" className="maint-note" role="status">
+              <span className="maint-track">
+                <span>
+                  ⚠ MAINTENANCE MODE IS ON. Everyone else sees the maintenance page. Turn it off
+                  when your work is done (Admin → Maintenance).
+                </span>
+                <span aria-hidden="true">
+                  ⚠ MAINTENANCE MODE IS ON. Everyone else sees the maintenance page. Turn it off
+                  when your work is done (Admin → Maintenance).
+                </span>
+              </span>
+            </Link>
+          )}
           <Link
             href="/notifications"
             className="bell"

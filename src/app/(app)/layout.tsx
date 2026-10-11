@@ -3,16 +3,18 @@ import type { NavItem } from "@/components/nav";
 import { getPersona } from "@/lib/demo";
 import { requireApprovedViewer } from "@/lib/access";
 import { getCapabilities, getChatUnread, getUnreadCount, listSubprocesses } from "@/lib/data";
+import { maintenanceOn } from "@/lib/maintenance";
 import { buildQueue, queueCount } from "@/lib/queue";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const viewer = await requireApprovedViewer();
   const persona = await getPersona();
-  const [unread, caps, chatUnread, rows] = await Promise.all([
+  const [unread, caps, chatUnread, rows, maintenance] = await Promise.all([
     getUnreadCount(),
     getCapabilities(),
     getChatUnread(),
     listSubprocesses(),
+    maintenanceOn(),
   ]);
   const waiting = queueCount(buildQueue(rows, caps));
   const items: NavItem[] = [
@@ -34,6 +36,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       unread={unread}
       userLabel={viewer.fullName ?? viewer.email}
       demoRole={persona?.role}
+      maintenance={maintenance}
     >
       {children}
     </AppShell>
