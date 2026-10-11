@@ -37,6 +37,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       userLabel={viewer.fullName ?? viewer.email}
       demoRole={persona?.role}
       maintenance={maintenance}
+      docSync={caps.roles.has("system_admin")}
     >
       {children}
     </AppShell>

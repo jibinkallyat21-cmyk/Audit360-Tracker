@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { logout } from "@/app/actions";
 import { BRAND } from "@/lib/brand";
+import { DocSyncRunner } from "./doc-sync";
 import { MaintenanceWatch } from "./maintenance-watch";
 import { PushToggle } from "./push-toggle";
 import { NavLinks, type NavItem } from "./nav";
@@ -13,6 +14,7 @@ export function AppShell({
   userLabel,
   demoRole,
   maintenance,
+  docSync,
   children,
 }: {
   items: NavItem[];
@@ -22,6 +24,8 @@ export function AppShell({
   demoRole?: string;
   /** Maintenance mode is on: only allowed administrators see the site, so they are reminded. */
   maintenance?: boolean;
+  /** The System Administrator: saves uploaded files to a folder on their computer. */
+  docSync?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -56,6 +60,7 @@ export function AppShell({
               </span>
             </Link>
           )}
+          {docSync && <DocSyncRunner />}
           <Link
             href="/notifications"
             className="bell"

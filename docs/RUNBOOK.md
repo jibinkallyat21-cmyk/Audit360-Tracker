@@ -183,3 +183,7 @@ Run `supabase/migrations/0013_reviewer_backlog.sql` once (after 0012). When a re
 ## 18. Chat oversight, and running 0012–0014 together
 
 Run `supabase/migrations/0014_chat_oversight.sql` (after 0013). Process group chats then include the System Administrator, the Project Lead and the Project Head as well as the assigned people (direct chats stay private). Those three get the group chat of every process when they open Chat. `supabase/run-0012-to-0014.sql` contains migrations 0012, 0013 and 0014 in one file: paste it into the SQL editor once instead of running them one by one.
+
+## 19. Save uploaded files to the administrator's computer (Admin → Save files)
+
+Browser-based, no install and no migration. The System Administrator opens **Admin → Save files**, presses "Choose a folder and start" and picks a folder in Edge or Chrome. While the site is open in that browser (any page), it checks every minute and saves each new document version into `process / step / line / file` folders (`src/lib/sync-paths.ts`); later versions are saved as `name (v2)`, nothing is overwritten, and a version already saved is never downloaded again (the list is kept in the browser's IndexedDB). It works only in the browser where it was set up, only for the System Administrator (the two endpoints under `/api/documents/sync` refuse anyone else), and each saved file is logged as a download. A browser restart may need one click on "Resume saving files to my computer" at the top of the page. Stopping removes the remembered folder; saved files stay.
