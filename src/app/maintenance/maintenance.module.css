@@ -1,0 +1,93 @@
+/* Maintenance page, built from the "Maintenance Pages" design (1a desktop, 1d mobile). */
+.page {
+  --coral: #ee5a73;
+  --blue: #5b8bd6;
+  --blue-text: #6f99e0;
+  --heading: #eaeefb;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 28px;
+  background: #040c22;
+  color: var(--heading);
+  font-family: var(--font-figtree), var(--font-sans), sans-serif;
+}
+.frame {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 56px);
+  padding: 40px;
+  text-align: center;
+  border: 1.5px solid var(--coral);
+  border-radius: 14px;
+}
+.eyebrow {
+  margin: 0;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+.icon {
+  width: 300px;
+  height: auto;
+  margin: 34px 0 30px;
+}
+.title {
+  margin: 0;
+  font-weight: 500;
+  font-size: 46px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--heading);
+}
+.body {
+  max-width: 520px;
+  margin: 26px 0 0;
+  font-family: var(--font-literata), serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--blue-text);
+}
+.admin {
+  margin-top: 40px;
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  text-decoration: none;
+}
+.admin:hover,
+.admin:focus-visible {
+  color: var(--heading);
+  text-decoration: underline;
+}
+@media (max-width: 720px) {
+  .page {
+    padding: 14px;
+  }
+  .frame {
+    min-height: calc(100vh - 28px);
+    padding: 24px;
+  }
+  .eyebrow {
+    font-size: 11px;
+  }
+  .icon {
+    width: 220px;
+    margin: 28px 0 26px;
+  }
+  .title {
+    font-size: 34px;
+    line-height: 1.12;
+  }
+  .body {
+    margin-top: 20px;
+    font-size: 15px;
+  }
+}

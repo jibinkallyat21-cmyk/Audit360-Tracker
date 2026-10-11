@@ -156,3 +156,7 @@ Run `supabase/migrations/0010_chat_push.sql` once in the Supabase SQL editor (af
 - **Chat** (`/chat`): one chat for everyone, private chats between two people, and one group chat per process for the people assigned to it. The database decides who can read each conversation; direct chats are invisible to everyone else, including the administrator. Messages cannot be edited or deleted by clients.
 - **Desktop alerts**: each person presses "Turn on" under their name in the sidebar and allows notifications in the browser. They then get an alert for new chat messages and for workflow notifications (a review point assigned to them, and so on), even when the tab is closed, as long as the browser is running. Chrome, Edge and Firefox on Windows and Mac are supported; Safari needs macOS 13 or later.
 - **Removing an account** also removes its direct chats and its push subscriptions. Its messages in the shared chats stay, shown as "Former member".
+
+## 14. Maintenance page design
+
+`src/app/maintenance/` is built from the "Maintenance Pages" design (screen 1a on desktop, 1d on phones): navy page, coral frame, laptop-and-gear icon. Fonts Figtree and Literata are self-hosted in `src/app/fonts` (SIL Open Font License), so the page makes no request to Google. The design's other screens (countdown and progress, e-mail sign-up, 503 outage) are not used because they need data the app does not have.
