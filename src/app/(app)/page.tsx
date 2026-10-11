@@ -70,7 +70,10 @@ function Progress({ items }: { items: GroupProgress[] }) {
       {items.map((g) => (
         <li key={g.key}>
           <div>
-            <span>{g.label}</span>
+            <span>
+              {g.label}
+              {g.weight ? <span className="muted"> · counts {g.weight}% of the total</span> : null}
+            </span>
             <span className="num">
               {g.done}/{g.total} · {g.percent}%
             </span>
@@ -141,7 +144,7 @@ export default async function DashboardPage() {
             <StatCard
               label="Complete"
               value={`${s.percent}%`}
-              hint={`${s.done} of ${s.total} items`}
+              hint={`${s.done} of ${s.total} items · weighted by phase`}
             />
             <StatCard
               label="Items"
@@ -207,7 +210,8 @@ export default async function DashboardPage() {
             <h2>{kind === "lead" ? "My teams' pipeline" : "Pipeline"}</h2>
             <StageBar counts={s.byStage} />
             <p className="muted">
-              {s.done} of {s.total} items finished in Production.
+              {s.done} of {s.total} items finished in Production. Overall completion is weighted by
+              phase: Audit execution 55%, File management and closure 5%, every other phase 10%.
             </p>
             <Meter percent={s.percent} label="Overall completion" />
             <ul className="chips" aria-label="Items by status">

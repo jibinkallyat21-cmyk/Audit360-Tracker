@@ -8,6 +8,44 @@ import {
   type SubprocessRow,
 } from "./domain";
 
+/**
+ * How much each phase counts towards overall completion, in percent (they add up to 100).
+ * Inside a phase every item counts the same. Any other phase name counts 10, the standard share.
+ */
+export const PHASE_WEIGHTS: Record<string, number> = {
+  "Lead and proposal": 10,
+  "Engagement and advance": 10,
+  "Audit execution": 55,
+  Review: 10,
+  "Reporting and submission": 10,
+  "File management and closure": 5,
+};
+
+export const phaseWeight = (name: string) => PHASE_WEIGHTS[name] ?? 10;
+
+/**
+ * Overall completion, weighted by phase: each phase's finished share (done / total) times its
+ * weight. When only some phases are visible (a team member sees their own processes), the weights
+ * of the phases shown are scaled to add up to 100, so the figure still reads as "of what you see".
+ */
+export function weightedPercent(rows: SubprocessRow[]): number {
+  const phases = new Map<string, { done: number; total: number }>();
+  for (const r of rows) {
+    const p = phases.get(r.phaseName) ?? { done: 0, total: 0 };
+    p.total++;
+    if (isDone(r)) p.done++;
+    phases.set(r.phaseName, p);
+  }
+  let earned = 0;
+  let possible = 0;
+  for (const [name, p] of phases) {
+    const w = phaseWeight(name);
+    earned += w * (p.done / p.total);
+    possible += w;
+  }
+  return possible === 0 ? 0 : Math.round((earned / possible) * 100);
+}
+
 export interface Summary {
   total: number;
   done: number;
@@ -36,7 +74,7 @@ export function summarize(rows: SubprocessRow[]): Summary {
   return {
     total: rows.length,
     done,
-    percent: rows.length === 0 ? 0 : Math.round((done / rows.length) * 100),
+    percent: weightedPercent(rows),
     byStage,
     byStatus,
     blocked: rows.filter((r) => r.status === "blocked"),
@@ -54,6 +92,8 @@ export interface GroupProgress {
   total: number;
   done: number;
   percent: number;
+  /** Share of the overall figure this group stands for (phases only), in percent. */
+  weight?: number;
 }
 
 function group(
@@ -74,9 +114,9 @@ function group(
 
 export function byPhase(rows: SubprocessRow[]): GroupProgress[] {
   const order = new Map(rows.map((r) => [r.phaseName, r.phaseOrder]));
-  return group(rows, (r) => [[r.phaseName, r.phaseName]]).sort(
-    (a, b) => (order.get(a.key) ?? 0) - (order.get(b.key) ?? 0),
-  );
+  return group(rows, (r) => [[r.phaseName, r.phaseName]])
+    .map((g) => ({ ...g, weight: phaseWeight(g.key) }))
+    .sort((a, b) => (order.get(a.key) ?? 0) - (order.get(b.key) ?? 0));
 }
 
 /** Progress per Production Lead, from the processes' lead assignments visible to the viewer. */
