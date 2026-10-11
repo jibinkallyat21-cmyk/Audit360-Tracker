@@ -175,3 +175,7 @@ Run `supabase/migrations/0012_lines.sql` once in the Supabase SQL editor (after 
 ## 16. My queue and plain status words
 
 **My queue** (sidebar, with a count) lists what needs the signed-in person now: for reviewers the steps and lines waiting for a decision (oldest first); for Production Leads what was sent back, what is blocked and what has had no activity for 5 days; for the Project Lead approved steps ready for Production. It needs no setup. In lists the status shows one plain word: Not started, Working, Waiting on review, Changes required, Blocked, In Production, Done (`flowState` in `src/lib/domain.ts`); the stage is shown separately.
+
+## 17. Late reviewers and the top bar
+
+Run `supabase/migrations/0013_reviewer_backlog.sql` once (after 0012). When a reviewer is added to a process that already has work waiting for review, they get a notification ("N items are already waiting for your review") and see it at once under **Review pending** on their dashboard and in **My queue**. The bell, theme switch and Sign out sit in a slim bar at the top right of every page.

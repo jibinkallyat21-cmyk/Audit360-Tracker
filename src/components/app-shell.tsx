@@ -35,25 +35,25 @@ export function AppShell({
         <div className="side-foot">
           <span className="who">{userLabel}</span>
           <PushToggle />
-          <div className="side-actions">
-            <Link
-              href="/notifications"
-              className="bell"
-              aria-label={`Notifications, ${unread} unread`}
-            >
-              <span aria-hidden="true">🔔</span>
-              {unread > 0 && <span className="count">{unread > 99 ? "99+" : unread}</span>}
-            </Link>
-            <ThemeToggle />
-            <form action={logout}>
-              <button type="submit" className="secondary">
-                Sign out
-              </button>
-            </form>
-          </div>
         </div>
       </aside>
       <div className="main">
+        <header className="topbar">
+          <Link
+            href="/notifications"
+            className="bell"
+            aria-label={`Notifications, ${unread} unread`}
+          >
+            <span aria-hidden="true">🔔</span>
+            {unread > 0 && <span className="count">{unread > 99 ? "99+" : unread}</span>}
+          </Link>
+          <ThemeToggle />
+          <form action={logout}>
+            <button type="submit" className="secondary">
+              Sign out
+            </button>
+          </form>
+        </header>
         {demoRole && (
           <div className="demo-banner" role="note">
             Prototype demo · viewing as <strong>{demoRole}</strong> · sample data, changes are

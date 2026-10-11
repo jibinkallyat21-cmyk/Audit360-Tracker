@@ -220,4 +220,39 @@ describe.skipIf(!TEST_URL)("lines: work, review and approve one piece at a time"
     const c = await run("jibin", "select * from comments where line_id is not null");
     expect(c.rows).toEqual([]);
   });
+
+  it("tells a reviewer who joins late about work already waiting, and lets them decide it", async () => {
+    const other = await db.sub("3.5", 3);
+    const l = (
+      await db.admin.query(
+        "select id from subprocess_lines where subprocess_id=$1 and title='EOSB'",
+        [other],
+      )
+    ).rows[0].id;
+    await run("rustham", "select line_set_status($1,'in_progress')", [l]);
+    await run(
+      "rustham",
+      "select register_document_version($1,null,null,'e.docx','t/late-1',1000,$2,null,$3)",
+      [other, DOCX, l],
+    );
+    await run("rustham", "select line_send_to_review($1,true,null)", [l]);
+    const process = await db.process("3.5");
+    const jismy = await db.person("Jismy");
+    expect((await run("jismy", "select 1 from subprocess_lines where id=$1", [l])).rowCount).toBe(
+      0,
+    ); // cannot see it yet
+    await run("jibin", "select admin_set_assignment($1,$2,'reviewer',true)", [process, jismy]);
+    expect((await run("jismy", "select 1 from subprocess_lines where id=$1", [l])).rowCount).toBe(
+      1,
+    );
+    const n = await db.admin.query(
+      "select message from notifications where recipient_user_id=$1 and event_type='review_queue' and process_id=$2",
+      [db.users.jismy, process],
+    );
+    expect(n.rows.some((x) => /already waiting for your review/.test(x.message))).toBe(true);
+    await run("jismy", "select line_review_decision($1,'approved','late reviewer')", [l]);
+    expect(
+      (await db.admin.query("select status from subprocess_lines where id=$1", [l])).rows[0].status,
+    ).toBe("approved");
+  });
 });

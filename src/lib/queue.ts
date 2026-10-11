@@ -94,8 +94,8 @@ export function buildQueue(
   const sections: QueueSection[] = [
     {
       key: "review",
-      title: "Waiting for your review",
-      hint: "Oldest first. Open the process to approve or ask for changes.",
+      title: "Review pending",
+      hint: "Waiting for your decision, oldest first. Open the process to approve or ask for changes.",
       items: review.sort(oldestFirst),
     },
     {

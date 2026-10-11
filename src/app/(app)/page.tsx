@@ -16,6 +16,7 @@ import { toneForLead } from "@/lib/brand";
 import { getCapabilities, getDeadline, listAssignments, listSubprocesses } from "@/lib/data";
 import { STAGE_LABEL, STATUSES, type SubprocessRow } from "@/lib/domain";
 import { canSetDeadline, dashboardKind } from "@/lib/permissions";
+import { buildQueue } from "@/lib/queue";
 import { byLead, byPhase, rollupProcesses, summarize, type GroupProgress } from "@/lib/progress";
 
 const LIMIT = 5;
@@ -25,11 +26,14 @@ function ItemList({
   empty,
   leadOf,
   limit = LIMIT,
+  youAre,
 }: {
   rows: SubprocessRow[];
   empty: string;
   leadOf: Map<string, string>;
   limit?: number;
+  /** Your role on a process, shown beside each item ("You: Reviewer"). */
+  youAre?: (processId: string) => string;
 }) {
   if (rows.length === 0) return <EmptyState>{empty}</EmptyState>;
   return (
@@ -44,6 +48,7 @@ function ItemList({
           <span className="item-meta">
             <span className="muted">
               Step {r.seq} · {STAGE_LABEL[r.stage]}
+              {youAre?.(r.processId) ? ` · You: ${youAre(r.processId)}` : ""}
             </span>
             <FlowBadge row={r} />
           </span>
@@ -92,6 +97,15 @@ export default async function DashboardPage() {
   const leadOf = new Map(
     assignments.filter((a) => a.type === "production_lead").map((a) => [a.processId, a.personName]),
   );
+  const needs = buildQueue(rows, caps);
+  const ROLE: Record<string, string> = {
+    production_lead: "Production Lead",
+    team_member: "Team",
+    reviewer: "Reviewer",
+    supporting_role: "Supporting",
+  };
+  const youAre = (processId: string) =>
+    [...(caps.assignments.get(processId) ?? [])].map((t) => ROLE[t] ?? t).join(", ");
   const scope = kind === "member" ? mine : rows;
   const scoped = kind === "member" ? summarize(mine) : s;
 
@@ -140,10 +154,50 @@ export default async function DashboardPage() {
         )}
       </div>
 
+      {needs.length > 0 && (
+        <section className="panel">
+          <h2>Needs you</h2>
+          <div className="attention">
+            {needs.map((n) => (
+              <div key={n.key}>
+                <h3>
+                  {n.title} ({n.items.length})
+                </h3>
+                <ul className="items">
+                  {n.items.slice(0, LIMIT).map((i) => (
+                    <li key={i.key}>
+                      <Link href={`/processes/${i.code}`} className="item-main">
+                        <span className="dot" aria-hidden="true" />
+                        <strong className="mono">{i.code}</strong>
+                        <span className="item-title">
+                          {i.processTitle} · step {i.step}
+                          {i.line ? ` · ${i.line}` : ""}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                  {n.items.length > LIMIT && (
+                    <li className="more">
+                      <Link href="/queue">+{n.items.length - LIMIT} more in My queue</Link>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {kind === "member" && (
         <section className="panel">
           <h2>My work</h2>
-          <ItemList rows={mine} empty="You have no assigned work yet." leadOf={leadOf} limit={50} />
+          <ItemList
+            rows={mine}
+            empty="You have no assigned work yet."
+            leadOf={leadOf}
+            limit={50}
+            youAre={youAre}
+          />
         </section>
       )}
 

@@ -248,6 +248,24 @@ code {
 .side-actions form button {
   width: 100%;
 }
+/* bell, theme and sign out stay in a slim bar at the top right */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 28px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.topbar form button {
+  height: 40px;
+  padding-block: 0;
+  white-space: nowrap;
+}
 .who {
   font-size: 14px;
   color: var(--muted);
@@ -1105,6 +1123,9 @@ td {
   }
   .nav a[aria-current="page"] {
     border-bottom-color: var(--accent);
+  }
+  .topbar {
+    padding: 8px 16px;
   }
   .content {
     padding: 22px 16px 36px;
