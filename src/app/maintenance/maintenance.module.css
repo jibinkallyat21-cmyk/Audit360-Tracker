@@ -1,17 +1,29 @@
 /* Maintenance page, built from the "Maintenance Pages" design (1a desktop, 1d mobile). */
 .page {
+  --bg: #040c22;
   --coral: #ee5a73;
   --blue: #5b8bd6;
   --blue-text: #6f99e0;
   --heading: #eaeefb;
+  --lines: #3f62a6;
   min-height: 100vh;
   box-sizing: border-box;
   padding: 28px;
-  background: #040c22;
+  background: var(--bg);
   color: var(--heading);
   font-family: var(--font-figtree), var(--font-sans), sans-serif;
 }
+/* Light theme: same layout and hues, darker for contrast on a pale page. */
+:global(html[data-theme="light"]) .page {
+  --bg: #f4f7fd;
+  --coral: #d93f5a;
+  --blue: #3b66b8;
+  --blue-text: #3a5ea8;
+  --heading: #0b1736;
+  --lines: #9db6e3;
+}
 .frame {
+  position: relative;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -30,6 +42,41 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--blue);
+}
+.theme {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+.lines,
+.laptop,
+.gear {
+  fill: none;
+}
+.lines {
+  stroke: var(--lines);
+}
+.laptop {
+  stroke: var(--blue);
+}
+.gear {
+  stroke: var(--coral);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: turn 14s linear infinite;
+}
+.hubfill {
+  fill: var(--bg);
+}
+@keyframes turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gear {
+    animation: none;
+  }
 }
 .icon {
   width: 300px;

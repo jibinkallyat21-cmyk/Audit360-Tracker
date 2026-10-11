@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { ThemeToggle } from "@/components/theme-toggle";
 import styles from "./maintenance.module.css";
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ const literata = localFont({
   display: "swap",
 });
 
-/** A laptop with a gear and speed lines, drawn as in the design. */
+/** A laptop with a gear and speed lines, drawn as in the design. The gear turns slowly. */
 function LaptopGear() {
   return (
     <svg
@@ -32,17 +33,25 @@ function LaptopGear() {
       aria-hidden="true"
       focusable="false"
     >
-      <g stroke="#3f62a6" strokeWidth="3" strokeLinecap="round">
+      <g className={styles.lines} strokeWidth="3" strokeLinecap="round">
         <path d="M12 39h48M30 28h30M30 50h22" />
         <path d="M240 39h48M240 28h30M248 50h22" />
       </g>
-      <rect x="80" y="4" width="140" height="86" rx="5" stroke="#5b8bd6" strokeWidth="3.5" />
-      <path
-        d="M70 96h160a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3H70a3 3 0 0 1-3-3v-3a3 3 0 0 1 3-3z"
-        stroke="#5b8bd6"
+      <rect
+        className={styles.laptop}
+        x="80"
+        y="4"
+        width="140"
+        height="86"
+        rx="5"
         strokeWidth="3.5"
       />
-      <g stroke="#ee5a73" fill="none">
+      <path
+        className={styles.laptop}
+        d="M70 96h160a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3H70a3 3 0 0 1-3-3v-3a3 3 0 0 1 3-3z"
+        strokeWidth="3.5"
+      />
+      <g className={styles.gear}>
         <circle
           cx="150"
           cy="47"
@@ -51,7 +60,7 @@ function LaptopGear() {
           strokeDasharray="7.5 7.5"
           transform="rotate(-10 150 47)"
         />
-        <circle cx="150" cy="47" r="15" strokeWidth="3.5" fill="#040c22" />
+        <circle className={styles.hubfill} cx="150" cy="47" r="15" strokeWidth="3.5" />
         <circle cx="150" cy="47" r="6" strokeWidth="3.5" />
       </g>
     </svg>
@@ -62,6 +71,9 @@ export default function MaintenancePage() {
   return (
     <div className={`${styles.page} ${figtree.variable} ${literata.variable}`}>
       <main className={styles.frame} role="status">
+        <div className={styles.theme}>
+          <ThemeToggle />
+        </div>
         <p className={styles.eyebrow}>System Maintenance</p>
         <LaptopGear />
         <h1 className={styles.title}>We’ll be back shortly</h1>
