@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { StepRecords } from "@/components/step-records";
+import { StepLines, lineSummary } from "@/components/step-lines";
 import { ItemActions } from "@/components/item-actions";
 import { BuildBadge, DecisionBadge, PageHero, StageTrack, StatusBadge } from "@/components/ui";
 import { toneForLead } from "@/lib/brand";
@@ -79,6 +80,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ code: 
               <StatusBadge status={r.status} /> <DecisionBadge decision={r.reviewDecision} />{" "}
               <BuildBadge status={r.dashboardStatus} />
             </p>
+            {r.lines && r.lines.length > 0 && <p className="muted">{lineSummary(r.lines)}</p>}
             <ItemActions
               row={r}
               caps={caps}
@@ -86,6 +88,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ code: 
                 .filter((d) => d.subprocess_id === r.id)
                 .map((d) => ({ id: d.id, name: d.original_filename }))}
             />
+            <StepLines row={r} caps={caps} records={records} />
             <StepRecords row={r} caps={caps} records={records} people={assignments} />
           </article>
         ))}

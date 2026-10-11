@@ -9,6 +9,7 @@ import type {
   Stage,
   Status,
   SubprocessRow,
+  LineRow,
 } from "./domain";
 import { createClient } from "@/lib/supabase/server";
 import { getPersona } from "./demo";
@@ -35,6 +36,7 @@ interface RawSub {
   review_decision: ReviewDecision | null;
   dashboard_status: DashboardStatus | null;
   updated_at: string;
+  subprocess_lines: LineRow[] | null;
   processes: {
     id: string;
     process_code: string;
@@ -62,6 +64,7 @@ export const listSubprocesses = cache(async (): Promise<SubprocessRow[]> => {
       reviewDecision: r.review_decision,
       dashboardStatus: r.dashboard_status,
       updatedAt: r.updated_at,
+      lines: [...(r.subprocess_lines ?? [])].sort((a, b) => a.seq - b.seq),
       processId: r.processes.id,
       processCode: r.processes.process_code,
       processTitle: r.processes.title,

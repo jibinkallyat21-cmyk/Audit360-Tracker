@@ -414,15 +414,33 @@
       "subprocesses": [
         {
           "seq": 1,
-          "title": "Rules engine computes EOSB, GOSI, prepaid & depreciation from payroll / FA data"
+          "title": "Rules engine computes EOSB, GOSI, prepaid & depreciation from payroll / FA data",
+          "lines": [
+            "EOSB",
+            "GOSI",
+            "Prepaid",
+            "Depreciation"
+          ]
         },
         {
           "seq": 2,
-          "title": "Auto-reconciled to GL with variance flags"
+          "title": "Auto-reconciled to GL with variance flags",
+          "lines": [
+            "EOSB",
+            "GOSI",
+            "Prepaid",
+            "Depreciation"
+          ]
         },
         {
           "seq": 3,
-          "title": "Adjustment entries passed automatically"
+          "title": "Adjustment entries passed automatically",
+          "lines": [
+            "EOSB",
+            "GOSI",
+            "Prepaid",
+            "Depreciation"
+          ]
         }
       ],
       "context": {

@@ -15,12 +15,18 @@ export interface Capabilities {
 const has = (c: Capabilities, processId: string, type: AssignmentType) =>
   c.assignments.get(processId)?.has(type) ?? false;
 
+/** A step with lines is worked, reviewed and approved line by line until it reaches Production. */
+export const usesLines = (r: SubprocessRow) =>
+  (r.lines?.length ?? 0) > 0 && r.stage !== "production";
+
 export function canSetStatus(c: Capabilities, r: SubprocessRow): boolean {
+  if (usesLines(r)) return false;
   if (r.stage === "production") return c.roles.has("project_lead");
   return has(c, r.processId, "production_lead");
 }
 
 export function canCompleteStage(c: Capabilities, r: SubprocessRow): boolean {
+  if (usesLines(r)) return false;
   if (r.status !== "in_progress") return false;
   if (r.stage === "production") return c.roles.has("project_lead");
   if (r.stage === "review") return c.roles.has("project_lead");
@@ -29,6 +35,7 @@ export function canCompleteStage(c: Capabilities, r: SubprocessRow): boolean {
 
 export function canRecordTesting(c: Capabilities, r: SubprocessRow): boolean {
   return (
+    !usesLines(r) &&
     r.stage === "testing" &&
     (["production_lead", "team_member", "supporting_role"] as const).some((t) =>
       has(c, r.processId, t),
@@ -62,10 +69,32 @@ export function canReview(c: Capabilities, processId: string): boolean {
 }
 
 export const canRaiseReviewPoint = (c: Capabilities, r: SubprocessRow) =>
-  canReview(c, r.processId) && (r.stage === "testing" || r.stage === "review");
+  canReview(c, r.processId) &&
+  ((r.lines?.length ?? 0) > 0
+    ? r.stage !== "production"
+    : r.stage === "testing" || r.stage === "review");
 
 export const canRecordDecision = (c: Capabilities, r: SubprocessRow) =>
-  canReview(c, r.processId) && r.stage === "review";
+  !usesLines(r) && canReview(c, r.processId) && r.stage === "review";
+
+/** Add, rename and remove lines: the step's Production Lead or the System Administrator. */
+export const canManageLines = (c: Capabilities, r: SubprocessRow) =>
+  r.stage !== "production" &&
+  (has(c, r.processId, "production_lead") || c.roles.has("system_admin"));
+
+/** Set a line's working status and send it to review: the step's Production Lead. */
+export const canWorkLines = (c: Capabilities, r: SubprocessRow) =>
+  r.stage !== "production" && has(c, r.processId, "production_lead");
+
+/** Approve or ask for changes on a line in review. */
+export const canDecideLines = (c: Capabilities, r: SubprocessRow) =>
+  r.stage !== "production" && canReview(c, r.processId);
+
+/** Move a file between lines: the people who do the work. */
+export const canMoveDocuments = (c: Capabilities, processId: string) =>
+  (["production_lead", "team_member", "supporting_role"] as const).some((t) =>
+    has(c, processId, t),
+  );
 
 export const canUpload = (c: Capabilities, processId: string) => c.assignments.has(processId);
 

@@ -16,6 +16,7 @@ export interface CommentRec {
   parent_comment_id: string | null;
   author_id: string;
   comment_text: string;
+  line_id?: string | null;
   created_at: string;
 }
 export interface ReviewPointRec {
@@ -47,6 +48,7 @@ export interface DocumentRec {
   subprocess_id: string;
   review_point_id: string | null;
   original_filename: string;
+  line_id?: string | null;
   created_at: string;
   document_versions: VersionRec[];
 }
@@ -57,13 +59,15 @@ export interface TestingRec {
   result: "pass" | "fail";
   notes: string | null;
   evidence_document_id: string | null;
+  line_id?: string | null;
   created_at: string;
 }
 export interface ApprovalRec {
   id: string;
   subprocess_id: string;
   review_point_id: string | null;
-  approval_type: "review_decision" | "review_point_closure" | "production_entry";
+  approval_type: "review_decision" | "review_point_closure" | "production_entry" | "line_decision";
+  line_id?: string | null;
   decision: string;
   decided_by: string;
   decision_note: string | null;

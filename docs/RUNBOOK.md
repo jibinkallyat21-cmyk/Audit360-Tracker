@@ -160,3 +160,14 @@ Run `supabase/migrations/0010_chat_push.sql` once in the Supabase SQL editor (af
 ## 14. Maintenance page design
 
 `src/app/maintenance/` is built from the "Maintenance Pages" design (screen 1a on desktop, 1d on phones): navy page, coral frame, laptop-and-gear icon. Fonts Figtree and Literata are self-hosted in `src/app/fonts` (SIL Open Font License), so the page makes no request to Google. The design's other screens (countdown and progress, e-mail sign-up, 503 outage) are not used because they need data the app does not have.
+
+## 15. Lines (review one piece of a step at a time)
+
+Run `supabase/migrations/0012_lines.sql` once in the Supabase SQL editor (after 0011). It creates the lines, switches them on for step 3.5 (EOSB, GOSI, Prepaid, Depreciation on each of its three steps) and files the documents already uploaded to 3.5 under the line their file name points to (EOSB, end of service; GOSI, social insurance; Prepaid; Depreciation, fixed assets or FA). The run prints a notice with how many documents were filed and how many were left for the team to file. To list the ones left over:
+
+`select p.process_code, s.seq, d.original_filename from documents d join subprocesses s on s.id = d.subprocess_id join processes p on p.id = s.process_id where p.process_code = '3.5' and d.line_id is null;`
+
+- A step with lines is worked line by line: the Production Lead sets each line's status and presses **Send to review** (needs a file on the line and a tick that it was tested). The reviewer approves or requests changes on that line; the other lines are not held back. The step shows Review while any line is in review and moves to Production when every line is approved.
+- The Production Lead and the System Administrator add, rename and remove lines on any step (Process page → Lines). A line that is in review, approved or has comments on record cannot be removed.
+- Uploading a new file to an approved line sends that line back to review. Files of a line that is in review or approved cannot be moved.
+- Steps without lines work exactly as before.

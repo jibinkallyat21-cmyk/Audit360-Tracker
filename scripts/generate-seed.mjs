@@ -68,6 +68,14 @@ for (const p of seed.processes) {
       p.subprocesses.map((s) => `(${s.seq}, ${q(s.title)})`).join(", ") +
       `) v(seq, title) where process_code = ${q(p.code)};`,
   );
+  for (const sp of p.subprocesses) {
+    if (!sp.lines?.length) continue;
+    add(
+      "insert into public.subprocess_lines (subprocess_id, seq, title) select s.id, v.seq, v.title from public.subprocesses s join public.processes pr on pr.id = s.process_id, (values " +
+        sp.lines.map((t, i) => `(${i + 1}, ${q(t)})`).join(", ") +
+        `) v(seq, title) where pr.process_code = ${q(p.code)} and s.seq = ${sp.seq};`,
+    );
+  }
   const rows = [
     [p.production_lead, "production_lead"],
     ...p.team_members.map((n) => [n, "team_member"]),

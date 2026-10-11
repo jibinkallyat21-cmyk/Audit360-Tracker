@@ -20,12 +20,14 @@ export async function POST(request: NextRequest) {
       sub: z.string().uuid(),
       document: z.string().uuid().optional(),
       reviewPoint: z.string().uuid().optional(),
+      line: z.string().uuid().optional(),
       note: z.string().trim().max(500).optional(),
     })
     .safeParse({
       sub: form.get("sub"),
       document: form.get("document") || undefined,
       reviewPoint: form.get("reviewPoint") || undefined,
+      line: form.get("line") || undefined,
       note: form.get("note") || undefined,
     });
   const file = form.get("file");
@@ -64,6 +66,7 @@ export async function POST(request: NextRequest) {
     p_size: bytes.length,
     p_mime: checked.mime,
     p_note: fields.data.note ?? null,
+    p_line: fields.data.line ?? null,
   });
   if (error) {
     // Do not leave an unregistered file behind.

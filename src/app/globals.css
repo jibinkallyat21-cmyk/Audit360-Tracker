@@ -583,8 +583,30 @@ code {
 }
 .status-completed,
 .badge.current,
-.badge.rp-closed {
+.badge.rp-closed,
+.badge.line-approved {
   border-color: var(--ok);
+}
+.badge.line-blocked,
+.badge.line-changes_required {
+  border-color: var(--danger);
+}
+.badge.line-changes_required,
+.badge.line-in_review {
+  border-style: dashed;
+}
+.lines {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+}
+.lines h4 {
+  margin: 0;
+}
+.check {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 .badge.current {
   font-weight: 700;

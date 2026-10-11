@@ -77,6 +77,33 @@ export const REVIEW_DECISION_LABEL: Record<ReviewDecision, string> = {
   approved: "Approved",
 };
 
+export const LINE_STATUSES = [
+  "not_started",
+  "in_progress",
+  "blocked",
+  "in_review",
+  "changes_required",
+  "approved",
+] as const;
+export type LineStatus = (typeof LINE_STATUSES)[number];
+
+export const LINE_STATUS_LABEL: Record<LineStatus, string> = {
+  not_started: "Not Started",
+  in_progress: "In Progress",
+  blocked: "Blocked",
+  in_review: "In Review",
+  changes_required: "Changes Required",
+  approved: "Approved",
+};
+
+/** One piece of work inside a step (for example EOSB under 3.5). */
+export interface LineRow {
+  id: string;
+  seq: number;
+  title: string;
+  status: LineStatus;
+}
+
 /** A row as the tracker screens use it (already filtered by the database to what the viewer may see). */
 export interface SubprocessRow {
   id: string;
@@ -92,6 +119,8 @@ export interface SubprocessRow {
   processTitle: string;
   phaseName: string;
   phaseOrder: number;
+  /** Lines of this step, in order. Empty or missing means the step is worked as a whole. */
+  lines?: LineRow[];
 }
 
 export interface AssignmentRow {

@@ -84,3 +84,11 @@
 | Backups and restore                              | Automated locally                                                                   | `tests/db/restore.test.ts`; repeat on Supabase before launch                                                                    |
 | Chat privacy: everyone / direct / process groups | Automated                                                                           | `chat.test.ts` (direct chats hidden from admin and others; process chats only for assigned people; push tables unreachable)     |
 | Desktop alerts and chat screens                  | Manual                                                                              | Turn alerts on in Chrome and Edge, send a message from a second account, confirm the alert and its link                         |
+
+## Lines
+
+- On 3.5, the Production Lead (Rustham) can send EOSB to review while GOSI is still Not Started; the reviewer sees only EOSB waiting.
+- The reviewer approves EOSB; 3.5 step 1 stays in Solution Building until the other lines are approved, then moves to Production.
+- A reviewer's "Request changes" needs a note; the line returns to the lead as Changes Required.
+- Uploading a new version to an approved line sends it back to review.
+- The lead and the administrator can add, rename and remove lines on any step; reviewers and the Project Lead cannot.

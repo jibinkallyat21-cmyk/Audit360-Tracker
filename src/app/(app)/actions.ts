@@ -139,3 +139,73 @@ export async function markNotificationRead(_: FormState, form: FormData): Promis
 export async function markAllNotificationsRead(): Promise<FormState> {
   return rpc("mark_all_notifications_read", {});
 }
+
+// ---------- lines ----------
+
+const lineTitle = z.string().trim().min(1, "Give the line a name.").max(120);
+
+export async function addLine(_: FormState, form: FormData): Promise<FormState> {
+  const p = z.object({ sub: id, title: lineTitle }).safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: p.error.issues[0].message };
+  return rpc("line_add", { p_sub: p.data.sub, p_title: p.data.title });
+}
+
+export async function renameLine(_: FormState, form: FormData): Promise<FormState> {
+  const p = z.object({ line: id, title: lineTitle }).safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: p.error.issues[0].message };
+  return rpc("line_rename", { p_line: p.data.line, p_title: p.data.title });
+}
+
+export async function removeLine(_: FormState, form: FormData): Promise<FormState> {
+  const p = z.object({ line: id }).safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: "Invalid line." };
+  return rpc("line_remove", { p_line: p.data.line });
+}
+
+export async function setLineStatus(_: FormState, form: FormData): Promise<FormState> {
+  const p = z
+    .object({ line: id, status: z.enum(["not_started", "in_progress", "blocked"]) })
+    .safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: "Choose a valid status." };
+  return rpc("line_set_status", { p_line: p.data.line, p_status: p.data.status });
+}
+
+export async function sendLineToReview(_: FormState, form: FormData): Promise<FormState> {
+  const p = z
+    .object({
+      line: id,
+      tested: z.string().optional(),
+      note: z.string().trim().max(2000).optional(),
+    })
+    .safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: "Invalid request." };
+  return rpc("line_send_to_review", {
+    p_line: p.data.line,
+    p_tested: p.data.tested === "on" || p.data.tested === "true",
+    p_note: p.data.note || null,
+  });
+}
+
+export async function decideLine(_: FormState, form: FormData): Promise<FormState> {
+  const p = z
+    .object({
+      line: id,
+      decision: z.enum(["approved", "changes_required"]),
+      note: z.string().trim().max(2000).optional(),
+    })
+    .safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: "Choose a decision." };
+  return rpc("line_review_decision", {
+    p_line: p.data.line,
+    p_decision: p.data.decision,
+    p_note: p.data.note || null,
+  });
+}
+
+export async function moveDocument(_: FormState, form: FormData): Promise<FormState> {
+  const p = z
+    .object({ doc: id, line: z.string().uuid().optional().or(z.literal("")) })
+    .safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: "Choose a line." };
+  return rpc("assign_document_line", { p_document: p.data.doc, p_line: p.data.line || null });
+}

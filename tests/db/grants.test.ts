@@ -49,6 +49,15 @@ const CLIENT_CALLABLE = [
   "chat_unread_total",
   "push_subscribe",
   "push_unsubscribe",
+  // lines
+  "can_manage_lines",
+  "line_add",
+  "line_rename",
+  "line_remove",
+  "line_set_status",
+  "line_send_to_review",
+  "line_review_decision",
+  "assign_document_line",
   // site switches
   "admin_set_maintenance",
   "get_maintenance",

@@ -13,10 +13,13 @@ export function UploadForm({
   subId,
   documents,
   reviewPoints,
+  lines = [],
 }: {
   subId: string;
   documents: { id: string; name: string }[];
   reviewPoints: { id: string; label: string }[];
+  /** Lines a new document can be filed under (only those still open for new files). */
+  lines?: { id: string; title: string }[];
 }) {
   const router = useRouter();
   const ref = useRef<HTMLFormElement>(null);
@@ -74,6 +77,19 @@ export function UploadForm({
             ))}
           </select>
         </label>
+        {lines.length > 0 && (
+          <label className="field">
+            <span>For line (new documents)</span>
+            <select name="line" defaultValue="">
+              <option value="">General (not for one line)</option>
+              {lines.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.title}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         {reviewPoints.length > 0 && (
           <label className="field">
             <span>Evidence for review point</span>

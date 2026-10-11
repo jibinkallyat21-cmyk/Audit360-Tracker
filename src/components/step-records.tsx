@@ -1,5 +1,6 @@
 import {
   addComment,
+  moveDocument,
   raiseReviewPoint,
   recordReviewDecision,
   updateReviewPoint,
@@ -7,6 +8,7 @@ import {
 import type { AssignmentRow, SubprocessRow } from "@/lib/domain";
 import {
   canComment,
+  canMoveDocuments,
   canRaiseReviewPoint,
   canReview,
   canRecordDecision,
@@ -15,7 +17,7 @@ import {
   type Capabilities,
 } from "@/lib/permissions";
 import type { CommentRec, Records, ReviewPointRec } from "@/lib/records";
-import { ActionForm } from "./client";
+import { ActionForm, SelectField } from "./client";
 import { UploadForm } from "./upload-form";
 import { EmptyState } from "./ui";
 
@@ -110,7 +112,10 @@ export function StepRecords({
   const points = mine(records.reviewPoints);
   const comments = mine(records.comments);
   const approvals = mine(records.approvals);
-  const general = comments.filter((c) => !c.review_point_id);
+  const general = comments.filter((c) => !c.review_point_id && !c.line_id);
+  const lines = row.lines ?? [];
+  const lineName = new Map(lines.map((l) => [l.id, l.title]));
+  const moving = canMoveDocuments(caps, row.processId);
   const docName = new Map(docs.map((d) => [d.id, d.original_filename]));
   const owners = [
     ...new Map(
@@ -137,6 +142,30 @@ export function StepRecords({
             {docs.map((d) => (
               <li key={d.id}>
                 <strong>{d.original_filename}</strong>
+                {lines.length > 0 && (
+                  <>
+                    {" "}
+                    <span className="badge">
+                      {d.line_id ? (lineName.get(d.line_id) ?? "Line") : "General"}
+                    </span>
+                  </>
+                )}
+                {moving && lines.length > 0 && (
+                  <details>
+                    <summary>Move to a line</summary>
+                    <ActionForm action={moveDocument} fields={{ doc: d.id }} label="Move">
+                      <SelectField
+                        name="line"
+                        label="Line"
+                        value={d.line_id ?? ""}
+                        options={[
+                          { value: "", label: "General (not for one line)" },
+                          ...lines.map((l) => ({ value: l.id, label: l.title })),
+                        ]}
+                      />
+                    </ActionForm>
+                  </details>
+                )}
                 <ul className="versions">
                   {[...d.document_versions]
                     .sort((a, b) => b.version_number - a.version_number)
@@ -163,6 +192,9 @@ export function StepRecords({
             subId={row.id}
             documents={docs.map((d) => ({ id: d.id, name: d.original_filename }))}
             reviewPoints={openPoints.map((p) => ({ id: p.id, label: p.description.slice(0, 60) }))}
+            lines={lines
+              .filter((l) => l.status !== "in_review" && l.status !== "approved")
+              .map((l) => ({ id: l.id, title: l.title }))}
           />
         )}
       </details>
@@ -178,6 +210,9 @@ export function StepRecords({
                 <span className={`badge test-${t.result}`}>
                   {t.result === "pass" ? "✓ Pass" : "✕ Fail"}
                 </span>{" "}
+                {t.line_id && lineName.get(t.line_id) && (
+                  <span className="badge">{lineName.get(t.line_id)}</span>
+                )}{" "}
                 <span className="muted">
                   {names.get(t.submitted_by) ?? "A team member"} · {when(t.created_at)}
                 </span>
@@ -292,8 +327,9 @@ export function StepRecords({
         </ul>
         {reviewer && !raising && (
           <p className="muted">
-            You can raise review points and record a decision once this step reaches Testing or
-            Review. You can comment on it at any time.
+            {lines.length > 0
+              ? "This step is reviewed line by line: approve or request changes on each line above. You can raise review points here at any time before Production."
+              : "You can raise review points and record a decision once this step reaches Testing or Review. You can comment on it at any time."}
           </p>
         )}
         {raising && (
@@ -395,7 +431,8 @@ export function StepRecords({
           <ul className="list">
             {approvals.map((a) => (
               <li key={a.id}>
-                <strong>{a.approval_type.replace(/_/g, " ")}</strong>:{" "}
+                <strong>{a.approval_type.replace(/_/g, " ")}</strong>
+                {a.line_id && lineName.get(a.line_id) ? ` (${lineName.get(a.line_id)})` : ""}:{" "}
                 {a.decision.replace(/_/g, " ")}{" "}
                 <span className="muted">
                   by {names.get(a.decided_by) ?? "a team member"} · {when(a.decided_at)}
