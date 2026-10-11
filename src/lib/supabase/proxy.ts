@@ -25,7 +25,7 @@ export function isPublicPath(pathname: string) {
 
 /** Refreshes the session cookie and sends signed-out visitors to /login. */
 export async function updateSession(request: NextRequest) {
-  const maintenance = maintenanceOn();
+  const maintenance = await maintenanceOn();
   // The notice page itself never needs a session check.
   if (maintenance && request.nextUrl.pathname.startsWith("/maintenance")) {
     return NextResponse.next({ request });

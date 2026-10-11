@@ -49,6 +49,9 @@ const CLIENT_CALLABLE = [
   "chat_unread_total",
   "push_subscribe",
   "push_unsubscribe",
+  // site switches
+  "admin_set_maintenance",
+  "get_maintenance",
 ].sort();
 
 describe.skipIf(!TEST_URL)(

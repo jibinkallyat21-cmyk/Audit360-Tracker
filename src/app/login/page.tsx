@@ -36,7 +36,7 @@ export default async function LoginPage({
           <Link href="/register">Create account</Link>
         </p>
       </main>
-      {demoEnabled() && !maintenanceOn() && (
+      {demoEnabled() && !(await maintenanceOn()) && (
         <section className="card demo">
           <h2>Try the demo</h2>
           <p className="muted">

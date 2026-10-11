@@ -1,6 +1,8 @@
 "use server";
 
 import { z } from "zod";
+import { getViewer } from "@/lib/access";
+import { forgetMaintenanceState, maintenanceAllowed } from "@/lib/maintenance";
 import { rpc } from "@/lib/rpc";
 import type { FormState } from "../../actions";
 
@@ -70,4 +72,19 @@ export async function setTeamMember(_: FormState, form: FormData): Promise<FormS
     p_person: p.data.person,
     p_member: p.data.member === "true",
   });
+}
+
+export async function setMaintenance(_: FormState, form: FormData): Promise<FormState> {
+  const p = z.object({ on: z.enum(["true", "false"]) }).safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: "Invalid request." };
+  const viewer = await getViewer();
+  // Turning it on would lock out anyone who is not on the allowed list, the person doing it included.
+  if (p.data.on === "true" && !maintenanceAllowed(viewer?.email)) {
+    return {
+      error: "Your account is not on the maintenance allow-list, so it would lock you out.",
+    };
+  }
+  const result = await rpc("admin_set_maintenance", { p_on: p.data.on === "true" });
+  forgetMaintenanceState();
+  return result;
 }

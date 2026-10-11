@@ -143,7 +143,7 @@ With "Don't email" selected, the page shows each invite link and a CSV (Email, N
 
 ## 11. Maintenance mode
 
-`src/lib/maintenance.ts`. While on, everyone except the emails in `MAINTENANCE_ALLOWED_EMAILS` (default: the project administrator) sees an "Under maintenance" page (HTTP 503); the administrator signs in at `/login` and works as usual. Set `MAINTENANCE_MODE=0` in Vercel to turn it off, or `1` to turn it on; with no value the default in that file applies (currently off).
+`src/lib/maintenance.ts`. While on, everyone except the emails in `MAINTENANCE_ALLOWED_EMAILS` (default: the project administrator) sees an "Under maintenance" page (HTTP 503); the administrator signs in at `/login` and works as usual. A System Administrator on the allow-list turns it on or off at **Admin → Maintenance** (stored in `site_settings`, migration 0011; open pages reload within about ten seconds). `MAINTENANCE_MODE` (1/0) in Vercel is only the fallback if the database cannot be reached.
 
 ## 12. Email links are not used up by previews
 

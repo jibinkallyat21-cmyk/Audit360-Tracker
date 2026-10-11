@@ -63,6 +63,7 @@ export async function setup(): Promise<Db> {
     "supabase/migrations/0008_function_search_path.sql",
     "supabase/migrations/0009_admin_read_documents.sql",
     "supabase/migrations/0010_chat_push.sql",
+    "supabase/migrations/0011_site_settings.sql",
     "supabase/seed.sql",
   ];
   for (const f of files) await admin.query(read(f));
@@ -165,6 +166,7 @@ export async function emptyDatabase() {
     "supabase/migrations/0008_function_search_path.sql",
     "supabase/migrations/0009_admin_read_documents.sql",
     "supabase/migrations/0010_chat_push.sql",
+    "supabase/migrations/0011_site_settings.sql",
   ];
   for (const f of files) await client.query(read(f));
   return {
