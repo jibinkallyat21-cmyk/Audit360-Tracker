@@ -58,6 +58,9 @@ const CLIENT_CALLABLE = [
   "line_send_to_review",
   "line_review_decision",
   "assign_document_line",
+  // removing documents
+  "remove_document",
+  "restore_document",
   // site switches
   "admin_set_maintenance",
   "get_maintenance",

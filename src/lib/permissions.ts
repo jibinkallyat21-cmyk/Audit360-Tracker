@@ -7,6 +7,8 @@ import type { AssignmentType, RoleName, SubprocessRow } from "./domain";
 export interface Capabilities {
   /** The viewer's linked person, used to recognise review points they own. */
   personId?: string | null;
+  /** The viewer's account id, used to recognise files they uploaded. */
+  userId?: string | null;
   roles: ReadonlySet<RoleName>;
   /** Assignment types the user holds, per process id. */
   assignments: ReadonlyMap<string, ReadonlySet<AssignmentType>>;
@@ -121,4 +123,26 @@ export function reviewPointActions(
     approveClose: reviewer && rp.status === "submitted_for_closure",
     returnBack: reviewer && rp.status === "submitted_for_closure",
   };
+}
+
+/**
+ * Remove a document: its uploader, the process's Production Lead or the System Administrator.
+ * Only the administrator may remove evidence that is under review or approved.
+ */
+export function canRemoveDocument(
+  c: Capabilities,
+  row: SubprocessRow,
+  doc: { uploaded_by?: string; line_id?: string | null; removed_at?: string | null },
+): boolean {
+  if (doc.removed_at) return false;
+  if (c.roles.has("system_admin")) return true;
+  const lead = has(c, row.processId, "production_lead");
+  const own = !!c.userId && doc.uploaded_by === c.userId && c.assignments.has(row.processId);
+  if (!lead && !own) return false;
+  const line = doc.line_id ? row.lines?.find((l) => l.id === doc.line_id) : undefined;
+  if (line) return line.status !== "in_review" && line.status !== "approved";
+  if ((row.lines?.length ?? 0) === 0 && (row.stage === "review" || row.stage === "production")) {
+    return false;
+  }
+  return true;
 }

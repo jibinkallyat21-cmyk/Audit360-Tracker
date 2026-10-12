@@ -209,3 +209,17 @@ export async function moveDocument(_: FormState, form: FormData): Promise<FormSt
   if (!p.success) return { error: "Choose a line." };
   return rpc("assign_document_line", { p_document: p.data.doc, p_line: p.data.line || null });
 }
+
+export async function removeDocument(_: FormState, form: FormData): Promise<FormState> {
+  const p = z
+    .object({ doc: id, reason: z.string().trim().max(500).optional() })
+    .safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: "Invalid document." };
+  return rpc("remove_document", { p_document: p.data.doc, p_reason: p.data.reason || null });
+}
+
+export async function restoreDocument(_: FormState, form: FormData): Promise<FormState> {
+  const p = z.object({ doc: id }).safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: "Invalid document." };
+  return rpc("restore_document", { p_document: p.data.doc });
+}

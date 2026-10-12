@@ -33,10 +33,19 @@ export async function GET() {
       .select("id, document_id, version_number, original_filename, storage_path, uploaded_at")
       .eq("is_current", true)
       .returns<Version[]>(),
+    // Removed documents are left out. (Older databases have no removed_at column yet.)
     supabase
       .from("documents")
-      .select("id, subprocess_id")
-      .returns<{ id: string; subprocess_id: string }[]>(),
+      .select("id, subprocess_id, removed_at")
+      .returns<{ id: string; subprocess_id: string; removed_at: string | null }[]>()
+      .then(async (r) =>
+        r.error
+          ? await supabase
+              .from("documents")
+              .select("id, subprocess_id")
+              .returns<{ id: string; subprocess_id: string; removed_at?: string | null }[]>()
+          : r,
+      ),
     supabase
       .from("subprocesses")
       .select("id, seq, processes(process_code)")
@@ -45,6 +54,8 @@ export async function GET() {
   if (versions.error || docs.error || subs.error) {
     return new NextResponse("The documents could not be loaded.", { status: 500 });
   }
+  const removedDocs = new Set(docs.data.filter((d) => d.removed_at).map((d) => d.id));
+  versions.data = versions.data.filter((v) => !removedDocs.has(v.document_id));
   if (versions.data.length === 0)
     return new NextResponse("No documents to download.", { status: 404 });
 

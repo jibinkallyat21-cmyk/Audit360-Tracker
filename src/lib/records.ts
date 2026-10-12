@@ -50,6 +50,9 @@ export interface DocumentRec {
   review_point_id: string | null;
   original_filename: string;
   line_id?: string | null;
+  uploaded_by?: string;
+  /** Set when the document was removed (only the administrator can still see it). */
+  removed_at?: string | null;
   created_at: string;
   document_versions: VersionRec[];
 }
@@ -157,7 +160,7 @@ export async function getRecords(subIds: string[]): Promise<Records> {
   const rec: Records = {
     comments: c.data,
     reviewPoints: r.data,
-    documents: d.data,
+    documents: d.data.filter((x) => !x.removed_at),
     testing: t.data,
     approvals: a.data,
     names: new Map(),

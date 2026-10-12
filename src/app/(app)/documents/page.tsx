@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { EmptyState, PageHero } from "@/components/ui";
-import { listSubprocesses } from "@/lib/data";
+import { restoreDocument, removeDocument } from "@/app/(app)/actions";
+import { ActionForm } from "@/components/client";
+import { getCapabilities, listSubprocesses } from "@/lib/data";
+import { canRemoveDocument } from "@/lib/permissions";
 import { resolveNames } from "@/lib/records";
 import { getPersona } from "@/lib/demo";
 import { demoDocuments } from "@/lib/demo-data";
@@ -24,7 +27,7 @@ export default async function DocumentsPage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const q = ((await searchParams).q ?? "").trim().toLowerCase().slice(0, 80);
-  const rows = await listSubprocesses();
+  const [rows, caps] = await Promise.all([listSubprocesses(), getCapabilities()]);
   const persona = await getPersona();
   let docs: DocumentRec[];
   if (persona) {
@@ -47,6 +50,8 @@ export default async function DocumentsPage({
     docs.flatMap((d) => d.document_versions.map((v) => v.uploaded_by)),
   );
   const where = new Map(rows.map((r) => [r.id, r]));
+  const removed = docs.filter((d) => d.removed_at);
+  docs = docs.filter((d) => !d.removed_at);
   const shown = docs.filter((d) => {
     const r = where.get(d.subprocess_id);
     return (
@@ -96,6 +101,28 @@ export default async function DocumentsPage({
                   · step {r.seq}
                 </p>
               )}
+              {r && canRemoveDocument(caps, r, d) && (
+                <details>
+                  <summary>Remove</summary>
+                  <ActionForm
+                    action={removeDocument}
+                    fields={{ doc: d.id }}
+                    label="Remove this document"
+                    quiet
+                  >
+                    <input
+                      name="reason"
+                      maxLength={500}
+                      placeholder="Reason (optional)"
+                      aria-label="Reason"
+                    />
+                  </ActionForm>
+                  <p className="muted">
+                    It disappears from the lists for everyone. The file and its history are kept for
+                    the record, and the administrator can restore it.
+                  </p>
+                </details>
+              )}
               <ul className="versions">
                 {[...d.document_versions]
                   .sort((a, b) => b.version_number - a.version_number)
@@ -116,6 +143,34 @@ export default async function DocumentsPage({
           );
         })}
       </ul>
+      {removed.length > 0 && (
+        <section className="panel">
+          <h2>Removed documents ({removed.length})</h2>
+          <p className="muted">
+            Only you can see these. Restoring puts a document back for its team.
+          </p>
+          <ul className="list">
+            {removed.map((d) => {
+              const r = where.get(d.subprocess_id);
+              return (
+                <li key={d.id}>
+                  <strong>{d.original_filename}</strong>{" "}
+                  <span className="muted">
+                    {r ? `${r.processCode} step ${r.seq} · ` : ""}removed{" "}
+                    {when(d.removed_at ?? d.created_at)}
+                  </span>
+                  <ActionForm
+                    action={restoreDocument}
+                    fields={{ doc: d.id }}
+                    label="Restore"
+                    quiet
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
     </main>
   );
 }

@@ -128,6 +128,8 @@ export const TABLES: { name: string; columns: string[] }[] = [
       "original_filename",
       "uploaded_by",
       "line_id",
+      "removed_at",
+      "removed_by",
       "created_at",
     ],
   },

@@ -15,7 +15,7 @@ export const COMMENTS_SELECT =
 export const REVIEW_POINTS_SELECT =
   "id, subprocess_id, raised_by, assigned_to_person_id, description, status, resolution_note, submitted_at, closed_by, closed_at, created_at, owner:people!assigned_to_person_id(display_name)";
 export const DOCUMENTS_SELECT =
-  "id, subprocess_id, review_point_id, original_filename, line_id, created_at, document_versions(id, version_number, original_filename, file_size, version_note, uploaded_by, uploaded_at, is_current)";
+  "id, subprocess_id, review_point_id, original_filename, line_id, uploaded_by, removed_at, created_at, document_versions(id, version_number, original_filename, file_size, version_note, uploaded_by, uploaded_at, is_current)";
 export const TESTING_SELECT =
   "id, subprocess_id, submitted_by, result, notes, evidence_document_id, line_id, created_at";
 export const APPROVALS_SELECT =
@@ -28,5 +28,5 @@ export const PEOPLE_SELECT = "id, display_name, first_name";
 export const ROLE_TAGS_SELECT = "person_id, roles!inner(name)";
 export const TEAMS_SELECT = "id, name, production_lead_person_id, team_members(person_id)";
 
-/** Drops the line_id column from a select string (database without the lines migration). */
-export const withoutLineId = (select: string) => select.replace(/ line_id,/, "");
+/** Drops the columns added by later migrations (lines, removed documents) from a select string. */
+export const withoutLineId = (select: string) => select.replace(/ line_id,| removed_at,/g, "");

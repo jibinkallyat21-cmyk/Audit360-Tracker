@@ -9,6 +9,7 @@ interface Doc {
   id: string;
   subprocess_id: string;
   line_id?: string | null;
+  removed_at?: string | null;
 }
 
 /**
@@ -23,7 +24,7 @@ export async function GET() {
   const { data: admin } = await supabase.rpc("has_role", { p_role: "system_admin" });
   if (admin !== true) return new NextResponse("Not found", { status: 404 });
 
-  const docSelect = "id, subprocess_id, line_id";
+  const docSelect = "id, subprocess_id, line_id, removed_at";
   let docs = await supabase.from("documents").select(docSelect).returns<Doc[]>();
   if (docs.error)
     docs = await supabase.from("documents").select(withoutLineId(docSelect)).returns<Doc[]>();
@@ -54,7 +55,7 @@ export async function GET() {
     return new NextResponse("The documents could not be loaded.", { status: 500 });
   }
   const lineList = lines.error ? [] : lines.data;
-  const docOf = new Map(docs.data.map((d) => [d.id, d]));
+  const docOf = new Map(docs.data.filter((d) => !d.removed_at).map((d) => [d.id, d]));
   const subOf = new Map(subs.data.map((s) => [s.id, s]));
   const lineTitle = new Map(lineList.map((l) => [l.id, l.title]));
   const hasLines = new Set(lineList.map((l) => l.subprocess_id));

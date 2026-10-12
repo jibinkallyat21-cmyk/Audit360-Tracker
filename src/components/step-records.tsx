@@ -1,6 +1,7 @@
 import {
   addComment,
   moveDocument,
+  removeDocument,
   raiseReviewPoint,
   recordReviewDecision,
   updateReviewPoint,
@@ -9,6 +10,7 @@ import type { AssignmentRow, SubprocessRow } from "@/lib/domain";
 import {
   canComment,
   canMoveDocuments,
+  canRemoveDocument,
   canRaiseReviewPoint,
   canReview,
   canRecordDecision,
@@ -164,6 +166,28 @@ export function StepRecords({
                         ]}
                       />
                     </ActionForm>
+                  </details>
+                )}
+                {canRemoveDocument(caps, row, d) && (
+                  <details>
+                    <summary>Remove</summary>
+                    <ActionForm
+                      action={removeDocument}
+                      fields={{ doc: d.id }}
+                      label="Remove this document"
+                      quiet
+                    >
+                      <input
+                        name="reason"
+                        maxLength={500}
+                        placeholder="Reason (optional)"
+                        aria-label="Reason"
+                      />
+                    </ActionForm>
+                    <p className="muted">
+                      It disappears from the lists for everyone. The file and its history are kept
+                      for the record, and the administrator can restore it.
+                    </p>
                   </details>
                 )}
                 <ul className="versions">
