@@ -68,6 +68,7 @@ export async function setup(): Promise<Db> {
     "supabase/migrations/0013_reviewer_backlog.sql",
     "supabase/migrations/0014_chat_oversight.sql",
     "supabase/migrations/0015_remove_documents.sql",
+    "supabase/migrations/0016_line_evidence.sql",
     "supabase/seed.sql",
   ];
   for (const f of files) await admin.query(read(f));
@@ -175,6 +176,7 @@ export async function emptyDatabase() {
     "supabase/migrations/0013_reviewer_backlog.sql",
     "supabase/migrations/0014_chat_oversight.sql",
     "supabase/migrations/0015_remove_documents.sql",
+    "supabase/migrations/0016_line_evidence.sql",
   ];
   for (const f of files) await client.query(read(f));
   return {

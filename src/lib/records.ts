@@ -5,6 +5,7 @@ import {
   APPROVALS_SELECT,
   COMMENTS_SELECT,
   DOCUMENTS_SELECT,
+  LINE_EVIDENCE_SELECT,
   REVIEW_POINTS_SELECT,
   TESTING_SELECT,
   withoutLineId,
@@ -78,12 +79,20 @@ export interface ApprovalRec {
   decided_at: string;
 }
 
+/** A file chosen as the evidence for a line. */
+export interface LineEvidenceRec {
+  line_id: string;
+  document_id: string;
+}
+
 export interface Records {
   comments: CommentRec[];
   reviewPoints: ReviewPointRec[];
   documents: DocumentRec[];
   testing: TestingRec[];
   approvals: ApprovalRec[];
+  /** Files chosen as evidence per line (empty before the evidence migration). */
+  lineEvidence?: LineEvidenceRec[];
   names: Map<string, string>;
 }
 
@@ -123,7 +132,7 @@ export async function getRecords(subIds: string[]): Promise<Records> {
   const probe = await supabase.from("documents").select("line_id").limit(1);
   const legacy = Boolean(probe.error);
   const pick = (select: string) => (legacy ? withoutLineId(select) : select);
-  const [c, r, d, t, a] = await Promise.all([
+  const [c, r, d, t, a, le] = await Promise.all([
     supabase
       .from("comments")
       .select(pick(COMMENTS_SELECT))
@@ -154,6 +163,8 @@ export async function getRecords(subIds: string[]): Promise<Records> {
       .in("subprocess_id", subIds)
       .order("decided_at")
       .returns<ApprovalRec[]>(),
+    // Missing before migration 0016: then there is simply no evidence list.
+    supabase.from("line_evidence").select(LINE_EVIDENCE_SELECT).returns<LineEvidenceRec[]>(),
   ]);
   if (c.error || r.error || d.error || t.error || a.error)
     throw new Error("Could not load records.");
@@ -163,6 +174,7 @@ export async function getRecords(subIds: string[]): Promise<Records> {
     documents: d.data.filter((x) => !x.removed_at),
     testing: t.data,
     approvals: a.data,
+    lineEvidence: le.error ? [] : le.data,
     names: new Map(),
   };
   rec.names = await resolveNames([

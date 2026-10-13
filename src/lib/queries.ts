@@ -16,6 +16,7 @@ export const REVIEW_POINTS_SELECT =
   "id, subprocess_id, raised_by, assigned_to_person_id, description, status, resolution_note, submitted_at, closed_by, closed_at, created_at, owner:people!assigned_to_person_id(display_name)";
 export const DOCUMENTS_SELECT =
   "id, subprocess_id, review_point_id, original_filename, line_id, uploaded_by, removed_at, created_at, document_versions(id, version_number, original_filename, file_size, version_note, uploaded_by, uploaded_at, is_current)";
+export const LINE_EVIDENCE_SELECT = "line_id, document_id";
 export const TESTING_SELECT =
   "id, subprocess_id, submitted_by, result, notes, evidence_document_id, line_id, created_at";
 export const APPROVALS_SELECT =

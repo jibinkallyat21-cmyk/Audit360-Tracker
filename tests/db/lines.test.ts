@@ -255,4 +255,82 @@ describe.skipIf(!TEST_URL)("lines: work, review and approve one piece at a time"
       (await db.admin.query("select status from subprocess_lines where id=$1", [l])).rows[0].status,
     ).toBe("approved");
   });
+
+  it("lets one file be the evidence for several lines, and reopens them all when it changes", async () => {
+    const other = await db.sub("3.5", 2);
+    const lineOf = async (title: string) =>
+      (
+        await db.admin.query(
+          "select id from subprocess_lines where subprocess_id=$1 and title=$2",
+          [other, title],
+        )
+      ).rows[0].id as string;
+    const prepaid = await lineOf("Prepaid");
+    const dep = await lineOf("Depreciation");
+    // one workbook, filed under no line (General)
+    await run(
+      "rustham",
+      "select register_document_version($1,null,null,'both.docx','t/shared-1',1000,$2,null,null)",
+      [other, DOCX],
+    );
+    const doc = (
+      await db.admin.query(
+        "select id from documents where subprocess_id=$1 and line_id is null order by created_at desc limit 1",
+        [other],
+      )
+    ).rows[0].id;
+    for (const l of [prepaid, dep])
+      await run("rustham", "select line_set_status($1,'in_progress')", [l]);
+    // without choosing it, a line with nothing filed under it cannot go
+    expect(
+      await failure(run("rustham", "select line_send_to_review($1,true,null)", [prepaid])),
+    ).toMatch(/Upload at least one file/);
+    // a file from another step cannot be chosen
+    const foreign = await db.sub("1.1", 1);
+    await run(
+      "pavithra",
+      "select register_document_version($1,null,null,'x.docx','t/shared-2',1000,$2,null,null)",
+      [foreign, DOCX],
+    );
+    const foreignDoc = (
+      await db.admin.query(
+        "select id from documents where subprocess_id=$1 order by created_at desc limit 1",
+        [foreign],
+      )
+    ).rows[0].id;
+    expect(
+      await failure(
+        run("rustham", "select line_send_to_review($1,true,null,array[$2]::uuid[])", [
+          prepaid,
+          foreignDoc,
+        ]),
+      ),
+    ).toMatch(/belong to this step/);
+    for (const l of [prepaid, dep])
+      await run("rustham", "select line_send_to_review($1,true,null,array[$2]::uuid[])", [l, doc]);
+    const ev = await db.admin.query("select line_id from line_evidence where document_id=$1", [
+      doc,
+    ]);
+    expect(ev.rows.length).toBe(2);
+    // the shared file cannot be removed by the lead while it backs lines in review
+    expect(await failure(run("rustham", "select remove_document($1)", [doc]))).toMatch(
+      /evidence for a line/,
+    );
+    for (const l of [prepaid, dep])
+      await run("syam", "select line_review_decision($1,'approved',null)", [l]);
+    // a new version of the shared file sends both approved lines back to review
+    await run(
+      "rustham",
+      "select register_document_version($1,null,$2,'both.docx','t/shared-3',1000,$3,null,null)",
+      [other, doc, DOCX],
+    );
+    expect(
+      (
+        await db.admin.query(
+          "select count(*)::int n from subprocess_lines where id = any($1) and status='in_review'",
+          [[prepaid, dep]],
+        )
+      ).rows[0].n,
+    ).toBe(2);
+  });
 });

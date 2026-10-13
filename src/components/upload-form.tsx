@@ -14,12 +14,15 @@ export function UploadForm({
   documents,
   reviewPoints,
   lines = [],
+  fixedLine,
 }: {
   subId: string;
   documents: { id: string; name: string }[];
   reviewPoints: { id: string; label: string }[];
   /** Lines a new document can be filed under (only those still open for new files). */
   lines?: { id: string; title: string }[];
+  /** File every new document under this line (used inside a line's own upload box). */
+  fixedLine?: string;
 }) {
   const router = useRouter();
   const ref = useRef<HTMLFormElement>(null);
@@ -56,6 +59,7 @@ export function UploadForm({
   return (
     <form ref={ref} onSubmit={onSubmit} className="stack">
       <input type="hidden" name="sub" value={subId} />
+      {fixedLine && <input type="hidden" name="line" value={fixedLine} />}
       <label className="field">
         <span>Word or Excel file (max 2 MB)</span>
         <input

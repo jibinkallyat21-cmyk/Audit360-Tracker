@@ -676,6 +676,18 @@ code {
 .lines h4 {
   margin: 0;
 }
+.evidence {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.evidence legend {
+  padding: 0 6px;
+  font-weight: 600;
+}
 .check {
   display: flex;
   gap: 8px;

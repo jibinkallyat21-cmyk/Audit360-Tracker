@@ -7,9 +7,16 @@ import {
   setLineStatus,
 } from "@/app/(app)/actions";
 import { LINE_STATUS_LABEL, type LineRow, type SubprocessRow } from "@/lib/domain";
-import { canDecideLines, canManageLines, canWorkLines, type Capabilities } from "@/lib/permissions";
+import {
+  canDecideLines,
+  canManageLines,
+  canUpload,
+  canWorkLines,
+  type Capabilities,
+} from "@/lib/permissions";
 import type { Records } from "@/lib/records";
 import { ActionForm, SelectField } from "./client";
+import { UploadForm } from "./upload-form";
 
 const WORKING = [
   { value: "not_started", label: "Not Started" },
@@ -56,6 +63,11 @@ export function StepLines({
 
   const docs = records.documents.filter((d) => d.subprocess_id === row.id);
   const comments = records.comments.filter((c) => c.subprocess_id === row.id && c.line_id);
+  const uploading = canUpload(caps, row.processId);
+  const docById = new Map(docs.map((d) => [d.id, d]));
+  const lineName = new Map(lines.map((l) => [l.id, l.title]));
+  const fileLabel = (d: (typeof docs)[number]) =>
+    `${d.original_filename} (${d.line_id ? (lineName.get(d.line_id) ?? "a line") : "General"})`;
 
   return (
     <section className="lines" aria-label="Lines">
@@ -85,6 +97,14 @@ export function StepLines({
           <ul className="list">
             {lines.map((l) => {
               const mine = docs.filter((d) => d.line_id === l.id);
+              // Files the lead chose as this line's evidence (a file can back several lines).
+              const evidence = (records.lineEvidence ?? [])
+                .filter((e) => e.line_id === l.id)
+                .map((e) => docById.get(e.document_id))
+                .filter((d): d is NonNullable<typeof d> => !!d);
+              // Pre-ticked when sending: files filed under this line, else the shared (General) ones.
+              const general = docs.filter((d) => !d.line_id);
+              const preset = new Set((mine.length > 0 ? mine : general).map((d) => d.id));
               const notes = comments.filter((c) => c.line_id === l.id);
               const canSend =
                 work && (l.status === "in_progress" || l.status === "changes_required");
@@ -93,11 +113,23 @@ export function StepLines({
                   <p>
                     <strong>{l.title}</strong>{" "}
                     <span className={`badge line-${l.status}`}>{LINE_STATUS_LABEL[l.status]}</span>
-                    {mine.length > 0 && (
+                    {(evidence.length > 0 ? evidence : mine).length > 0 && (
                       <span className="muted">
                         {" "}
-                        · {mine.length} file{mine.length === 1 ? "" : "s"}:{" "}
-                        {mine.map((d) => d.original_filename).join(", ")}
+                        · {evidence.length > 0 ? "evidence" : "files"}:{" "}
+                        {(evidence.length > 0 ? evidence : mine).map((d, i) => {
+                          const cur = d.document_versions.find((v) => v.is_current);
+                          return (
+                            <span key={d.id}>
+                              {i > 0 ? ", " : ""}
+                              {cur ? (
+                                <a href={`/api/documents/${cur.id}`}>{d.original_filename}</a>
+                              ) : (
+                                d.original_filename
+                              )}
+                            </span>
+                          );
+                        })}
                       </span>
                     )}
                   </p>
@@ -123,8 +155,10 @@ export function StepLines({
                       </ActionForm>
                     )}
                     {canSend &&
-                      (mine.length === 0 ? (
-                        <p className="muted">Upload a file for this line to send it to review.</p>
+                      (docs.length === 0 ? (
+                        <p className="muted">
+                          Add a file for this line (below) to send it to review.
+                        </p>
                       ) : (
                         <ActionForm
                           action={sendLineToReview}
@@ -132,6 +166,24 @@ export function StepLines({
                           label="Send to review"
                           className="stack"
                         >
+                          <fieldset className="evidence">
+                            <legend>Files that support this line</legend>
+                            {docs.map((d) => (
+                              <label key={d.id} className="check">
+                                <input
+                                  type="checkbox"
+                                  name="docs"
+                                  value={d.id}
+                                  defaultChecked={preset.has(d.id)}
+                                />{" "}
+                                {fileLabel(d)}
+                              </label>
+                            ))}
+                            <span className="muted">
+                              One file can support several lines. Tick it here for each line it
+                              covers.
+                            </span>
+                          </fieldset>
                           <label className="check">
                             <input type="checkbox" name="tested" required /> I tested this line and
                             it passed
@@ -175,6 +227,17 @@ export function StepLines({
                       </>
                     )}
                   </div>
+                  {uploading && l.status !== "in_review" && l.status !== "approved" && (
+                    <details open={work && canSend && docs.length === 0}>
+                      <summary>Add a file for this line</summary>
+                      <UploadForm
+                        subId={row.id}
+                        documents={mine.map((d) => ({ id: d.id, name: d.original_filename }))}
+                        reviewPoints={[]}
+                        fixedLine={l.id}
+                      />
+                    </details>
+                  )}
                   {manage && (
                     <details>
                       <summary>Rename or remove</summary>

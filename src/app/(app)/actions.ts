@@ -176,13 +176,15 @@ export async function sendLineToReview(_: FormState, form: FormData): Promise<Fo
       line: id,
       tested: z.string().optional(),
       note: z.string().trim().max(2000).optional(),
+      docs: z.array(id).max(50),
     })
-    .safeParse(Object.fromEntries(form));
+    .safeParse({ ...Object.fromEntries(form), docs: form.getAll("docs") });
   if (!p.success) return { error: "Invalid request." };
   return rpc("line_send_to_review", {
     p_line: p.data.line,
     p_tested: p.data.tested === "on" || p.data.tested === "true",
     p_note: p.data.note || null,
+    p_documents: p.data.docs.length > 0 ? p.data.docs : null,
   });
 }
 
