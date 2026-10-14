@@ -203,3 +203,7 @@ Run `supabase/migrations/0016_line_evidence.sql` once (after 0012 and 0015). Whe
 ## 23. Production Leads add people to their process
 
 Run `supabase/migrations/0017_lead_assignments.sql` once. On the Process page, the process's Production Lead sees **Remove** beside each team member and supporting role, and an **Add someone to this process** form. Rules (enforced in the database by `lead_set_assignment`): only the process's own Production Lead; only Team member or Supporting role (reviewers and leads stay with the administrator); not someone who is already a reviewer or lead on the process; not someone who still owns an open review point (when removing). The person is notified and sees the whole process at once. People belong to a process, not to single steps.
+
+## 24. Send to review in one step, and the Project Lead override
+
+Run `supabase/migrations/0018_send_to_review.sql` once. A Production Lead of a step without lines now has one **Send to review** button (with a "tested" tick and an optional note) from any stage before Review, instead of completing Process Definition, Solution Building and Testing one by one; it needs the step not to be Blocked, records a passing test, and notifies the reviewers. The Project Lead can push a step (without lines) or a single line to review on the team's behalf: "Project Lead: send to review without the team" with a required reason, which is saved as a comment and logged. For a line, the files filed under it become its evidence.

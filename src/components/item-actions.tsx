@@ -1,13 +1,21 @@
-import { completeStage, recordTesting, setDashboardStatus, setStatus } from "@/app/(app)/actions";
+import {
+  completeStage,
+  overrideStepToReview,
+  recordTesting,
+  sendToReview,
+  setDashboardStatus,
+  setStatus,
+} from "@/app/(app)/actions";
 import {
   DASHBOARD_STATUSES,
   DASHBOARD_STATUS_LABEL,
-  STAGES,
   STAGE_LABEL,
   type SubprocessRow,
 } from "@/lib/domain";
 import {
   canCompleteStage,
+  canOverrideStep,
+  canSendToReview,
   canRecordTesting,
   canSetDashboardStatus,
   canSetStatus,
@@ -21,19 +29,19 @@ const SETTABLE = [
   { value: "blocked", label: "Blocked" },
 ];
 
-/** Tells a Production Lead how to move a step on, since "Complete" only appears once it is In Progress. */
+/** Tells a Production Lead how to move a step on. */
 function nextStepHint(caps: Capabilities, row: SubprocessRow): string | null {
+  if (canSendToReview(caps, row)) {
+    return "When the work is ready, press “Send to review”. You do not need to complete each stage first.";
+  }
   if (!canSetStatus(caps, row) || row.stage === "production" || canCompleteStage(caps, row)) {
     return null;
   }
   if (row.stage === "review") {
     return "This step is with the reviewers. The Project Lead moves it to Production once it is approved.";
   }
-  const next = STAGE_LABEL[STAGES[STAGES.indexOf(row.stage) + 1]];
-  const finish = `press “Complete ${STAGE_LABEL[row.stage]}” to move it to ${next}`;
-  return row.stage === "testing"
-    ? `To send this step to Review: record a passing test result, set the status to In Progress, then ${finish.replace(" to move it to Review", "")}. The reviewers see it once it is in Review.`
-    : `To move this step on: set the status to In Progress, then ${finish}.`;
+  if (row.status === "blocked") return "Clear the Blocked status, then send it to review.";
+  return null;
 }
 
 /**
@@ -51,6 +59,39 @@ export function ItemActions({
 }) {
   const sub = { sub: row.id };
   const parts = [
+    canSendToReview(caps, row) && (
+      <ActionForm
+        key="send"
+        action={sendToReview}
+        fields={sub}
+        label="Send to review"
+        className="stack"
+      >
+        <label className="check">
+          <input type="checkbox" name="tested" required /> I tested this and it passed
+        </label>
+        <input
+          name="note"
+          maxLength={2000}
+          placeholder="Note for the reviewer (optional)"
+          aria-label="Note for the reviewer"
+        />
+      </ActionForm>
+    ),
+    canOverrideStep(caps, row) && (
+      <details key="override">
+        <summary>Project Lead: send to review without the team</summary>
+        <ActionForm action={overrideStepToReview} fields={sub} label="Send to review" quiet>
+          <input
+            name="reason"
+            required
+            maxLength={500}
+            placeholder="Reason"
+            aria-label="Reason for sending it to review"
+          />
+        </ActionForm>
+      </details>
+    ),
     canSetStatus(caps, row) && (
       <ActionForm key="status" action={setStatus} fields={sub} label="Update status">
         <SelectField

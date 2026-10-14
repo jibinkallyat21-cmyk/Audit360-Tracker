@@ -1,6 +1,7 @@
 import {
   addLine,
   decideLine,
+  overrideLineToReview,
   removeLine,
   renameLine,
   sendLineToReview,
@@ -10,6 +11,7 @@ import { LINE_STATUS_LABEL, type LineRow, type SubprocessRow } from "@/lib/domai
 import {
   canDecideLines,
   canManageLines,
+  canOverrideLines,
   canUpload,
   canWorkLines,
   type Capabilities,
@@ -59,6 +61,7 @@ export function StepLines({
   const manage = canManageLines(caps, row);
   const work = canWorkLines(caps, row);
   const decide = canDecideLines(caps, row);
+  const override = canOverrideLines(caps, row);
   if (lines.length === 0 && !manage) return null;
 
   const docs = records.documents.filter((d) => d.subprocess_id === row.id);
@@ -227,6 +230,28 @@ export function StepLines({
                       </>
                     )}
                   </div>
+                  {override &&
+                    ["not_started", "in_progress", "blocked", "changes_required"].includes(
+                      l.status,
+                    ) && (
+                      <details>
+                        <summary>Project Lead: send to review without the team</summary>
+                        <ActionForm
+                          action={overrideLineToReview}
+                          fields={{ line: l.id }}
+                          label="Send to review"
+                          quiet
+                        >
+                          <input
+                            name="reason"
+                            required
+                            maxLength={500}
+                            placeholder="Reason"
+                            aria-label="Reason for sending it to review"
+                          />
+                        </ActionForm>
+                      </details>
+                    )}
                   {uploading && l.status !== "in_review" && l.status !== "approved" && (
                     <details open={work && canSend && docs.length === 0}>
                       <summary>Add a file for this line</summary>

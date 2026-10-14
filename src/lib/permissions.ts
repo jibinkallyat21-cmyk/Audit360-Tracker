@@ -146,3 +146,18 @@ export function canRemoveDocument(
   }
   return true;
 }
+
+const EARLY = ["process_definition", "solution_building", "testing"];
+
+/** One-step "Send to review" for a step without lines: its Production Lead, before Review. */
+export const canSendToReview = (c: Capabilities, r: SubprocessRow) =>
+  !((r.lines?.length ?? 0) > 0) &&
+  EARLY.includes(r.stage) &&
+  r.status !== "blocked" &&
+  has(c, r.processId, "production_lead");
+
+/** The Project Lead may push a step (without lines) or a line to review on the team's behalf. */
+export const canOverrideStep = (c: Capabilities, r: SubprocessRow) =>
+  !((r.lines?.length ?? 0) > 0) && EARLY.includes(r.stage) && c.roles.has("project_lead");
+export const canOverrideLines = (c: Capabilities, r: SubprocessRow) =>
+  r.stage !== "production" && c.roles.has("project_lead");

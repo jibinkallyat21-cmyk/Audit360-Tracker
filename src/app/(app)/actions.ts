@@ -243,3 +243,33 @@ export async function leadSetAssignment(_: FormState, form: FormData): Promise<F
     p_assigned: p.data.assigned === "true",
   });
 }
+
+export async function sendToReview(_: FormState, form: FormData): Promise<FormState> {
+  const p = z
+    .object({
+      sub: id,
+      tested: z.string().optional(),
+      note: z.string().trim().max(2000).optional(),
+    })
+    .safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: "Invalid request." };
+  return rpc("send_to_review", {
+    p_sub: p.data.sub,
+    p_tested: p.data.tested === "on" || p.data.tested === "true",
+    p_note: p.data.note || null,
+  });
+}
+
+const reason = z.string().trim().min(1, "Give a reason.").max(500);
+
+export async function overrideStepToReview(_: FormState, form: FormData): Promise<FormState> {
+  const p = z.object({ sub: id, reason }).safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: p.error.issues[0].message };
+  return rpc("override_step_to_review", { p_sub: p.data.sub, p_reason: p.data.reason });
+}
+
+export async function overrideLineToReview(_: FormState, form: FormData): Promise<FormState> {
+  const p = z.object({ line: id, reason }).safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: p.error.issues[0].message };
+  return rpc("override_line_to_review", { p_line: p.data.line, p_reason: p.data.reason });
+}

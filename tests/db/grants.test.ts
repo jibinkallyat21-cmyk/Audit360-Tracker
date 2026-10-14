@@ -63,6 +63,10 @@ const CLIENT_CALLABLE = [
   "restore_document",
   // people on a process
   "lead_set_assignment",
+  // sending to review
+  "send_to_review",
+  "override_step_to_review",
+  "override_line_to_review",
   // site switches
   "admin_set_maintenance",
   "get_maintenance",
