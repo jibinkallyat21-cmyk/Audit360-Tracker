@@ -61,6 +61,8 @@ const CLIENT_CALLABLE = [
   // removing documents
   "remove_document",
   "restore_document",
+  // people on a process
+  "lead_set_assignment",
   // site switches
   "admin_set_maintenance",
   "get_maintenance",

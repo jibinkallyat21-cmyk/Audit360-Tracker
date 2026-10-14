@@ -225,3 +225,21 @@ export async function restoreDocument(_: FormState, form: FormData): Promise<For
   if (!p.success) return { error: "Invalid document." };
   return rpc("restore_document", { p_document: p.data.doc });
 }
+
+export async function leadSetAssignment(_: FormState, form: FormData): Promise<FormState> {
+  const p = z
+    .object({
+      process: id,
+      person: z.string().uuid("Choose a person."),
+      type: z.enum(["team_member", "supporting_role"]),
+      assigned: z.enum(["true", "false"]),
+    })
+    .safeParse(Object.fromEntries(form));
+  if (!p.success) return { error: p.error.issues[0].message };
+  return rpc("lead_set_assignment", {
+    p_process: p.data.process,
+    p_person: p.data.person,
+    p_type: p.data.type,
+    p_assigned: p.data.assigned === "true",
+  });
+}

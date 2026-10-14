@@ -4,7 +4,9 @@ import { StepLines, lineSummary } from "@/components/step-lines";
 import { ItemActions } from "@/components/item-actions";
 import { BuildBadge, DecisionBadge, FlowBadge, PageHero, StageTrack } from "@/components/ui";
 import { toneForLead } from "@/lib/brand";
-import { getCapabilities, listAssignments, listSubprocesses } from "@/lib/data";
+import { leadSetAssignment } from "@/app/(app)/actions";
+import { ActionForm, SelectField } from "@/components/client";
+import { getCapabilities, getOrg, listAssignments, listSubprocesses } from "@/lib/data";
 import { PROCESS_DETAIL_SELECT } from "@/lib/queries";
 import { getRecords } from "@/lib/records";
 import { getPersona } from "@/lib/demo";
@@ -43,6 +45,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ code: 
   if (!proc) notFound();
   const records = await getRecords(rows.map((r) => r.id));
   const people = assignments.filter((a) => a.processId === rows[0].processId);
+  // The process's Production Lead can add and remove team members and supporting roles.
+  const isLead = caps.assignments.get(rows[0].processId)?.has("production_lead") ?? false;
+  const org = isLead ? await getOrg() : null;
+  const taken = new Set(people.map((p) => p.personId));
   const leadName = people.find((p) => p.type === "production_lead")?.personName;
   const tone = `tone-${toneForLead(leadName)}`;
   const before: string[] = (proc.context as { before_ai_steps?: string[] })?.before_ai_steps ?? [];
@@ -57,15 +63,75 @@ export default async function ProcessPage({ params }: { params: Promise<{ code: 
         <h2>People</h2>
         <dl className="people">
           {GROUPS.map(([type, label]) => {
-            const names = people.filter((p) => p.type === type).map((p) => p.personName);
-            return names.length === 0 ? null : (
+            const list = people.filter((p) => p.type === type);
+            const editable = isLead && (type === "team_member" || type === "supporting_role");
+            if (list.length === 0 && !editable) return null;
+            return (
               <div key={type}>
                 <dt>{label}</dt>
-                <dd>{names.join(", ")}</dd>
+                <dd>
+                  {editable ? (
+                    <ul className="row-list">
+                      {list.map((p) => (
+                        <li key={p.personId}>
+                          {p.personName}
+                          <ActionForm
+                            action={leadSetAssignment}
+                            fields={{
+                              process: rows[0].processId,
+                              person: p.personId,
+                              type,
+                              assigned: "false",
+                            }}
+                            label="Remove"
+                            quiet
+                          />
+                        </li>
+                      ))}
+                      {list.length === 0 && <li className="muted">None yet.</li>}
+                    </ul>
+                  ) : (
+                    list.map((p) => p.personName).join(", ")
+                  )}
+                </dd>
               </div>
             );
           })}
         </dl>
+        {isLead && org && (
+          <div className="stack">
+            <h3>Add someone to this process</h3>
+            <p className="muted">
+              They join the whole process (all its steps) straight away and are notified. Reviewers
+              and leads are set by the administrator.
+            </p>
+            <ActionForm
+              action={leadSetAssignment}
+              fields={{ process: rows[0].processId, assigned: "true" }}
+              label="Add"
+            >
+              <SelectField
+                name="person"
+                label="Person"
+                required
+                options={[
+                  { value: "", label: "Choose person…" },
+                  ...org.people
+                    .filter((p) => !taken.has(p.id))
+                    .map((p) => ({ value: p.id, label: p.displayName })),
+                ]}
+              />
+              <SelectField
+                name="type"
+                label="As"
+                options={[
+                  { value: "team_member", label: "Team member" },
+                  { value: "supporting_role", label: "Supporting role" },
+                ]}
+              />
+            </ActionForm>
+          </div>
+        )}
       </section>
 
       <section className="stack-lg">

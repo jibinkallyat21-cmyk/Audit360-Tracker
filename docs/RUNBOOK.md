@@ -199,3 +199,7 @@ Run `supabase/migrations/0015_remove_documents.sql` once (after 0012). Documents
 ## 22. Files as evidence for several lines
 
 Run `supabase/migrations/0016_line_evidence.sql` once (after 0012 and 0015). When the Production Lead sends a line to review, the form lists every file of the step with tick boxes (the files filed under that line, or the shared "General" ones, are pre-ticked): one file, such as a workbook with an EOSB tab and a GOSI tab, can be the evidence for several lines by ticking it on each. The reviewer sees exactly those files on the line; a new version of one of them sends an approved line that relies on it back to review; and a file that is evidence for a line in review or approved cannot be removed (except by the administrator). Each line also has its own "Add a file for this line" box, so a file can be filed under the right line at upload time.
+
+## 23. Production Leads add people to their process
+
+Run `supabase/migrations/0017_lead_assignments.sql` once. On the Process page, the process's Production Lead sees **Remove** beside each team member and supporting role, and an **Add someone to this process** form. Rules (enforced in the database by `lead_set_assignment`): only the process's own Production Lead; only Team member or Supporting role (reviewers and leads stay with the administrator); not someone who is already a reviewer or lead on the process; not someone who still owns an open review point (when removing). The person is notified and sees the whole process at once. People belong to a process, not to single steps.
