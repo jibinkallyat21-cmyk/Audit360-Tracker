@@ -10,6 +10,10 @@ import { createClient } from "@/lib/supabase/server";
 export function friendly(message: string | undefined): string {
   if (!message) return "Something went wrong.";
   if (/Not authorized/i.test(message)) return "You are not allowed to do that.";
+  // A feature whose database update (migration) has not been run yet.
+  if (/schema cache|could not find the function|does not exist/i.test(message)) {
+    return "This feature needs a database update that has not been run yet. Tell the administrator.";
+  }
   // Workflow rules are written as plain sentences in the database functions.
   if (/^[A-Z][^{}()]{3,160}$/.test(message)) return message;
   return "The change could not be saved.";
